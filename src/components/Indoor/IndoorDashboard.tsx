@@ -8,6 +8,15 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import * as indoorApi from '../../services/indoorApi';
 
+const STAT_CARDS = [
+  { title: 'Total Operators', icon: Users, bgColor: 'bg-blue-50', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-600', key: 'length', suffix: '', desc: 'operators involved' },
+  { title: 'Media Prepared', icon: FlaskConical, bgColor: 'bg-green-50', iconBg: 'bg-green-500/10', iconColor: 'text-green-600', key: 'media', suffix: ' L', desc: 'media prepared' },
+  { title: 'Total Vessels', icon: Package, bgColor: 'bg-purple-50', iconBg: 'bg-purple-500/10', iconColor: 'text-purple-600', key: 'vessels', suffix: '', desc: 'vessels processed' },
+  { title: 'Total Shoots', icon: TrendingUp, bgColor: 'bg-orange-50', iconBg: 'bg-orange-500/10', iconColor: 'text-orange-600', key: 'shoots', suffix: '', desc: 'shoots generated' }
+];
+
+const TABLE_HEADERS = ['Operator', 'Media (L)', 'Media Types', 'Vessels', 'Shoots', 'Performance'];
+
 export function IndoorDashboard() {
   const [data, setData] = useState({ autoclave: [], batches: [], subculture: [], incubation: [] });
   const [modal, setModal] = useState(false);
@@ -48,14 +57,10 @@ export function IndoorDashboard() {
 
   const stats = useMemo(() => {
     const operators = {};
-
     [...data.autoclave, ...data.batches, ...data.subculture, ...data.incubation]
       .filter(r => isInRange(r.date || r.transfer_date || r.subculture_date))
       .forEach(r => {
-        if (!operators[r.operator]) {
-          operators[r.operator] = { name: r.operator, media: 0, bottles: 0, vessels: 0, shoots: 0, types: new Set() };
-        }
-        const op = operators[r.operator];
+        const op = operators[r.operator] ||= { name: r.operator, media: 0, bottles: 0, vessels: 0, shoots: 0, types: new Set() };
         if (r.media_total) op.media += parseFloat(r.media_total) || 0;
         if (r.type_of_media) op.types.add(r.type_of_media);
         if (r.bottles) op.bottles += r.bottles;
@@ -64,7 +69,6 @@ export function IndoorDashboard() {
         if (r.shoots_transferred) op.shoots += r.shoots_transferred;
         if (r.shoots_count) op.shoots += r.shoots_count;
       });
-
     return Object.values(operators).map(o => ({ ...o, types: Array.from(o.types) }));
   }, [data, applied]);
 
@@ -108,49 +112,22 @@ export function IndoorDashboard() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <Card className="bg-blue-50">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-normal text-gray-500">Total Operators</CardTitle>
-            <div className="bg-blue-500/10 rounded-full p-2"><Users className="h-5 w-5 text-blue-600" /></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.length}</div>
-            <p className="text-xs text-gray-500">operators involved</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-green-50">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-normal text-gray-500">Media Prepared</CardTitle>
-            <div className="bg-green-500/10 rounded-full p-2"><FlaskConical className="h-5 w-5 text-green-600" /></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.media.toFixed(1)} L</div>
-            <p className="text-xs text-gray-500">media prepared</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-purple-50">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-normal text-gray-500">Total Vessels</CardTitle>
-            <div className="bg-purple-500/10 rounded-full p-2"><Package className="h-5 w-5 text-purple-600" /></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.vessels.toLocaleString()}</div>
-            <p className="text-xs text-gray-500">vessels processed</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-orange-50">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-normal text-gray-500">Total Shoots</CardTitle>
-            <div className="bg-orange-500/10 rounded-full p-2"><TrendingUp className="h-5 w-5 text-orange-600" /></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.shoots.toLocaleString()}</div>
-            <p className="text-xs text-gray-500">shoots generated</p>
-          </CardContent>
-        </Card>
+        {STAT_CARDS.map(({ title, icon: Icon, bgColor, iconBg, iconColor, key, suffix, desc }) => {
+          const value = key === 'length' ? stats.length : totals[key];
+          const display = key === 'media' ? value.toFixed(1) : value.toLocaleString();
+          return (
+            <Card key={title} className={bgColor}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-normal text-gray-500">{title}</CardTitle>
+                <div className={`${iconBg} rounded-full p-2`}><Icon className={`h-5 w-5 ${iconColor}`} /></div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{display}{suffix}</div>
+                <p className="text-xs text-gray-500">{desc}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <Card>
@@ -160,9 +137,7 @@ export function IndoorDashboard() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  {['Operator', 'Media (L)', 'Media Types', 'Vessels', 'Shoots', 'Performance'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-700">{h}</th>
-                  ))}
+                  {TABLE_HEADERS.map(h => <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-700">{h}</th>)}
                 </tr>
               </thead>
               <tbody>
