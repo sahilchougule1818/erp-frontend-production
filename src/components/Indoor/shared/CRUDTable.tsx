@@ -10,6 +10,7 @@ import { Label } from '../../ui/label';
 import { Textarea } from '../../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../ui/alert-dialog';
+import { DatePicker } from '../../ui/date-picker';
 
 // Field interface - defines structure for form fields
 interface Field {
@@ -277,7 +278,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
       );
     }
     if (f.type === 'textarea') return <Textarea placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
-    if (f.type === 'date') return <Input type="date" value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} className="cursor-pointer" />;
+    if (f.type === 'date') return <DatePicker value={form[f.key] || ''} onChange={(date) => setForm({...form, [f.key]: date})} placeholder={f.placeholder || 'Select date'} />;
     if (f.type === 'time') return <Input type="time" value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} className="cursor-pointer" />;
     return <Input type={f.type || 'text'} placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
   };
@@ -340,7 +341,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label>{filterFields.field1Label}</Label>
-                        <Input type="date" value={searchDate} onChange={(e) => { setSearchDate(e.target.value); setSearchBatch(''); }} />
+                        <DatePicker value={searchDate} onChange={(date) => { setSearchDate(date); setSearchBatch(''); }} placeholder="Select date" />
                       </div>
                       <div className="space-y-2">
                         <Label>{filterFields.field2Label}</Label>
@@ -368,11 +369,11 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <Label>From Date</Label>
-                      <Input type="date" value={exportRange.from} onChange={(e) => setExportRange({ ...exportRange, from: e.target.value })} />
+                      <DatePicker value={exportRange.from} onChange={(date) => setExportRange({ ...exportRange, from: date })} placeholder="Select from date" />
                     </div>
                     <div className="space-y-2">
                       <Label>To Date</Label>
-                      <Input type="date" value={exportRange.to} onChange={(e) => setExportRange({ ...exportRange, to: e.target.value })} />
+                      <DatePicker value={exportRange.to} onChange={(date) => setExportRange({ ...exportRange, to: date })} placeholder="Select to date" />
                     </div>
                   </div>
                   <div className="flex justify-end gap-3">
