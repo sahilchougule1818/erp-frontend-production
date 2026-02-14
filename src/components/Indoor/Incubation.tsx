@@ -38,7 +38,7 @@ const MORTALITY_FIELDS = [
 function IncubationRegister() {
   return (
     <CRUDTable
-      title="Incubation Register"
+      title=""
       fields={INCUBATION_FIELDS}
       columns={['Subculture Date', 'Stage', 'Batch Name', 'Media Code', 'Operator Name', 'Crop Name', 'No. of Vessels', 'No. of Shoots', 'Temp', 'Humidity', 'Photo Period', 'Light Intensity']}
       dataKeys={['subculture_date', 'stage', 'batch_name', 'media_code', 'operator_name', 'crop_name', 'no_of_vessels', 'no_of_shoots', 'temp', 'humidity', 'photo_period', 'light_intensity']}
@@ -97,7 +97,7 @@ function IncubationRegister() {
 function MortalityRecord() {
   return (
     <CRUDTable
-      title="Mortality Record"
+      title=""
       fields={MORTALITY_FIELDS}
       columns={['Date', 'Batch Name', 'Vessel Count', 'Type of Mortality', 'Possible Source', 'Disposal Method']}
       dataKeys={['date', 'batch_name', 'vessel_count', 'type_of_mortality', 'possible_source', 'disposal_method']}
@@ -142,19 +142,14 @@ export function Incubation() {
 
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader><CardTitle>Incubation</CardTitle></CardHeader>
-        <CardContent>
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="incubation">Incubation Register</TabsTrigger>
-              <TabsTrigger value="mortality">Mortality Record</TabsTrigger>
-            </TabsList>
-            <TabsContent value="incubation"><IncubationRegister /></TabsContent>
-            <TabsContent value="mortality"><MortalityRecord /></TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="incubation">Incubation Register</TabsTrigger>
+          <TabsTrigger value="mortality">Mortality Record</TabsTrigger>
+        </TabsList>
+        <TabsContent value="incubation"><IncubationRegister /></TabsContent>
+        <TabsContent value="mortality"><MortalityRecord /></TabsContent>
+      </Tabs>
     </div>
   );
 }

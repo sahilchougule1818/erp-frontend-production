@@ -25,7 +25,7 @@ const DEEP_CLEANING_FIELDS = [
 function CleaningRecordTable() {
   return (
     <CRUDTable
-      title="Cleaning Record"
+      title=""
       fields={CLEANING_FIELDS}
       columns={['Date', 'Operator Name', 'Area Cleaned']}
       dataKeys={['date', 'operator_name', 'area_cleaned']}
@@ -61,7 +61,7 @@ function CleaningRecordTable() {
 function DeepCleaningRecord() {
   return (
     <CRUDTable
-      title="Deep Cleaning Record"
+      title=""
       fields={DEEP_CLEANING_FIELDS}
       columns={['Date', 'Operator', 'Instrument Cleaned']}
       dataKeys={['date', 'operator', 'instrument_cleaned']}
@@ -100,19 +100,14 @@ export function CleaningRecord() {
 
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader><CardTitle>Cleaning Records</CardTitle></CardHeader>
-        <CardContent>
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="cleaning">Cleaning Record</TabsTrigger>
-              <TabsTrigger value="deep">Deep Cleaning Record</TabsTrigger>
-            </TabsList>
-            <TabsContent value="cleaning"><CleaningRecordTable /></TabsContent>
-            <TabsContent value="deep"><DeepCleaningRecord /></TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="cleaning">Cleaning Record</TabsTrigger>
+          <TabsTrigger value="deep">Deep Cleaning Record</TabsTrigger>
+        </TabsList>
+        <TabsContent value="cleaning"><CleaningRecordTable /></TabsContent>
+        <TabsContent value="deep"><DeepCleaningRecord /></TabsContent>
+      </Tabs>
     </div>
   );
 }

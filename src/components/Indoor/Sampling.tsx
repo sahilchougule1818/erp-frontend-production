@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { CRUDTable } from './shared/CRUDTable';
 import { Badge } from '../ui/badge';
 import * as indoorApi from '../../services/indoorApi';
@@ -26,11 +27,13 @@ const FIELDS = [
 export function Sampling() {
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader><CardTitle>Sampling Register</CardTitle></CardHeader>
-        <CardContent>
+      <Tabs value="sampling" onValueChange={() => {}}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="sampling">Sampling Register</TabsTrigger>
+        </TabsList>
+        <TabsContent value="sampling">
           <CRUDTable
-            title="Sampling"
+            title=""
             fields={FIELDS}
             columns={['Sample Date', 'Crop Name', 'Batch Name', 'Stage', 'Tunnel No', 'Tray/Bed No', 'Sent Date', 'Received Date', 'Status', 'Govt Certificate', 'Certificate No', 'Reason']}
             dataKeys={['sample_date', 'crop_name', 'batch_name', 'stage', 'tunnel_no', 'tray_bed_no', 'sent_date', 'received_date', 'status', 'govt_certificate', 'certificate_no', 'reason']}
@@ -79,8 +82,8 @@ export function Sampling() {
             // Filter configuration - enables filtering by sample date and batch name
             filterFields={{ field1Key: 'sample_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
           />
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -37,7 +37,7 @@ const BATCH_FIELDS = [
 function AutoclaveCycle() {
   return (
     <CRUDTable
-      title="Autoclave Cycle"
+      title=""
       fields={AUTOCLAVE_FIELDS}
       columns={['Date', 'Media Code', 'Operator Name', 'Type of Media', 'Autoclave ON Time', 'Media Loading Time', 'Pressure Time', 'Off Time', 'Open Time', 'Media Total', 'Remark']}
       dataKeys={['date', 'media_code', 'operator_name', 'type_of_media', 'autoclave_on_time', 'media_loading_time', 'pressure_time', 'off_time', 'open_time', 'media_total', 'remark']}
@@ -79,7 +79,7 @@ function AutoclaveCycle() {
 function MediaBatch() {
   return (
     <CRUDTable
-      title="Media Batch"
+      title=""
       fields={BATCH_FIELDS}
       columns={['Date', 'Media Code', 'Operator Name', 'Quantity', 'Bottles', 'Contamination']}
       dataKeys={['date', 'media_code', 'operator_name', 'quantity', 'bottles', 'contamination']}
@@ -121,19 +121,14 @@ export function MediaPreparation() {
 
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader><CardTitle>Media Preparation</CardTitle></CardHeader>
-        <CardContent>
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="autoclave">Autoclave Cycle</TabsTrigger>
-              <TabsTrigger value="batch">Media Batch</TabsTrigger>
-            </TabsList>
-            <TabsContent value="autoclave"><AutoclaveCycle /></TabsContent>
-            <TabsContent value="batch"><MediaBatch /></TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="autoclave">Autoclave Cycle</TabsTrigger>
+          <TabsTrigger value="batch">Media Batch</TabsTrigger>
+        </TabsList>
+        <TabsContent value="autoclave"><AutoclaveCycle /></TabsContent>
+        <TabsContent value="batch"><MediaBatch /></TabsContent>
+      </Tabs>
     </div>
   );
 }

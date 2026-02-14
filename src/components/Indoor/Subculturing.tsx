@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { CRUDTable } from './shared/CRUDTable';
 import { Badge } from '../ui/badge';
 import * as indoorApi from '../../services/indoorApi';
@@ -24,11 +25,13 @@ const FIELDS = [
 export function Subculturing() {
   return (
     <div className="p-6">
-      <Card>
-        <CardHeader><CardTitle>Subculturing Register</CardTitle></CardHeader>
-        <CardContent>
+      <Tabs value="subculturing" onValueChange={() => {}}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="subculturing">Subculturing Register</TabsTrigger>
+        </TabsList>
+        <TabsContent value="subculturing">
           <CRUDTable
-            title="Subculturing"
+            title=""
             fields={FIELDS}
             columns={['Transfer Date', 'Stage Number', 'Batch Name', 'Media Code', 'Crop Name', 'No. of Vessels', 'No. of Shoots', 'Operator Name', 'Mortality', 'Remark']}
             dataKeys={['transfer_date', 'stage_number', 'batch_name', 'media_code', 'crop_name', 'no_of_vessels', 'no_of_shoots', 'operator_name', 'mortality', 'remark']}
@@ -73,8 +76,8 @@ export function Subculturing() {
             // Filter configuration - enables filtering by date and batch name
             filterFields={{ field1Key: 'transfer_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
           />
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
