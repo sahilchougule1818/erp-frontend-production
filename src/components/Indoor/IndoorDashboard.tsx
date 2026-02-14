@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -46,12 +46,12 @@ export function IndoorDashboard() {
     }
   };
 
-  const handleViewReport = () => {
+  const handleViewReport = useCallback(() => {
     setApplied(dateRange);
     setDateModal(false);
-  };
+  }, [dateRange]);
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     const html = `<html><head><style>table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f2f2f2}</style></head><body><h2>Indoor Dashboard Report</h2><p>Date Range: ${exportRange.from || 'All'} to ${exportRange.to || 'All'}</p><table><thead><tr>${TABLE_HEADERS.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${stats.map(s => `<tr><td>${s.name}</td><td>${s.media.toFixed(1)} L</td><td>${s.types.join(', ')}</td><td>${s.vessels}</td><td>${s.shoots}</td></tr>`).join('')}</tbody></table></body></html>`;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -59,15 +59,16 @@ export function IndoorDashboard() {
     a.href = url;
     a.download = `indoor-dashboard_${exportRange.from || 'all'}_to_${exportRange.to || 'all'}.html`;
     a.click();
+    URL.revokeObjectURL(url);
     setModal(false);
     setExportRange({ from: '', to: '' });
-  };
+  }, [exportRange]);
 
-  const isInRange = (date: string) => {
+  const isInRange = useCallback((date: string) => {
     if (!applied.from || !applied.to) return true;
     const d = new Date(date);
     return d >= new Date(applied.from) && d <= new Date(applied.to);
-  };
+  }, [applied]);
 
   const stats = useMemo(() => {
     const operators = {};
@@ -84,7 +85,7 @@ export function IndoorDashboard() {
         if (r.no_of_shoots) op.shoots += r.no_of_shoots;
       });
     return Object.values(operators).map(o => ({ ...o, types: Array.from(o.types) }));
-  }, [data, applied]);
+  }, [data, isInRange]);
 
   const totals = useMemo(() => 
     stats.reduce((acc, s) => ({

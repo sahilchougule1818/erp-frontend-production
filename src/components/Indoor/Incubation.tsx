@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { CRUDTable } from './shared/CRUDTable';
 import * as indoorApi from '../../services/indoorApi';
 
-// Field configuration for incubation register - tracks environmental conditions during incubation
 const INCUBATION_FIELDS = [
   { key: 'subcultureDate', label: 'Subculture Date', type: 'date' },
   { key: 'stage', label: 'Stage', placeholder: 'Stage 1' },
@@ -21,7 +19,6 @@ const INCUBATION_FIELDS = [
   { key: 'lightIntensity', label: 'Light Intensity', placeholder: '3000 lux' }
 ];
 
-// Field configuration for mortality records - tracks vessel losses and disposal
 const MORTALITY_FIELDS = [
   { key: 'date', label: 'Date', type: 'date' },
   { key: 'batchName', label: 'Batch Name', placeholder: 'B-2024-1145' },
@@ -31,10 +28,6 @@ const MORTALITY_FIELDS = [
   { key: 'disposalMethod', label: 'Disposal Method', type: 'textarea' }
 ];
 
-/**
- * IncubationRegister component - Manages incubation records with environmental parameters
- * Tracks temperature, humidity, light conditions for each batch during incubation
- */
 function IncubationRegister() {
   return (
     <CRUDTable
@@ -43,12 +36,11 @@ function IncubationRegister() {
       columns={['Subculture Date', 'Stage', 'Batch Name', 'Media Code', 'Operator Name', 'Crop Name', 'No. of Bottles', 'No. of Shoots', 'Temp', 'Humidity', 'Photo Period', 'Light Intensity']}
       dataKeys={['subculture_date', 'stage', 'batch_name', 'media_code', 'operator_name', 'crop_name', 'no_of_bottles', 'no_of_shoots', 'temp', 'humidity', 'photo_period', 'light_intensity']}
       api={{
-        get: indoorApi.getIncubation,      // Fetch all incubation records
-        create: indoorApi.createIncubation, // Create new incubation record
-        update: indoorApi.updateIncubation, // Update existing record
-        delete: indoorApi.deleteIncubation  // Delete incubation record
+        get: indoorApi.getIncubation,
+        create: indoorApi.createIncubation,
+        update: indoorApi.updateIncubation,
+        delete: indoorApi.deleteIncubation
       }}
-      // Maps database record to form fields
       mapToForm={(r) => ({
         id: r.id,
         subcultureDate: r.subculture_date,
@@ -64,7 +56,6 @@ function IncubationRegister() {
         photoPeriod: r.photo_period,
         lightIntensity: r.light_intensity
       })}
-      // Maps form fields to API payload format
       mapToPayload={(f) => ({
         subcultureDate: f.subcultureDate,
         stage: f.stage,
@@ -79,21 +70,15 @@ function IncubationRegister() {
         photoPeriod: f.photoPeriod,
         lightIntensity: f.lightIntensity
       })}
-      // Custom cell rendering - displays media code as badge
       renderCell={(key, value) => {
         if (key === 'media_code') return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
         return value;
       }}
-      // Filter configuration - enables filtering by date and batch name
       filterFields={{ field1Key: 'subculture_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
     />
   );
 }
 
-/**
- * MortalityRecord component - Manages mortality/loss records during incubation
- * Tracks vessel losses, causes, and disposal methods
- */
 function MortalityRecord() {
   return (
     <CRUDTable
@@ -102,12 +87,11 @@ function MortalityRecord() {
       columns={['Date', 'Batch Name', 'Vessel Count', 'Type of Mortality', 'Possible Source', 'Disposal Method']}
       dataKeys={['date', 'batch_name', 'vessel_count', 'type_of_mortality', 'possible_source', 'disposal_method']}
       api={{
-        get: indoorApi.getMortalityRecord,      // Fetch all mortality records
-        create: indoorApi.createMortalityRecord, // Create new mortality record
-        update: indoorApi.updateMortalityRecord, // Update existing record
-        delete: indoorApi.deleteMortalityRecord  // Delete mortality record
+        get: indoorApi.getMortalityRecord,
+        create: indoorApi.createMortalityRecord,
+        update: indoorApi.updateMortalityRecord,
+        delete: indoorApi.deleteMortalityRecord
       }}
-      // Maps database record to form fields
       mapToForm={(r) => ({
         id: r.id,
         date: r.date,
@@ -117,7 +101,6 @@ function MortalityRecord() {
         possibleSource: r.possible_source,
         disposalMethod: r.disposal_method
       })}
-      // Maps form fields to API payload format
       mapToPayload={(f) => ({
         date: f.date,
         batchName: f.batchName,
@@ -126,18 +109,12 @@ function MortalityRecord() {
         possibleSource: f.possibleSource,
         disposalMethod: f.disposalMethod
       })}
-      // Filter configuration - enables filtering by date and batch name
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
     />
   );
 }
 
-/**
- * Incubation component - Main component with tabs for incubation register and mortality records
- * Manages all incubation activities and tracks losses in the tissue culture lab
- */
 export function Incubation() {
-  // State to track active tab (incubation or mortality)
   const [tab, setTab] = useState('incubation');
 
   return (
