@@ -277,6 +277,8 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
       );
     }
     if (f.type === 'textarea') return <Textarea placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
+    if (f.type === 'date') return <Input type="date" value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} className="cursor-pointer" />;
+    if (f.type === 'time') return <Input type="time" value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} className="cursor-pointer" />;
     return <Input type={f.type || 'text'} placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
   };
 
@@ -307,25 +309,24 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
             <CardTitle>{title}</CardTitle>
             <div className="flex items-center gap-2">
               <BackToMainDataButton isVisible={isFiltered} onClick={handleReset} />
-              <Dialog open={exportModal} onOpenChange={setExportModal}>
+              <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
                 <DialogTrigger asChild>
-                  <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
+                  <Button className="bg-green-600 hover:bg-green-700"><Plus className="w-4 h-4 mr-2" />Add New</Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader><DialogTitle>Export Data</DialogTitle></DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>From Date</Label>
-                      <Input type="date" value={exportRange.from} onChange={(e) => setExportRange({ ...exportRange, from: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>To Date</Label>
-                      <Input type="date" value={exportRange.to} onChange={(e) => setExportRange({ ...exportRange, to: e.target.value })} />
-                    </div>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader><DialogTitle>{edit ? 'Edit' : 'Add'} {title}</DialogTitle></DialogHeader>
+                  <div className="grid grid-cols-2 gap-4 py-4">
+                    {fields.map(f => (
+                      <div key={f.key} className={`space-y-2 ${f.span === 2 ? 'col-span-2' : ''}`}>
+                        <Label>{f.label}</Label>
+                        {renderField(f)}
+                      </div>
+                    ))}
                   </div>
                   <div className="flex justify-end gap-3">
-                    <Button variant="outline" onClick={() => { setExportModal(false); setExportRange({ from: '', to: '' }); }}>Cancel</Button>
-                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleExport}>Download</Button>
+                    <Button variant="outline" onClick={closeModal}>Cancel</Button>
+                    {edit && <Button variant="destructive" onClick={() => { setDeleteId(form.id); setDeleteConfirm(true); setModal(false); }}><Trash2 className="w-4 h-4 mr-2" />Delete</Button>}
+                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleSave}>Save</Button>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -358,24 +359,25 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                   </DialogContent>
                 </Dialog>
               )}
-              <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
+              <Dialog open={exportModal} onOpenChange={setExportModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700"><Plus className="w-4 h-4 mr-2" />Add New</Button>
+                  <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader><DialogTitle>{edit ? 'Edit' : 'Add'} {title}</DialogTitle></DialogHeader>
-                  <div className="grid grid-cols-2 gap-4 py-4">
-                    {fields.map(f => (
-                      <div key={f.key} className={`space-y-2 ${f.span === 2 ? 'col-span-2' : ''}`}>
-                        <Label>{f.label}</Label>
-                        {renderField(f)}
-                      </div>
-                    ))}
+                <DialogContent className="max-w-md">
+                  <DialogHeader><DialogTitle>Export Data</DialogTitle></DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>From Date</Label>
+                      <Input type="date" value={exportRange.from} onChange={(e) => setExportRange({ ...exportRange, from: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>To Date</Label>
+                      <Input type="date" value={exportRange.to} onChange={(e) => setExportRange({ ...exportRange, to: e.target.value })} />
+                    </div>
                   </div>
                   <div className="flex justify-end gap-3">
-                    <Button variant="outline" onClick={closeModal}>Cancel</Button>
-                    {edit && <Button variant="destructive" onClick={() => { setDeleteId(form.id); setDeleteConfirm(true); setModal(false); }}><Trash2 className="w-4 h-4 mr-2" />Delete</Button>}
-                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleSave}>Save</Button>
+                    <Button variant="outline" onClick={() => { setExportModal(false); setExportRange({ from: '', to: '' }); }}>Cancel</Button>
+                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleExport}>Download</Button>
                   </div>
                 </DialogContent>
               </Dialog>

@@ -11,11 +11,11 @@ import * as indoorApi from '../../services/indoorApi';
 const STAT_CARDS = [
   { title: 'Total Operators', icon: Users, bgColor: 'bg-blue-50', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-600', key: 'length', suffix: '', desc: 'operators involved' },
   { title: 'Media Prepared', icon: FlaskConical, bgColor: 'bg-green-50', iconBg: 'bg-green-500/10', iconColor: 'text-green-600', key: 'media', suffix: ' L', desc: 'media prepared' },
-  { title: 'Total Vessels', icon: Package, bgColor: 'bg-purple-50', iconBg: 'bg-purple-500/10', iconColor: 'text-purple-600', key: 'vessels', suffix: '', desc: 'vessels processed' },
+  { title: 'Total Bottles', icon: Package, bgColor: 'bg-purple-50', iconBg: 'bg-purple-500/10', iconColor: 'text-purple-600', key: 'bottles', suffix: '', desc: 'bottles processed' },
   { title: 'Total Shoots', icon: TrendingUp, bgColor: 'bg-orange-50', iconBg: 'bg-orange-500/10', iconColor: 'text-orange-600', key: 'shoots', suffix: '', desc: 'shoots generated' }
 ];
 
-const TABLE_HEADERS = ['Operator', 'Media (L)', 'Media Types', 'Vessels', 'Shoots', 'Performance'];
+const TABLE_HEADERS = ['Operator', 'Media (L)', 'Media Types', 'Bottles', 'Shoots', 'Performance'];
 
 export function IndoorDashboard() {
   const [data, setData] = useState({ autoclave: [], batches: [], subculture: [], incubation: [] });

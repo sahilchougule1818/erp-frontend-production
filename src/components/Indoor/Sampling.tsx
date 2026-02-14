@@ -10,8 +10,6 @@ const FIELDS = [
   { key: 'cropName', label: 'Crop Name', placeholder: 'Rose' },
   { key: 'batchName', label: 'Batch Name', placeholder: 'B-2024-1145' },
   { key: 'stage', label: 'Stage', placeholder: 'Subculturing' },
-  { key: 'tunnelNo', label: 'Tunnel No', placeholder: 'T1' },
-  { key: 'trayBedNo', label: 'Tray/Bed No', placeholder: 'Tray 12' },
   { key: 'sentDate', label: 'Sent Date', type: 'date' },
   { key: 'receivedDate', label: 'Received Date', type: 'date' },
   { key: 'status', label: 'Status', placeholder: 'Approved/Rejected' },
@@ -35,8 +33,8 @@ export function Sampling() {
           <CRUDTable
             title=""
             fields={FIELDS}
-            columns={['Sample Date', 'Crop Name', 'Batch Name', 'Stage', 'Tunnel No', 'Tray/Bed No', 'Sent Date', 'Received Date', 'Status', 'Govt Certificate', 'Certificate No', 'Reason']}
-            dataKeys={['sample_date', 'crop_name', 'batch_name', 'stage', 'tunnel_no', 'tray_bed_no', 'sent_date', 'received_date', 'status', 'govt_certificate', 'certificate_no', 'reason']}
+            columns={['Sample Date', 'Crop Name', 'Batch Name', 'Stage', 'Sent Date', 'Received Date', 'Status', 'Govt Certificate', 'Certificate No', 'Reason']}
+            dataKeys={['sample_date', 'crop_name', 'batch_name', 'stage', 'sent_date', 'received_date', 'status', 'govt_certificate', 'certificate_no', 'reason']}
             api={{
               get: indoorApi.getSampling,      // Fetch all sampling records
               create: indoorApi.createSampling, // Create new sample record
@@ -50,8 +48,6 @@ export function Sampling() {
               cropName: r.crop_name,
               batchName: r.batch_name,
               stage: r.stage,
-              tunnelNo: r.tunnel_no,
-              trayBedNo: r.tray_bed_no,
               sentDate: r.sent_date,
               receivedDate: r.received_date,
               status: r.status,
@@ -65,8 +61,6 @@ export function Sampling() {
               cropName: f.cropName,
               batchName: f.batchName,
               stage: f.stage,
-              tunnelNo: f.tunnelNo,
-              trayBedNo: f.trayBedNo,
               sentDate: f.sentDate,
               receivedDate: f.receivedDate,
               status: f.status,

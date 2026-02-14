@@ -13,7 +13,7 @@ const INCUBATION_FIELDS = [
   { key: 'mediaCode', label: 'Media Code', placeholder: 'MS-001' },
   { key: 'operatorName', label: 'Operator Name' },
   { key: 'cropName', label: 'Crop Name', placeholder: 'Rose' },
-  { key: 'noOfVessels', label: 'No. of Vessels', type: 'number', placeholder: '50' },
+  { key: 'noOfBottles', label: 'No. of Bottles', type: 'number', placeholder: '50' },
   { key: 'noOfShoots', label: 'No. of Shoots', type: 'number', placeholder: '1000' },
   { key: 'temp', label: 'Temp', placeholder: '25°C' },
   { key: 'humidity', label: 'Humidity', placeholder: '70%' },
@@ -40,8 +40,8 @@ function IncubationRegister() {
     <CRUDTable
       title=""
       fields={INCUBATION_FIELDS}
-      columns={['Subculture Date', 'Stage', 'Batch Name', 'Media Code', 'Operator Name', 'Crop Name', 'No. of Vessels', 'No. of Shoots', 'Temp', 'Humidity', 'Photo Period', 'Light Intensity']}
-      dataKeys={['subculture_date', 'stage', 'batch_name', 'media_code', 'operator_name', 'crop_name', 'no_of_vessels', 'no_of_shoots', 'temp', 'humidity', 'photo_period', 'light_intensity']}
+      columns={['Subculture Date', 'Stage', 'Batch Name', 'Media Code', 'Operator Name', 'Crop Name', 'No. of Bottles', 'No. of Shoots', 'Temp', 'Humidity', 'Photo Period', 'Light Intensity']}
+      dataKeys={['subculture_date', 'stage', 'batch_name', 'media_code', 'operator_name', 'crop_name', 'no_of_bottles', 'no_of_shoots', 'temp', 'humidity', 'photo_period', 'light_intensity']}
       api={{
         get: indoorApi.getIncubation,      // Fetch all incubation records
         create: indoorApi.createIncubation, // Create new incubation record
@@ -57,7 +57,7 @@ function IncubationRegister() {
         mediaCode: r.media_code,
         operatorName: r.operator_name,
         cropName: r.crop_name,
-        noOfVessels: String(r.no_of_vessels),
+        noOfBottles: String(r.no_of_bottles),
         noOfShoots: String(r.no_of_shoots),
         temp: r.temp,
         humidity: r.humidity,
@@ -72,7 +72,7 @@ function IncubationRegister() {
         mediaCode: f.mediaCode,
         operatorName: f.operatorName,
         cropName: f.cropName,
-        noOfVessels: parseInt(f.noOfVessels) || 0,
+        noOfBottles: parseInt(f.noOfBottles) || 0,
         noOfShoots: parseInt(f.noOfShoots) || 0,
         temp: f.temp,
         humidity: f.humidity,

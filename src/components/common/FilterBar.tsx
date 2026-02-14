@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Input } from '../ui/input';
 import { Card } from '../ui/card';
 
 interface FilterOption {
@@ -74,18 +75,27 @@ export function FilterBar({
         {firstField && (
           <div className="flex-1 min-w-[200px]">
             <label className="block text-sm mb-1.5">{firstField.label}</label>
-            <Select value={firstField.value} onValueChange={firstField.onChange}>
-              <SelectTrigger>
-                <SelectValue placeholder={firstField.placeholder || `Select ${firstField.label.toLowerCase()}`} />
-              </SelectTrigger>
-              <SelectContent>
-                {firstField.options.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {firstField.label.toLowerCase().includes('date') ? (
+              <Input 
+                type="date" 
+                value={firstField.value || ''} 
+                onChange={(e) => firstField.onChange?.(e.target.value)}
+                className="h-10"
+              />
+            ) : (
+              <Select value={firstField.value} onValueChange={firstField.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder={firstField.placeholder || `Select ${firstField.label.toLowerCase()}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {firstField.options.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         )}
 

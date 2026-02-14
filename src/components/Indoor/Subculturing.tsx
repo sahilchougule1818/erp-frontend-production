@@ -11,7 +11,7 @@ const FIELDS = [
   { key: 'batchName', label: 'Batch Name', placeholder: 'B-2024-1145' },
   { key: 'mediaCode', label: 'Media Code', placeholder: 'MS-001' },
   { key: 'cropName', label: 'Crop Name', placeholder: 'Rose' },
-  { key: 'noOfVessels', label: 'No. of Vessels', type: 'number', placeholder: '50' },
+  { key: 'noOfBottles', label: 'No. of Bottles', type: 'number', placeholder: '50' },
   { key: 'noOfShoots', label: 'No. of Shoots', type: 'number', placeholder: '1000' },
   { key: 'operatorName', label: 'Operator Name' },
   { key: 'mortality', label: 'Mortality', placeholder: 'Low/Medium/High' },
@@ -33,8 +33,8 @@ export function Subculturing() {
           <CRUDTable
             title=""
             fields={FIELDS}
-            columns={['Transfer Date', 'Stage Number', 'Batch Name', 'Media Code', 'Crop Name', 'No. of Vessels', 'No. of Shoots', 'Operator Name', 'Mortality', 'Remark']}
-            dataKeys={['transfer_date', 'stage_number', 'batch_name', 'media_code', 'crop_name', 'no_of_vessels', 'no_of_shoots', 'operator_name', 'mortality', 'remark']}
+            columns={['Transfer Date', 'Stage Number', 'Batch Name', 'Media Code', 'Crop Name', 'No. of Bottles', 'No. of Shoots', 'Operator Name', 'Mortality', 'Remark']}
+            dataKeys={['transfer_date', 'stage_number', 'batch_name', 'media_code', 'crop_name', 'no_of_bottles', 'no_of_shoots', 'operator_name', 'mortality', 'remark']}
             api={{
               get: indoorApi.getSubculturing,      // Fetch all subculturing records
               create: indoorApi.createSubculturing, // Create new record
@@ -49,7 +49,7 @@ export function Subculturing() {
               batchName: r.batch_name,
               mediaCode: r.media_code,
               cropName: r.crop_name,
-              noOfVessels: String(r.no_of_vessels),
+              noOfBottles: String(r.no_of_bottles),
               noOfShoots: String(r.no_of_shoots),
               operatorName: r.operator_name,
               mortality: r.mortality,
@@ -62,7 +62,7 @@ export function Subculturing() {
               batchName: f.batchName,
               mediaCode: f.mediaCode,
               cropName: f.cropName,
-              noOfVessels: parseInt(f.noOfVessels) || 0,
+              noOfBottles: parseInt(f.noOfBottles) || 0,
               noOfShoots: parseInt(f.noOfShoots) || 0,
               operatorName: f.operatorName,
               mortality: f.mortality,
