@@ -60,14 +60,14 @@ export function IndoorDashboard() {
     [...data.autoclave, ...data.batches, ...data.subculture, ...data.incubation]
       .filter(r => isInRange(r.date || r.transfer_date || r.subculture_date))
       .forEach(r => {
-        const op = operators[r.operator] ||= { name: r.operator, media: 0, bottles: 0, vessels: 0, shoots: 0, types: new Set() };
+        const opName = r.operator_name;
+        if (!opName) return;
+        const op = operators[opName] ||= { name: opName, media: 0, bottles: 0, vessels: 0, shoots: 0, types: new Set() };
         if (r.media_total) op.media += parseFloat(r.media_total) || 0;
         if (r.type_of_media) op.types.add(r.type_of_media);
         if (r.bottles) op.bottles += r.bottles;
-        if (r.vessels_used) op.vessels += r.vessels_used;
-        if (r.vessels_count) op.vessels += r.vessels_count;
-        if (r.shoots_transferred) op.shoots += r.shoots_transferred;
-        if (r.shoots_count) op.shoots += r.shoots_count;
+        if (r.no_of_bottles) op.vessels += r.no_of_bottles;
+        if (r.no_of_shoots) op.shoots += r.no_of_shoots;
       });
     return Object.values(operators).map(o => ({ ...o, types: Array.from(o.types) }));
   }, [data, applied]);
