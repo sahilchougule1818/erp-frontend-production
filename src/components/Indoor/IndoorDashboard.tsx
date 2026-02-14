@@ -15,12 +15,14 @@ const STAT_CARDS = [
   { title: 'Total Shoots', icon: TrendingUp, bgColor: 'bg-orange-50', iconBg: 'bg-orange-500/10', iconColor: 'text-orange-600', key: 'shoots', suffix: '', desc: 'shoots generated' }
 ];
 
-const TABLE_HEADERS = ['Operator', 'Media (L)', 'Media Types', 'Bottles', 'Shoots', 'Performance'];
+const TABLE_HEADERS = ['Operator', 'Media (L)', 'Media Types', 'Bottles', 'Shoots'];
 
 export function IndoorDashboard() {
   const [data, setData] = useState({ autoclave: [], batches: [], subculture: [], incubation: [] });
   const [modal, setModal] = useState(false);
+  const [dateModal, setDateModal] = useState(false);
   const [dateRange, setDateRange] = useState({ from: '', to: '' });
+  const [exportRange, setExportRange] = useState({ from: '', to: '' });
   const [applied, setApplied] = useState({ from: '', to: '' });
 
   useEffect(() => { fetchData(); }, []);
@@ -46,7 +48,19 @@ export function IndoorDashboard() {
 
   const handleViewReport = () => {
     setApplied(dateRange);
+    setDateModal(false);
+  };
+
+  const handleExport = () => {
+    const html = `<html><head><style>table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f2f2f2}</style></head><body><h2>Indoor Dashboard Report</h2><p>Date Range: ${exportRange.from || 'All'} to ${exportRange.to || 'All'}</p><table><thead><tr>${TABLE_HEADERS.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${stats.map(s => `<tr><td>${s.name}</td><td>${s.media.toFixed(1)} L</td><td>${s.types.join(', ')}</td><td>${s.vessels}</td><td>${s.shoots}</td></tr>`).join('')}</tbody></table></body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `indoor-dashboard_${exportRange.from || 'all'}_to_${exportRange.to || 'all'}.html`;
+    a.click();
     setModal(false);
+    setExportRange({ from: '', to: '' });
   };
 
   const isInRange = (date: string) => {
@@ -86,8 +100,31 @@ export function IndoorDashboard() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Indoor Dashboard</h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => alert('Export feature coming soon')}><Download className="w-4 h-4 mr-2" />Export</Button>
           <Dialog open={modal} onOpenChange={setModal}>
+            <DialogTrigger asChild>
+              <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader><DialogTitle>Export Data</DialogTitle></DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>From Date</Label>
+                  <Input type="date" value={exportRange.from} onChange={(e) => setExportRange({ ...exportRange, from: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>To Date</Label>
+                  <Input type="date" value={exportRange.to} onChange={(e) => setExportRange({ ...exportRange, to: e.target.value })} />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => { setModal(false); setExportRange({ from: '', to: '' }); }}>Cancel</Button>
+                {exportRange.from && exportRange.to && (
+                  <Button className="bg-green-600 hover:bg-green-700" onClick={handleExport}>Download</Button>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={dateModal} onOpenChange={setDateModal}>
             <DialogTrigger asChild>
               <Button variant="outline"><Calendar className="w-4 h-4 mr-2" />Date Range</Button>
             </DialogTrigger>
@@ -142,32 +179,21 @@ export function IndoorDashboard() {
               </thead>
               <tbody>
                 {stats.length === 0 ? (
-                  <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">No data available</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">No data available</td></tr>
                 ) : (
-                  stats.map((s: any, i) => {
-                    const perf = s.vessels > 0 ? Math.min(100, ((s.shoots / s.vessels) / 20 * 100).toFixed(1)) : 0;
-                    return (
-                      <tr key={i} className="border-b hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-medium">{s.name}</td>
-                        <td className="px-4 py-3"><Badge className="bg-green-100 text-green-700">{s.media.toFixed(1)} L</Badge></td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-wrap gap-1">
-                            {s.types.map((t: string, j: number) => <Badge key={j} variant="outline" className="text-xs">{t}</Badge>)}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-sm">{s.vessels.toLocaleString()}</td>
-                        <td className="px-4 py-3 text-sm text-green-700">{s.shoots.toLocaleString()}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-gray-200 rounded-full h-2">
-                              <div className="bg-green-600 h-2 rounded-full" style={{ width: `${perf}%` }} />
-                            </div>
-                            <span className="text-xs text-gray-600 w-12 text-right">{perf}%</span>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
+                  stats.map((s: any, i) => (
+                    <tr key={i} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm font-medium">{s.name}</td>
+                      <td className="px-4 py-3"><Badge className="bg-green-100 text-green-700">{s.media.toFixed(1)} L</Badge></td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {s.types.map((t: string, j: number) => <Badge key={j} variant="outline" className="text-xs">{t}</Badge>)}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm">{s.vessels.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-sm text-green-700">{s.shoots.toLocaleString()}</td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
