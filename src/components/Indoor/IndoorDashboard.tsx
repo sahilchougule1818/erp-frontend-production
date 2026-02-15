@@ -183,12 +183,12 @@ export function IndoorDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-4 overflow-x-auto">
         {STAT_CARDS.map(({ title, icon: Icon, bgColor, iconBg, iconColor, key, suffix, desc }) => {
           const value = key === 'length' ? totals.operators : totals[key];
           const display = key === 'media' ? value.toFixed(1) : value.toLocaleString();
           return (
-            <Card key={title} className={bgColor}>
+            <Card key={title} className={`${bgColor} min-w-[250px]`}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-normal text-gray-500">{title}</CardTitle>
                 <div className={`${iconBg} rounded-full p-2`}><Icon className={`h-5 w-5 ${iconColor}`} /></div>
