@@ -279,6 +279,7 @@ export function OperatorMaster() {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
