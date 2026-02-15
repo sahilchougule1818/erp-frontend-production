@@ -47,24 +47,6 @@ export function IndoorDashboard() {
     }
   };
 
-  const handleViewReport = useCallback(() => {
-    setApplied(dateRange);
-    setDateModal(false);
-  }, [dateRange]);
-
-  const handleExport = useCallback(() => {
-    const html = `<html><head><style>table{border-collapse:collapse;width:100%;margin:20px 0}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f2f2f2}h3{color:#16a34a;margin-top:30px}</style></head><body><h2>Indoor Dashboard Report</h2><p>Date Range: ${exportRange.from || 'All'} to ${exportRange.to || 'All'}</p><h3>🧪 Media Preparation Team</h3><table><thead><tr><th>Operator</th><th>Media (L)</th><th>Media Types</th><th>Cycles</th><th>Contamination</th></tr></thead><tbody>${mediaPrepStats.map(s => `<tr><td>${s.name}</td><td>${s.media.toFixed(1)} L</td><td>${s.types.join(', ')}</td><td>${s.cycles}</td><td>${s.contaminationRate}%</td></tr>`).join('')}</tbody></table><h3>🔬 Lab Operations Team</h3><table><thead><tr><th>Operator</th><th>Bottles</th><th>Shoots</th><th>Batches</th><th>Success Rate</th></tr></thead><tbody>${labOpsStats.map(s => `<tr><td>${s.name}</td><td>${s.bottles}</td><td>${s.shoots}</td><td>${s.batches}</td><td>${s.successRate}%</td></tr>`).join('')}</tbody></table></body></html>`;
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `indoor-dashboard_${exportRange.from || 'all'}_to_${exportRange.to || 'all'}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
-    setModal(false);
-    setExportRange({ from: '', to: '' });
-  }, [exportRange, mediaPrepStats, labOpsStats]);
-
   const isInRange = useCallback((date: string) => {
     if (!applied.from || !applied.to) return true;
     const d = new Date(date);
@@ -130,6 +112,24 @@ export function IndoorDashboard() {
       shoots: labOpsStats.reduce((acc, s) => acc + s.shoots, 0)
     };
   }, [mediaPrepStats, labOpsStats]);
+
+  const handleViewReport = useCallback(() => {
+    setApplied(dateRange);
+    setDateModal(false);
+  }, [dateRange]);
+
+  const handleExport = useCallback(() => {
+    const html = `<html><head><style>table{border-collapse:collapse;width:100%;margin:20px 0}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f2f2f2}h3{color:#16a34a;margin-top:30px}</style></head><body><h2>Indoor Dashboard Report</h2><p>Date Range: ${exportRange.from || 'All'} to ${exportRange.to || 'All'}</p><h3>🧪 Media Preparation Team</h3><table><thead><tr><th>Operator</th><th>Media (L)</th><th>Media Types</th><th>Cycles</th><th>Contamination</th></tr></thead><tbody>${mediaPrepStats.map(s => `<tr><td>${s.name}</td><td>${s.media.toFixed(1)} L</td><td>${s.types.join(', ')}</td><td>${s.cycles}</td><td>${s.contaminationRate}%</td></tr>`).join('')}</tbody></table><h3>🔬 Lab Operations Team</h3><table><thead><tr><th>Operator</th><th>Bottles</th><th>Shoots</th><th>Batches</th><th>Success Rate</th></tr></thead><tbody>${labOpsStats.map(s => `<tr><td>${s.name}</td><td>${s.bottles}</td><td>${s.shoots}</td><td>${s.batches}</td><td>${s.successRate}%</td></tr>`).join('')}</tbody></table></body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `indoor-dashboard_${exportRange.from || 'all'}_to_${exportRange.to || 'all'}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setModal(false);
+    setExportRange({ from: '', to: '' });
+  }, [exportRange, mediaPrepStats, labOpsStats]);
 
   return (
     <div className="p-6 space-y-6">
