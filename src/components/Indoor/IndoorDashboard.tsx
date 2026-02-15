@@ -36,13 +36,14 @@ export function IndoorDashboard() {
         indoorApi.getIncubation()
       ]);
       setData({
-        autoclave: autoclave.data,
-        batches: batches.data,
-        subculture: subculture.data,
-        incubation: incubation.data
+        autoclave: autoclave.data || [],
+        batches: batches.data || [],
+        subculture: subculture.data || [],
+        incubation: incubation.data || []
       });
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching data:', error);
+      setData({ autoclave: [], batches: [], subculture: [], incubation: [] });
     }
   };
 
@@ -71,42 +72,52 @@ export function IndoorDashboard() {
   }, [applied]);
 
   const mediaPrepStats = useMemo(() => {
-    const operators = {};
-    [...data.autoclave, ...data.batches]
-      .filter(r => isInRange(r.date))
-      .forEach(r => {
-        const opName = r.operator_name;
-        if (!opName) return;
-        const op = operators[opName] ||= { name: opName, media: 0, types: new Set(), cycles: 0, contamination: 0, total: 0 };
-        if (r.media_total) op.media += parseFloat(r.media_total) || 0;
-        if (r.type_of_media) op.types.add(r.type_of_media);
-        if (r.autoclave_on_time) op.cycles += 1;
-        if (r.contamination && r.contamination !== 'None') op.contamination += 1;
-        if (r.bottles) op.total += 1;
-      });
-    return Object.values(operators).map(o => ({ 
-      ...o, 
-      types: Array.from(o.types),
-      contaminationRate: o.total > 0 ? ((o.contamination / o.total) * 100).toFixed(1) : '0'
-    }));
+    try {
+      const operators = {};
+      [...(data.autoclave || []), ...(data.batches || [])]
+        .filter(r => isInRange(r.date))
+        .forEach(r => {
+          const opName = r.operator_name;
+          if (!opName) return;
+          const op = operators[opName] ||= { name: opName, media: 0, types: new Set(), cycles: 0, contamination: 0, total: 0 };
+          if (r.media_total) op.media += parseFloat(r.media_total) || 0;
+          if (r.type_of_media) op.types.add(r.type_of_media);
+          if (r.autoclave_on_time) op.cycles += 1;
+          if (r.contamination && r.contamination !== 'None') op.contamination += 1;
+          if (r.bottles) op.total += 1;
+        });
+      return Object.values(operators).map(o => ({ 
+        ...o, 
+        types: Array.from(o.types),
+        contaminationRate: o.total > 0 ? ((o.contamination / o.total) * 100).toFixed(1) : '0'
+      }));
+    } catch (error) {
+      console.error('Error in mediaPrepStats:', error);
+      return [];
+    }
   }, [data, isInRange]);
 
   const labOpsStats = useMemo(() => {
-    const operators = {};
-    [...data.subculture, ...data.incubation]
-      .filter(r => isInRange(r.transfer_date || r.subculture_date))
-      .forEach(r => {
-        const opName = r.operator_name;
-        if (!opName) return;
-        const op = operators[opName] ||= { name: opName, bottles: 0, shoots: 0, batches: 0 };
-        if (r.no_of_bottles) op.bottles += r.no_of_bottles;
-        if (r.no_of_shoots) op.shoots += r.no_of_shoots;
-        op.batches += 1;
-      });
-    return Object.values(operators).map(o => ({ 
-      ...o,
-      successRate: o.bottles > 0 ? '98' : '0'
-    }));
+    try {
+      const operators = {};
+      [...(data.subculture || []), ...(data.incubation || [])]
+        .filter(r => isInRange(r.transfer_date || r.subculture_date))
+        .forEach(r => {
+          const opName = r.operator_name;
+          if (!opName) return;
+          const op = operators[opName] ||= { name: opName, bottles: 0, shoots: 0, batches: 0 };
+          if (r.no_of_bottles) op.bottles += r.no_of_bottles;
+          if (r.no_of_shoots) op.shoots += r.no_of_shoots;
+          op.batches += 1;
+        });
+      return Object.values(operators).map(o => ({ 
+        ...o,
+        successRate: o.bottles > 0 ? '98' : '0'
+      }));
+    } catch (error) {
+      console.error('Error in labOpsStats:', error);
+      return [];
+    }
   }, [data, isInRange]);
 
   const totals = useMemo(() => {
