@@ -130,10 +130,11 @@ export function IndoorDashboard() {
   }, [exportRange, mediaPrepStats, labOpsStats]);
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="min-h-screen overflow-x-hidden">
+      <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h1 className="text-2xl font-bold">Indoor Dashboard</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Dialog open={modal} onOpenChange={setModal}>
             <DialogTrigger asChild>
               <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
@@ -182,7 +183,7 @@ export function IndoorDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {STAT_CARDS.map(({ title, icon: Icon, bgColor, iconBg, iconColor, key, suffix, desc }) => {
           const value = key === 'length' ? totals.operators : totals[key];
           const display = key === 'media' ? value.toFixed(1) : value.toLocaleString();
@@ -209,15 +210,15 @@ export function IndoorDashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
+          <div className="border rounded-lg overflow-x-auto">
+            <table className="w-full min-w-max">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Operator</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Media Prepared</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Media Types</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Autoclave Cycles</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Contamination Rate</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Operator</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Media Prepared</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Media Types</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Autoclave Cycles</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Contamination Rate</th>
                 </tr>
               </thead>
               <tbody>
@@ -226,15 +227,15 @@ export function IndoorDashboard() {
                 ) : (
                   mediaPrepStats.map((s: any, i) => (
                     <tr key={i} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium">{s.name}</td>
-                      <td className="px-4 py-3"><Badge className="bg-green-100 text-green-700">{s.media.toFixed(1)} L</Badge></td>
+                      <td className="px-4 py-3 text-sm font-medium whitespace-nowrap">{s.name}</td>
+                      <td className="px-4 py-3 whitespace-nowrap"><Badge className="bg-green-100 text-green-700">{s.media.toFixed(1)} L</Badge></td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
                           {s.types.map((t: string, j: number) => <Badge key={j} variant="outline" className="text-xs">{t}</Badge>)}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm">{s.cycles}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{s.cycles}</td>
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <Badge className={parseFloat(s.contaminationRate) > 5 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}>
                           {s.contaminationRate}%
                         </Badge>
@@ -256,15 +257,15 @@ export function IndoorDashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
+          <div className="border rounded-lg overflow-x-auto">
+            <table className="w-full min-w-max">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Operator</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Bottles Processed</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Shoots Generated</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Batches Handled</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Mortality</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Operator</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Bottles Processed</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Shoots Generated</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Batches Handled</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Mortality</th>
                 </tr>
               </thead>
               <tbody>
@@ -273,11 +274,11 @@ export function IndoorDashboard() {
                 ) : (
                   labOpsStats.map((s: any, i) => (
                     <tr key={i} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium">{s.name}</td>
-                      <td className="px-4 py-3 text-sm">{s.bottles.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-sm text-green-700 font-semibold">{s.shoots.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-sm">{s.batches}</td>
-                      <td className="px-4 py-3 text-sm">{s.mortality}</td>
+                      <td className="px-4 py-3 text-sm font-medium whitespace-nowrap">{s.name}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{s.bottles.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-sm text-green-700 font-semibold whitespace-nowrap">{s.shoots.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{s.batches}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{s.mortality}</td>
                     </tr>
                   ))
                 )}
@@ -287,5 +288,6 @@ export function IndoorDashboard() {
         </CardContent>
       </Card>
     </div>
+  </div>
   );
 }

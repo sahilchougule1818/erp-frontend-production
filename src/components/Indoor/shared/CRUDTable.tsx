@@ -298,7 +298,8 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
   };
 
   return (
-    <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="min-h-screen overflow-x-hidden">
+      <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
       {filterFields && (
         <FilterBar
           field1={{

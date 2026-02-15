@@ -110,11 +110,11 @@ function AppContent() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar currentPage={currentPage} onNavigate={handleNavigate} user={user} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Header breadcrumbs={breadcrumbs} user={user} />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
             <Route path="/indoor-dashboard" element={<IndoorDashboard />} />
             <Route path="/operator-master" element={<OperatorMaster />} />

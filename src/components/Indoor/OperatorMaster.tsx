@@ -145,12 +145,13 @@ export function OperatorMaster() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen overflow-x-hidden">
+      <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Operator Master</CardTitle>
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <CardTitle className="text-lg sm:text-xl">Operator Master</CardTitle>
+            <div className="flex flex-wrap gap-2">
               <Dialog open={exportModal} onOpenChange={setExportModal}>
                 <DialogTrigger asChild>
                   <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
@@ -179,7 +180,7 @@ export function OperatorMaster() {
                   <Plus className="w-4 h-4 mr-2" />Add Operator
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{form.id ? 'Edit' : 'Add'} Operator</DialogTitle>
                 </DialogHeader>
@@ -283,16 +284,16 @@ export function OperatorMaster() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
+          <div className="border rounded-lg overflow-x-auto">
+            <table className="w-full min-w-max">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Short Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Full Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Role</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Assigned Sections</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Short Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Full Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Role</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Assigned Sections</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap sticky right-0 bg-gray-50">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -301,9 +302,9 @@ export function OperatorMaster() {
                 ) : (
                   operators.map(op => (
                     <tr key={op.id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-bold">{op.short_name}</td>
-                      <td className="px-4 py-3 text-sm">{`${op.first_name} ${op.middle_name || ''} ${op.last_name}`.trim()}</td>
-                      <td className="px-4 py-3 text-sm">{op.role}</td>
+                      <td className="px-4 py-3 text-sm font-bold whitespace-nowrap">{op.short_name}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{`${op.first_name} ${op.middle_name || ''} ${op.last_name}`.trim()}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{op.role}</td>
                       <td className="px-4 py-3 text-sm">
                         <div className="flex flex-wrap gap-1">
                           {(op.sections || []).map((s: string) => (
@@ -311,12 +312,12 @@ export function OperatorMaster() {
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">
                         <Badge className={op.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
                           {op.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-4 py-3 text-sm sticky right-0 bg-white hover:bg-gray-50">
                         <Button variant="ghost" size="sm" onClick={() => handleEdit(op)}>
                           <Edit2 className="w-4 h-4" />
                         </Button>
