@@ -23,20 +23,21 @@ interface Field {
 
 // Props interface for CRUDTable component
 interface CRUDTableProps {
-  title: string;                    // Table title
-  fields: Field[];                  // Form field configuration
-  columns: string[];                // Table column headers
-  dataKeys: string[];               // Database field keys for table columns
-  api: {                            // API endpoints for CRUD operations
+  title: string;
+  fields: Field[];
+  columns: string[];
+  dataKeys: string[];
+  api: {
     get: () => Promise<any>;
     create: (data: any) => Promise<any>;
     update: (id: number, data: any) => Promise<any>;
     delete: (id: number) => Promise<any>;
   };
-  mapToForm: (record: any) => any;  // Maps database record to form format
-  mapToPayload: (form: any) => any; // Maps form data to API payload format
-  renderCell?: (key: string, value: any) => React.ReactNode; // Custom cell renderer
-  filterFields?: { field1Key: string; field1Label: string; field2Key: string; field2Label: string }; // Filter configuration
+  mapToForm: (record: any) => any;
+  mapToPayload: (form: any) => any;
+  renderCell?: (key: string, value: any) => React.ReactNode;
+  filterFields?: { field1Key: string; field1Label: string; field2Key: string; field2Label: string };
+  section?: string; // Section name for filtering operators
 }
 
 /**
@@ -48,7 +49,7 @@ interface CRUDTableProps {
  * - Operator dropdown integration
  * - Custom cell rendering support
  */
-export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, mapToPayload, renderCell, filterFields }: CRUDTableProps) {
+export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, mapToPayload, renderCell, filterFields, section }: CRUDTableProps) {
   // State management
   const [records, setRecords] = useState([]);           // All records from database
   const [operators, setOperators] = useState([]);       // List of operators for dropdown
@@ -78,9 +79,12 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
   const fetchOperators = async () => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-      const res = await fetch(`${apiUrl}/operators`);
+      const endpoint = section 
+        ? `${apiUrl}/operators/section/${encodeURIComponent(section)}`
+        : `${apiUrl}/operators`;
+      const res = await fetch(endpoint);
       const data = await res.json();
-      setOperators(data);
+      setOperators(data.filter((op: any) => op.is_active));
     } catch (error) {
       console.error('Error:', error);
     }
@@ -270,9 +274,18 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
     if (f.key === 'operatorName' || f.key === 'operator') {
       return (
         <Select value={form[f.key] || ''} onValueChange={(v) => setForm({...form, [f.key]: v})}>
-          <SelectTrigger><SelectValue placeholder="Select operator" /></SelectTrigger>
+          <SelectTrigger>
+            <SelectValue placeholder="Select operator" />
+          </SelectTrigger>
           <SelectContent>
-            {operators.map(op => <SelectItem key={op.id} value={op.name}>{op.name}</SelectItem>)}
+            {operators.map(op => (
+              <SelectItem key={op.id} value={op.short_name} title={`${op.first_name} ${op.last_name} - ${op.role}`}>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold">{op.short_name}</span>
+                  <span className="text-xs text-gray-500">({op.first_name} {op.last_name})</span>
+                </div>
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       );

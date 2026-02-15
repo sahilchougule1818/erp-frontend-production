@@ -18,8 +18,9 @@ import {
   Droplets,
   Package,
   Clock,
-  LayoutDashboard, /* Added for Sales Dashboard */
-  Building /* Added for Supplier Detail */
+  LayoutDashboard,
+  Building,
+  Users
 } from 'lucide-react';
 import { User } from '../Auth/AuthContext';
 
@@ -72,6 +73,7 @@ export function Sidebar({ currentPage, onNavigate, user }: SidebarProps) {
       icon: FlaskConical,
       children: [
         { id: 'indoor-dashboard', label: 'Indoor Dashboard', icon: Home, page: 'indoor-dashboard', breadcrumbs: ['Indoor', 'Indoor Dashboard'] },
+        { id: 'operator-master', label: 'Operator Master', icon: Users, page: 'operator-master', breadcrumbs: ['Indoor', 'Operator Master'] },
         { id: 'media-preparation', label: 'Media Preparation', icon: TestTube, page: 'media-preparation', breadcrumbs: ['Indoor', 'Media Preparation'] },
         { id: 'subculturing', label: 'Subculturing', icon: Microscope, page: 'subculturing', breadcrumbs: ['Indoor', 'Subculturing'] },
         { id: 'incubation', label: 'Incubation', icon: Thermometer, page: 'incubation', breadcrumbs: ['Indoor', 'Incubation'] },

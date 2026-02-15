@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './components/Auth/AuthContext';
 import { Login } from './components/Auth/Login';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
+import { OperatorMaster } from './components/Indoor/OperatorMaster';
 import { IndoorDashboard } from './components/Indoor/IndoorDashboard';
 import { MediaPreparation } from './components/Indoor/MediaPreparation';
 import { Subculturing } from './components/Indoor/Subculturing';
@@ -57,7 +58,7 @@ function AppContent() {
     if (!user) return false;
     if (user.role === 'owner') return true;
 
-    const indoorPages = ['indoor-dashboard', 'media-preparation', 'subculturing', 'incubation', 'cleaning-record', 'sampling'];
+    const indoorPages = ['indoor-dashboard', 'operator-master', 'media-preparation', 'subculturing', 'incubation', 'cleaning-record', 'sampling'];
     const outdoorPages = ['outdoor-dashboard', 'primary-hardening', 'secondary-hardening', 'shifting', 'outdoor-contamination', 'fertilization', 'holding-area', 'batch-timeline', 'outdoor-sampling'];
     const salesPages = ['sales-buyer', 'sales-seller', 'sales-ledger', 'inventory-dashboard'];
     const inventorySupplierPages = ['inventory-record', 'supplier-detail'];
@@ -116,6 +117,7 @@ function AppContent() {
         <main className="flex-1 overflow-y-auto">
           <Routes>
             <Route path="/indoor-dashboard" element={<IndoorDashboard />} />
+            <Route path="/operator-master" element={<OperatorMaster />} />
             <Route path="/media-preparation" element={<MediaPreparation />} />
             <Route path="/subculturing" element={<Subculturing />} />
             <Route path="/incubation" element={<Incubation />} />

@@ -1,0 +1,306 @@
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Badge } from '../ui/badge';
+import { Plus, Edit2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
+import * as operatorApi from '../../services/operatorApi';
+
+const ROLES = ['Lab Assistant', 'Senior Technician', 'Supervisor', 'QC Officer'];
+const SECTIONS = ['Media Preparation', 'Subculturing', 'Incubation', 'Cleaning Record', 'Quality Control'];
+
+export function OperatorMaster() {
+  const [operators, setOperators] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [form, setForm] = useState({
+    id: null,
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    shortName: '',
+    role: '',
+    sections: [],
+    age: '',
+    gender: '',
+    isActive: true
+  });
+
+  useEffect(() => { fetchOperators(); }, []);
+
+  const fetchOperators = async () => {
+    try {
+      const res = await operatorApi.getOperators();
+      setOperators(res.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const generateShortName = (first: string, middle: string, last: string) => {
+    const f = first.trim().charAt(0).toUpperCase();
+    const m = middle.trim().charAt(0).toUpperCase();
+    const l = last.trim().charAt(0).toUpperCase();
+    return m ? `${f}${m}${l}` : `${f}${l}`;
+  };
+
+  const handleNameChange = (field: string, value: string) => {
+    const updated = { ...form, [field]: value };
+    const shortName = generateShortName(
+      field === 'firstName' ? value : form.firstName,
+      field === 'middleName' ? value : form.middleName,
+      field === 'lastName' ? value : form.lastName
+    );
+    setForm({ ...updated, shortName });
+  };
+
+  const toggleSection = (section: string) => {
+    const sections = form.sections.includes(section)
+      ? form.sections.filter(s => s !== section)
+      : [...form.sections, section];
+    setForm({ ...form, sections });
+  };
+
+  const handleSave = async () => {
+    if (!form.firstName || !form.lastName || !form.role || form.sections.length === 0) {
+      return alert('Please fill all required fields');
+    }
+    try {
+      if (form.id) {
+        await operatorApi.updateOperator(form.id, form);
+      } else {
+        await operatorApi.createOperator(form);
+      }
+      fetchOperators();
+      closeModal();
+      alert('Saved!');
+    } catch (error: any) {
+      alert('Error: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const handleEdit = (op: any) => {
+    setForm({
+      id: op.id,
+      firstName: op.first_name,
+      middleName: op.middle_name || '',
+      lastName: op.last_name,
+      shortName: op.short_name,
+      role: op.role,
+      sections: op.sections || [],
+      age: String(op.age || ''),
+      gender: op.gender || '',
+      isActive: op.is_active
+    });
+    setModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await operatorApi.deleteOperator(deleteId);
+      fetchOperators();
+      setDeleteConfirm(false);
+      setDeleteId(null);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const closeModal = () => {
+    setModal(false);
+    setForm({
+      id: null,
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      shortName: '',
+      role: '',
+      sections: [],
+      age: '',
+      gender: '',
+      isActive: true
+    });
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Operator Master</CardTitle>
+            <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
+              <DialogTrigger asChild>
+                <Button className="bg-green-600 hover:bg-green-700">
+                  <Plus className="w-4 h-4 mr-2" />Add Operator
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{form.id ? 'Edit' : 'Add'} Operator</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-3">
+                    <h3 className="font-semibold text-sm text-gray-700">Personal Information</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <Label>First Name *</Label>
+                        <Input value={form.firstName} onChange={(e) => handleNameChange('firstName', e.target.value)} />
+                      </div>
+                      <div>
+                        <Label>Middle Name</Label>
+                        <Input value={form.middleName} onChange={(e) => handleNameChange('middleName', e.target.value)} />
+                      </div>
+                      <div>
+                        <Label>Last Name *</Label>
+                        <Input value={form.lastName} onChange={(e) => handleNameChange('lastName', e.target.value)} />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Short Name (Auto-generated)</Label>
+                      <Input value={form.shortName} disabled className="bg-gray-50 font-bold" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="font-semibold text-sm text-gray-700">Professional Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Role *</Label>
+                        <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}>
+                          <SelectTrigger><SelectValue placeholder="Select role" /></SelectTrigger>
+                          <SelectContent>
+                            {ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Working Sections *</Label>
+                        <div className="border rounded-md p-3 space-y-2 max-h-32 overflow-y-auto">
+                          {SECTIONS.map(section => (
+                            <label key={section} className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={form.sections.includes(section)}
+                                onChange={() => toggleSection(section)}
+                                className="w-4 h-4 text-green-600"
+                              />
+                              <span className="text-sm">{section}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="font-semibold text-sm text-gray-700">Additional Information</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <Label>Age</Label>
+                        <Input type="number" value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Gender</Label>
+                        <Select value={form.gender} onValueChange={(v) => setForm({ ...form, gender: v })}>
+                          <SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Male">Male</SelectItem>
+                            <SelectItem value="Female">Female</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Status</Label>
+                        <Select value={form.isActive ? 'active' : 'inactive'} onValueChange={(v) => setForm({ ...form, isActive: v === 'active' })}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={closeModal}>Cancel</Button>
+                  {form.id && (
+                    <Button variant="destructive" onClick={() => { setDeleteId(form.id); setDeleteConfirm(true); setModal(false); }}>
+                      Delete
+                    </Button>
+                  )}
+                  <Button className="bg-green-600 hover:bg-green-700" onClick={handleSave}>Save</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Short Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Full Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Role</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Assigned Sections</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {operators.length === 0 ? (
+                  <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">No operators found.</td></tr>
+                ) : (
+                  operators.map(op => (
+                    <tr key={op.id} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm font-bold">{op.short_name}</td>
+                      <td className="px-4 py-3 text-sm">{`${op.first_name} ${op.middle_name || ''} ${op.last_name}`.trim()}</td>
+                      <td className="px-4 py-3 text-sm">{op.role}</td>
+                      <td className="px-4 py-3 text-sm">
+                        <div className="flex flex-wrap gap-1">
+                          {(op.sections || []).map((s: string) => (
+                            <Badge key={s} variant="outline" className="text-xs bg-green-50 text-green-700">{s}</Badge>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <Badge className={op.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
+                          {op.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <Button variant="ghost" size="sm" onClick={() => handleEdit(op)}>
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <AlertDialog open={deleteConfirm} onOpenChange={setDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}

@@ -57,6 +57,7 @@ function AutoclaveCycle() {
         return value;
       }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'media_code', field2Label: 'Media Code' }}
+      section="Media Preparation"
     />
   );
 }
@@ -88,6 +89,7 @@ function MediaBatch() {
         return value;
       }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'media_code', field2Label: 'Media Code' }}
+      section="Media Preparation"
     />
   );
 }
