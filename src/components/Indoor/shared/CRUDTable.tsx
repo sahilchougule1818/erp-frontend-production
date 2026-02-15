@@ -446,6 +446,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }

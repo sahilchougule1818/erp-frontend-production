@@ -343,6 +343,7 @@ export function OperatorMaster() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }
