@@ -17,7 +17,11 @@ const FIELDS = [
 
 export function Sampling() {
   return (
-    <CRUDTable
+    <div className="p-6">
+      <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6">
+        <h2 className="text-lg font-semibold text-gray-700">Sampling</h2>
+      </div>
+      <CRUDTable
       title=""
       fields={FIELDS}
       columns={['Sample Date', 'Crop Name', 'Batch Name', 'Stage', 'Sent Date', 'Received Date', 'Status', 'Govt Certificate', 'Certificate No', 'Reason']}
@@ -63,5 +67,6 @@ export function Sampling() {
       filterFields={{ field1Key: 'sample_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
       section="Sampling"
     />
+    </div>
   );
 }

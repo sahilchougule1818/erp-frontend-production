@@ -116,6 +116,7 @@ function AppContent() {
         <Header breadcrumbs={breadcrumbs} user={user} />
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
+            <Route path="/" element={<IndoorDashboard />} />
             <Route path="/indoor-dashboard" element={<IndoorDashboard />} />
             <Route path="/operator-master" element={<OperatorMaster />} />
             <Route path="/media-preparation" element={<MediaPreparation />} />

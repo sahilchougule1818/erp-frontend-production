@@ -98,14 +98,6 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Notification Bell */}
-          <button className="relative p-2 hover:bg-white/60 rounded-lg transition-colors">
-            <Bell className="w-5 h-5 text-black" />
-            <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
-              3
-            </Badge>
-          </button>
-
           {/* User Profile */}
           {user && (
             <DropdownMenu>

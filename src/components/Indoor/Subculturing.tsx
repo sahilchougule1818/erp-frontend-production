@@ -17,7 +17,11 @@ const FIELDS = [
 
 export function Subculturing() {
   return (
-    <CRUDTable
+    <div className="p-6">
+      <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6">
+        <h2 className="text-lg font-semibold text-gray-700">Subculturing</h2>
+      </div>
+      <CRUDTable
       title=""
       fields={FIELDS}
       columns={['Transfer Date', 'Stage Number', 'Batch Name', 'Media Code', 'Crop Name', 'No. of Bottles', 'No. of Shoots', 'Operator Name', 'Mortality', 'Remark']}
@@ -61,5 +65,6 @@ export function Subculturing() {
       filterFields={{ field1Key: 'transfer_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
       section="Subculturing"
     />
+    </div>
   );
 }
