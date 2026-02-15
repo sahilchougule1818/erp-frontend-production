@@ -87,15 +87,13 @@ export function IndoorDashboard() {
         .forEach(r => {
           const opName = r.operator_name;
           if (!opName) return;
-          const op = operators[opName] ||= { name: opName, bottles: 0, shoots: 0, batches: 0 };
+          const op = operators[opName] ||= { name: opName, bottles: 0, shoots: 0, batches: 0, mortality: 0 };
           if (r.no_of_bottles) op.bottles += r.no_of_bottles;
           if (r.no_of_shoots) op.shoots += r.no_of_shoots;
+          if (r.mortality && r.mortality !== 'Low') op.mortality += 1;
           op.batches += 1;
         });
-      return Object.values(operators).map(o => ({ 
-        ...o,
-        successRate: o.bottles > 0 ? '98' : '0'
-      }));
+      return Object.values(operators);
     } catch (error) {
       console.error('Error in labOpsStats:', error);
       return [];
@@ -203,15 +201,15 @@ export function IndoorDashboard() {
         })}
       </div>
 
-      <Card className="bg-green-50">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
             <TestTube className="w-5 h-5 text-green-600" />
-            <CardTitle className="text-green-800">Media Preparation Team</CardTitle>
+            <CardTitle>Media Preparation Team</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden bg-white">
+          <div className="border rounded-lg overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
@@ -250,15 +248,15 @@ export function IndoorDashboard() {
         </CardContent>
       </Card>
 
-      <Card className="bg-blue-50">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Microscope className="w-5 h-5 text-blue-600" />
-            <CardTitle className="text-blue-800">Lab Operations Team</CardTitle>
+            <CardTitle>Lab Operations Team</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden bg-white">
+          <div className="border rounded-lg overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
@@ -266,7 +264,7 @@ export function IndoorDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Bottles Processed</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Shoots Generated</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Batches Handled</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Success Rate</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Mortality</th>
                 </tr>
               </thead>
               <tbody>
@@ -279,11 +277,7 @@ export function IndoorDashboard() {
                       <td className="px-4 py-3 text-sm">{s.bottles.toLocaleString()}</td>
                       <td className="px-4 py-3 text-sm text-green-700 font-semibold">{s.shoots.toLocaleString()}</td>
                       <td className="px-4 py-3 text-sm">{s.batches}</td>
-                      <td className="px-4 py-3">
-                        <Badge className={parseFloat(s.successRate) < 95 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}>
-                          {s.successRate}%
-                        </Badge>
-                      </td>
+                      <td className="px-4 py-3 text-sm">{s.mortality}</td>
                     </tr>
                   ))
                 )}
