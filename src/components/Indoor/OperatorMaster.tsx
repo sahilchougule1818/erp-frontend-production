@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
-import { Plus, Edit2 } from 'lucide-react';
+import { Plus, Edit2, Download } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -16,6 +16,8 @@ const SECTIONS = ['Media Preparation', 'Subculturing', 'Incubation', 'Cleaning R
 export function OperatorMaster() {
   const [operators, setOperators] = useState([]);
   const [modal, setModal] = useState(false);
+  const [exportModal, setExportModal] = useState(false);
+  const [exportRange, setExportRange] = useState({ from: '', to: '' });
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [form, setForm] = useState({
@@ -112,6 +114,20 @@ export function OperatorMaster() {
     }
   };
 
+  const handleExport = () => {
+    if (!exportRange.from || !exportRange.to) return alert('Please select date range');
+    const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{color:#16a34a}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background-color:#f3f4f6}</style></head><body><h1>Operator Master</h1><p>Period: ${exportRange.from} to ${exportRange.to}</p><table><thead><tr><th>Short Name</th><th>Full Name</th><th>Role</th><th>Sections</th><th>Status</th></tr></thead><tbody>${operators.map(op => `<tr><td>${op.short_name}</td><td>${op.first_name} ${op.middle_name || ''} ${op.last_name}</td><td>${op.role}</td><td>${(op.sections || []).join(', ')}</td><td>${op.is_active ? 'Active' : 'Inactive'}</td></tr>`).join('')}</tbody></table></body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `operator-master_${exportRange.from}_to_${exportRange.to}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setExportModal(false);
+    setExportRange({ from: '', to: '' });
+  };
+
   const closeModal = () => {
     setModal(false);
     setForm({
@@ -134,7 +150,30 @@ export function OperatorMaster() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Operator Master</CardTitle>
-            <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
+            <div className="flex gap-2">
+              <Dialog open={exportModal} onOpenChange={setExportModal}>
+                <DialogTrigger asChild>
+                  <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader><DialogTitle>Export Data</DialogTitle></DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>From Date</Label>
+                      <Input type="date" value={exportRange.from} onChange={(e) => setExportRange({ ...exportRange, from: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>To Date</Label>
+                      <Input type="date" value={exportRange.to} onChange={(e) => setExportRange({ ...exportRange, to: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={() => { setExportModal(false); setExportRange({ from: '', to: '' }); }}>Cancel</Button>
+                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleExport}>Download</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
               <DialogTrigger asChild>
                 <Button className="bg-green-600 hover:bg-green-700">
                   <Plus className="w-4 h-4 mr-2" />Add Operator
