@@ -71,9 +71,9 @@ export function FilterBar({
 
   return (
     <Card className="p-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="flex flex-wrap gap-3 items-end">
         {firstField && (
-          <div className="w-full">
+          <div className="flex-1 min-w-[200px]">
             <label className="block text-sm mb-1.5 font-medium">{firstField.label}</label>
             {firstField.label.toLowerCase().includes('date') ? (
               <Input 
@@ -100,7 +100,7 @@ export function FilterBar({
         )}
 
         {secondField && (
-          <div className="w-full">
+          <div className="flex-1 min-w-[200px]">
             <label className="block text-sm mb-1.5 font-medium">{secondField.label}</label>
             <Select value={secondField.value} onValueChange={secondField.onChange}>
               <SelectTrigger>
@@ -118,7 +118,7 @@ export function FilterBar({
         )}
 
         {field3 && (
-          <div className="w-full">
+          <div className="flex-1 min-w-[200px]">
             <label className="block text-sm mb-1.5 font-medium">{field3.label}</label>
             <Select value={field3.value} onValueChange={field3.onChange}>
               <SelectTrigger>
@@ -135,11 +135,11 @@ export function FilterBar({
           </div>
         )}
 
-        <div className="w-full flex items-end">
+        <div className="flex-shrink-0">
           <Button 
             variant={null as any}
             style={{ backgroundColor: '#4CAF50', color: 'white' }}
-            className="hover:bg-[#66BB6A] font-medium shadow-sm h-10 w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all px-4"
+            className="hover:bg-[#66BB6A] font-medium shadow-sm h-10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all px-4"
             onClick={onSearch}
           >
             <Search className="w-4 h-4 mr-2" />
