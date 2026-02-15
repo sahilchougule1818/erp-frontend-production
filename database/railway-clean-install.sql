@@ -58,7 +58,7 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  role VARCHAR(20) NOT NULL DEFAULT 'user',
+  role VARCHAR(20) NOT NULL DEFAULT 'indoor-operator',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -66,6 +66,7 @@ CREATE TABLE users (
 CREATE INDEX idx_users_username ON users(username);
 
 COMMENT ON TABLE users IS 'User authentication and authorization';
+COMMENT ON COLUMN users.role IS 'Valid roles: owner, indoor-operator, outdoor-operator, sales-analyst';
 
 -- ============================================
 -- 3. AUTOCLAVE CYCLES TABLE
@@ -272,8 +273,10 @@ INSERT INTO operators (first_name, middle_name, last_name, short_name, role, sec
 
 -- Insert default users
 INSERT INTO users (username, password, role) VALUES
-('admin', '$2b$10$YourHashedPasswordHere', 'admin'),
-('user', '$2b$10$YourHashedPasswordHere', 'user');
+('owner@seemabiotech.com', 'Owner123', 'owner'),
+('indoor@seemabiotech.com', 'Indoor123', 'indoor-operator'),
+('outdoor@seemabiotech.com', 'Outdoor123', 'outdoor-operator'),
+('sales@seemabiotech.com', 'Sales123', 'sales-analyst');
 
 -- ============================================
 -- VIEWS

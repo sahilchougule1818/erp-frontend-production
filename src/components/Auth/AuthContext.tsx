@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username: email, password }),
       });
       
       if (!response.ok) return false;
@@ -43,8 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
       const userData: User = {
         id: data.user.id.toString(),
-        email: data.user.email,
-        name: data.user.name,
+        email: data.user.username,
+        name: data.user.username,
         role: data.user.role
       };
       setUser(userData);
