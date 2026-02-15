@@ -416,7 +416,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                       <tr key={record.id} className="border-b hover:bg-gray-50">
                         {dataKeys.map(key => (
                           <td key={key} className="px-4 py-3 text-sm">
-                            {renderCell ? renderCell(key, record[key]) : record[key]}
+                            {renderCell ? renderCell(key, record[key]) : (key.includes('date') && record[key] ? record[key].split('T')[0] : record[key])}
                           </td>
                         ))}
                         <td className="px-4 py-3 text-sm">
