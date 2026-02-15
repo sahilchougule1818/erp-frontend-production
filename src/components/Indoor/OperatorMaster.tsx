@@ -36,9 +36,23 @@ export function OperatorMaster() {
   const fetchOperators = async () => {
     try {
       const res = await operatorApi.getOperators();
-      setOperators(res.data);
+      // Map old structure to new structure
+      const mapped = res.data.map((op: any) => ({
+        id: op.id,
+        first_name: op.name?.split(' ')[0] || '',
+        middle_name: '',
+        last_name: op.name?.split(' ').slice(1).join(' ') || '',
+        short_name: op.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || '',
+        role: 'Lab Assistant',
+        sections: ['Media Preparation'],
+        age: null,
+        gender: '',
+        is_active: true
+      }));
+      setOperators(mapped);
     } catch (error) {
       console.error('Error:', error);
+      setOperators([]);
     }
   };
 
@@ -71,16 +85,30 @@ export function OperatorMaster() {
       return alert('Please fill all required fields');
     }
     try {
+      // For now, save to old operators table format
+      const payload = {
+        name: `${form.firstName} ${form.middleName ? form.middleName + ' ' : ''}${form.lastName}`.trim(),
+        type: 'indoor'
+      };
+      
       if (form.id) {
-        await operatorApi.updateOperator(form.id, form);
+        await fetch(`https://resourceful-vision-production.up.railway.app/api/operators/${form.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
       } else {
-        await operatorApi.createOperator(form);
+        await fetch('https://resourceful-vision-production.up.railway.app/api/operators', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
       }
       fetchOperators();
       closeModal();
-      alert('Saved!');
+      alert('Saved! Note: Full operator features require backend update.');
     } catch (error: any) {
-      alert('Error: ' + (error.response?.data?.message || error.message));
+      alert('Error: ' + (error.message || 'Failed to save'));
     }
   };
 
@@ -102,7 +130,9 @@ export function OperatorMaster() {
 
   const handleDelete = async () => {
     try {
-      await operatorApi.deleteOperator(deleteId);
+      await fetch(`https://resourceful-vision-production.up.railway.app/api/operators/${deleteId}`, {
+        method: 'DELETE'
+      });
       fetchOperators();
       setDeleteConfirm(false);
       setDeleteId(null);

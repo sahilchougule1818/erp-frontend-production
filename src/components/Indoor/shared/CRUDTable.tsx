@@ -84,9 +84,20 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
         : `${apiUrl}/operators`;
       const res = await fetch(endpoint);
       const data = await res.json();
-      setOperators(data.filter((op: any) => op.is_active));
+      // Map old structure to new for display
+      const mapped = data.filter((op: any) => op.type === 'indoor').map((op: any) => ({
+        id: op.id,
+        name: op.name,
+        short_name: op.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || '',
+        first_name: op.name?.split(' ')[0] || '',
+        last_name: op.name?.split(' ').slice(1).join(' ') || '',
+        role: 'Operator',
+        is_active: true
+      }));
+      setOperators(mapped);
     } catch (error) {
       console.error('Error:', error);
+      setOperators([]);
     }
   };
 
