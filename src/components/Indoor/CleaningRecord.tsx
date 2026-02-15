@@ -39,6 +39,10 @@ function CleaningRecordTable() {
         operatorName: f.operatorName,
         areaCleaned: f.areaCleaned
       })}
+      renderCell={(key, value) => {
+        if (key === 'date' && value) return value.split('T')[0];
+        return value;
+      }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'operator_name', field2Label: 'Operator Name' }}
     />
   );
@@ -68,6 +72,10 @@ function DeepCleaningRecord() {
         operator: f.operator,
         instrumentCleaned: f.instrumentCleaned
       })}
+      renderCell={(key, value) => {
+        if (key === 'date' && value) return value.split('T')[0];
+        return value;
+      }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'operator', field2Label: 'Operator' }}
     />
   );

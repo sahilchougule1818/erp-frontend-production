@@ -53,6 +53,7 @@ function AutoclaveCycle() {
         offTime: f.offTime, openTime: f.openTime, mediaTotal: f.mediaTotal, remark: f.remark
       })}
       renderCell={(key, value) => {
+        if (key === 'date' && value) return value.split('T')[0];
         if (key === 'media_code') return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
         return value;
       }}
@@ -84,6 +85,7 @@ function MediaBatch() {
         quantity: f.quantity, bottles: parseInt(f.bottles) || 0, contamination: f.contamination
       })}
       renderCell={(key, value) => {
+        if (key === 'date' && value) return value.split('T')[0];
         if (key === 'media_code') return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
         if (key === 'contamination') return <Badge className={value === 'None' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>{value}</Badge>;
         return value;

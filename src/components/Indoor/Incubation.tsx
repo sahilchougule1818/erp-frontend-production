@@ -71,6 +71,7 @@ function IncubationRegister() {
         lightIntensity: f.lightIntensity
       })}
       renderCell={(key, value) => {
+        if (key === 'subculture_date' && value) return value.split('T')[0];
         if (key === 'media_code') return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
         return value;
       }}
@@ -109,6 +110,10 @@ function MortalityRecord() {
         possibleSource: f.possibleSource,
         disposalMethod: f.disposalMethod
       })}
+      renderCell={(key, value) => {
+        if (key === 'date' && value) return value.split('T')[0];
+        return value;
+      }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
     />
   );

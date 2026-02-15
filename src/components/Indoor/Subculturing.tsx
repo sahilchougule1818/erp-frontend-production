@@ -54,6 +54,7 @@ export function Subculturing() {
         remark: f.remark
       })}
       renderCell={(key, value) => {
+        if (key === 'transfer_date' && value) return value.split('T')[0];
         if (key === 'media_code') return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
         return value;
       }}

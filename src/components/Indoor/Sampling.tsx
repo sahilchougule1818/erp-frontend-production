@@ -54,6 +54,9 @@ export function Sampling() {
         reason: f.reason
       })}
       renderCell={(key, value) => {
+        if (key === 'sample_date' && value) return value.split('T')[0];
+        if (key === 'sent_date' && value) return value.split('T')[0];
+        if (key === 'received_date' && value) return value.split('T')[0];
         if (key === 'status') return <Badge className={value === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>{value}</Badge>;
         return value;
       }}
