@@ -298,7 +298,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
       {filterFields && (
         <FilterBar
           field1={{
@@ -320,15 +320,15 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
       )}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>{title}</CardTitle>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <CardTitle className="text-lg sm:text-xl">{title}</CardTitle>
+            <div className="flex flex-wrap items-center gap-2">
               <BackToMainDataButton isVisible={isFiltered} onClick={handleReset} />
               <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
                 <DialogTrigger asChild>
                   <Button className="bg-green-600 hover:bg-green-700"><Plus className="w-4 h-4 mr-2" />Add New</Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader><DialogTitle>{edit ? 'Edit' : 'Add'} {title}</DialogTitle></DialogHeader>
                   <div className="grid grid-cols-2 gap-4 py-4">
                     {fields.map(f => (
@@ -400,12 +400,12 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden">
-              <table className="w-full">
+          <div className="border rounded-lg overflow-x-auto">
+              <table className="w-full min-w-max">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    {columns.map(c => <th key={c} className="px-4 py-3 text-left text-xs text-gray-600">{c}</th>)}
-                    <th className="px-4 py-3 text-left text-xs text-gray-600">Actions</th>
+                    {columns.map(c => <th key={c} className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">{c}</th>)}
+                    <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap sticky right-0 bg-gray-50">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -415,11 +415,11 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                     visibleRecords.map(record => (
                       <tr key={record.id} className="border-b hover:bg-gray-50">
                         {dataKeys.map(key => (
-                          <td key={key} className="px-4 py-3 text-sm">
+                          <td key={key} className="px-4 py-3 text-sm whitespace-nowrap">
                             {renderCell ? renderCell(key, record[key]) : (key.includes('date') && record[key] ? record[key].split('T')[0] : record[key])}
                           </td>
                         ))}
-                        <td className="px-4 py-3 text-sm">
+                        <td className="px-4 py-3 text-sm sticky right-0 bg-white hover:bg-gray-50">
                           <Button variant="ghost" size="sm" onClick={() => { setForm(mapToForm(record)); setEdit(true); setModal(true); }}>
                             <PenSquare className="w-4 h-4" />
                           </Button>
