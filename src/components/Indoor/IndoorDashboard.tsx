@@ -287,7 +287,7 @@ export function IndoorDashboard() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
-  </div>
   );
 }
