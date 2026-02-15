@@ -11,7 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import * as operatorApi from '../../services/operatorApi';
 
 const ROLES = ['Lab Assistant', 'Senior Technician', 'Supervisor', 'QC Officer'];
-const SECTIONS = ['Media Preparation', 'Subculturing', 'Incubation', 'Cleaning Record', 'Quality Control'];
+const SECTIONS = ['Media Preparation', 'Subculturing', 'Incubation', 'Cleaning Record', 'Sampling'];
 
 export function OperatorMaster() {
   const [operators, setOperators] = useState([]);

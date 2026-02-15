@@ -76,6 +76,7 @@ function IncubationRegister() {
         return value;
       }}
       filterFields={{ field1Key: 'subculture_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      section="Incubation"
     />
   );
 }
@@ -115,6 +116,7 @@ function MortalityRecord() {
         return value;
       }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      section="Incubation"
     />
   );
 }

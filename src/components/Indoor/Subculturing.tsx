@@ -59,6 +59,7 @@ export function Subculturing() {
         return value;
       }}
       filterFields={{ field1Key: 'transfer_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      section="Subculturing"
     />
   );
 }

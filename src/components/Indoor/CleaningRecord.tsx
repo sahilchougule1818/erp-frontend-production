@@ -44,6 +44,7 @@ function CleaningRecordTable() {
         return value;
       }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'operator_name', field2Label: 'Operator Name' }}
+      section="Cleaning Record"
     />
   );
 }
@@ -77,6 +78,7 @@ function DeepCleaningRecord() {
         return value;
       }}
       filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'operator', field2Label: 'Operator' }}
+      section="Cleaning Record"
     />
   );
 }

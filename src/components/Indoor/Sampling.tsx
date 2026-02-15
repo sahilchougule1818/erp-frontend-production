@@ -61,6 +61,7 @@ export function Sampling() {
         return value;
       }}
       filterFields={{ field1Key: 'sample_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      section="Sampling"
     />
   );
 }
