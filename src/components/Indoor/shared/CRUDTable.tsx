@@ -298,8 +298,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="p-6 space-y-6">
       {filterFields && (
         <FilterBar
           field1={{
@@ -321,15 +320,15 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
       )}
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="text-lg sm:text-xl">{title}</CardTitle>
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center justify-between">
+            <CardTitle>{title}</CardTitle>
+            <div className="flex items-center gap-2">
               <BackToMainDataButton isVisible={isFiltered} onClick={handleReset} />
               <Dialog open={modal} onOpenChange={(o) => { setModal(o); if (!o) closeModal(); }}>
                 <DialogTrigger asChild>
                   <Button className="bg-green-600 hover:bg-green-700"><Plus className="w-4 h-4 mr-2" />Add New</Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader><DialogTitle>{edit ? 'Edit' : 'Add'} {title}</DialogTitle></DialogHeader>
                   <div className="grid grid-cols-2 gap-4 py-4">
                     {fields.map(f => (
@@ -446,7 +445,6 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      </div>
     </div>
   );
 }

@@ -130,11 +130,10 @@ export function IndoorDashboard() {
   }, [exportRange, mediaPrepStats, labOpsStats]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Indoor Dashboard</h1>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2">
           <Dialog open={modal} onOpenChange={setModal}>
             <DialogTrigger asChild>
               <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
@@ -287,7 +286,6 @@ export function IndoorDashboard() {
           </div>
         </CardContent>
       </Card>
-      </div>
     </div>
   );
 }

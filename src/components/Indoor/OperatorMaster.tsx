@@ -145,13 +145,12 @@ export function OperatorMaster() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <div className="p-2 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="p-6 space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="text-lg sm:text-xl">Operator Master</CardTitle>
-            <div className="flex flex-wrap gap-2">
+          <div className="flex items-center justify-between">
+            <CardTitle>Operator Master</CardTitle>
+            <div className="flex gap-2">
               <Dialog open={exportModal} onOpenChange={setExportModal}>
                 <DialogTrigger asChild>
                   <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
@@ -180,7 +179,7 @@ export function OperatorMaster() {
                   <Plus className="w-4 h-4 mr-2" />Add Operator
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{form.id ? 'Edit' : 'Add'} Operator</DialogTitle>
                 </DialogHeader>
@@ -343,7 +342,6 @@ export function OperatorMaster() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      </div>
     </div>
   );
 }
