@@ -74,7 +74,7 @@ export function FilterBar({
       <div className="flex flex-wrap gap-3 items-end">
         {firstField && (
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5 font-medium">{firstField.label}</label>
+            <label className="block text-sm mb-1.5 font-medium text-gray-700">{firstField.label}</label>
             {firstField.label.toLowerCase().includes('date') ? (
               <Input 
                 type="date" 
@@ -101,7 +101,7 @@ export function FilterBar({
 
         {secondField && (
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5 font-medium">{secondField.label}</label>
+            <label className="block text-sm mb-1.5 font-medium text-gray-700">{secondField.label}</label>
             <Select value={secondField.value} onValueChange={secondField.onChange}>
               <SelectTrigger>
                 <SelectValue placeholder={secondField.placeholder || `Select ${secondField.label.toLowerCase()}`} />
@@ -119,7 +119,7 @@ export function FilterBar({
 
         {field3 && (
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5 font-medium">{field3.label}</label>
+            <label className="block text-sm mb-1.5 font-medium text-gray-700">{field3.label}</label>
             <Select value={field3.value} onValueChange={field3.onChange}>
               <SelectTrigger>
                 <SelectValue placeholder={field3.placeholder || `Select ${field3.label.toLowerCase()}`} />

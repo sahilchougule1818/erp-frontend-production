@@ -193,7 +193,7 @@ export function IndoorDashboard() {
                 <div className={`${iconBg} rounded-full p-2`}><Icon className={`h-5 w-5 ${iconColor}`} /></div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{display}{suffix}</div>
+                <div className="text-2xl font-bold break-words">{display}{suffix}</div>
                 <p className="text-xs text-gray-500">{desc}</p>
               </CardContent>
             </Card>
