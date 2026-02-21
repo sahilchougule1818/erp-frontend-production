@@ -3,38 +3,46 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { CRUDTable } from './shared/CRUDTable';
 import * as indoorApi from '../../services/indoorApi';
-
-const INCUBATION_FIELDS = [
-  { key: 'subcultureDate', label: 'Subculture Date', type: 'date' },
-  { key: 'stage', label: 'Stage', placeholder: 'Stage 1' },
-  { key: 'batchName', label: 'Batch Name', placeholder: 'B-2024-1145' },
-  { key: 'mediaCode', label: 'Media Code', placeholder: 'MS-001' },
-  { key: 'operatorName', label: 'Operator Name' },
-  { key: 'cropName', label: 'Crop Name', placeholder: 'Rose' },
-  { key: 'noOfBottles', label: 'No. of Bottles', type: 'number', placeholder: '50' },
-  { key: 'noOfShoots', label: 'No. of Shoots', type: 'number', placeholder: '1000' },
-  { key: 'temp', label: 'Temp', placeholder: '25°C' },
-  { key: 'humidity', label: 'Humidity', placeholder: '70%' },
-  { key: 'photoPeriod', label: 'Photo Period', placeholder: '16/8' },
-  { key: 'lightIntensity', label: 'Light Intensity', placeholder: '3000 lux' }
-];
-
-const MORTALITY_FIELDS = [
-  { key: 'date', label: 'Date', type: 'date' },
-  { key: 'batchName', label: 'Batch Name', placeholder: 'B-2024-1145' },
-  { key: 'vesselCount', label: 'Vessel Count', type: 'number', placeholder: '10' },
-  { key: 'typeOfMortality', label: 'Type of Mortality', placeholder: 'Contamination/Drying' },
-  { key: 'possibleSource', label: 'Possible Source', type: 'textarea' },
-  { key: 'disposalMethod', label: 'Disposal Method', type: 'textarea' }
-];
+import { useIndoorBatches } from '../../hooks/useIndoorBatches';
+import { useMediaCodes } from '../../hooks/useMediaCodes';
 
 function IncubationRegister() {
+  const { batches } = useIndoorBatches();
+  const { mediaCodes } = useMediaCodes();
+  
+  const INCUBATION_FIELDS = [
+    { key: 'subcultureDate', label: 'Subculture Date', type: 'date' },
+    { key: 'stage', label: 'Stage', type: 'select', options: Array.from({length: 8}, (_, i) => ({value: `Stage-${i+1}`, label: `Stage-${i+1}`})) },
+    { 
+      key: 'batchName', 
+      label: 'Batch Name', 
+      type: 'select', 
+      options: batches,
+      onChange: (value, setForm, form) => {
+        const selected = batches.find(b => b.value === value);
+        if (selected) {
+          const cropName = selected.label.split('(')[1]?.replace(')', '') || '';
+          setForm({...form, batchName: value, cropName});
+        }
+      }
+    },
+    { key: 'mediaCode', label: 'Media Code', type: 'select', options: mediaCodes },
+    { key: 'operatorName', label: 'Operator Name' },
+    { key: 'cropName', label: 'Crop Name', readOnly: true },
+    { key: 'noOfBottles', label: 'No. of Bottles', type: 'number', placeholder: '50' },
+    { key: 'noOfShoots', label: 'No. of Shoots', type: 'number', placeholder: '1000' },
+    { key: 'temp', label: 'Temp', placeholder: '25°C' },
+    { key: 'humidity', label: 'Humidity', placeholder: '70%' },
+    { key: 'photoPeriod', label: 'Photo Period', placeholder: '16/8' },
+    { key: 'lightIntensity', label: 'Light Intensity', placeholder: '3000 lux' }
+  ];
+
   return (
     <CRUDTable
       title=""
       fields={INCUBATION_FIELDS}
       columns={['Subculture Date', 'Stage', 'Batch Name', 'Media Code', 'Operator Name', 'Crop Name', 'No. of Bottles', 'No. of Shoots', 'Temp', 'Humidity', 'Photo Period', 'Light Intensity']}
-      dataKeys={['subculture_date', 'stage', 'batch_name', 'media_code', 'operator_name', 'crop_name', 'no_of_bottles', 'no_of_shoots', 'temp', 'humidity', 'photo_period', 'light_intensity']}
+      dataKeys={['subculture_date', 'stage', 'batch_code', 'media_code', 'operator_name', 'crop_name', 'no_of_bottles', 'no_of_shoots', 'temp', 'humidity', 'photo_period', 'light_intensity']}
       api={{
         get: indoorApi.getIncubation,
         create: indoorApi.createIncubation,
@@ -45,7 +53,7 @@ function IncubationRegister() {
         id: r.id,
         subcultureDate: r.subculture_date,
         stage: r.stage,
-        batchName: r.batch_name,
+        batchName: r.batch_code,
         mediaCode: r.media_code,
         operatorName: r.operator_name,
         cropName: r.crop_name,
@@ -75,19 +83,30 @@ function IncubationRegister() {
         if (key === 'media_code') return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
         return value;
       }}
-      filterFields={{ field1Key: 'subculture_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      filterFields={{ field1Key: 'subculture_date', field1Label: 'Date', field2Key: 'batch_code', field2Label: 'Batch Name' }}
       section="Incubation"
     />
   );
 }
 
 function MortalityRecord() {
+  const { batches } = useIndoorBatches();
+  
+  const MORTALITY_FIELDS = [
+    { key: 'date', label: 'Date', type: 'date' },
+    { key: 'batchName', label: 'Batch Name', type: 'select', options: batches },
+    { key: 'vesselCount', label: 'Vessel Count', type: 'number', placeholder: '10' },
+    { key: 'typeOfMortality', label: 'Type of Mortality', placeholder: 'Contamination/Drying' },
+    { key: 'possibleSource', label: 'Possible Source', type: 'textarea' },
+    { key: 'disposalMethod', label: 'Disposal Method', type: 'textarea' }
+  ];
+
   return (
     <CRUDTable
       title=""
       fields={MORTALITY_FIELDS}
       columns={['Date', 'Batch Name', 'Vessel Count', 'Type of Mortality', 'Possible Source', 'Disposal Method']}
-      dataKeys={['date', 'batch_name', 'vessel_count', 'type_of_mortality', 'possible_source', 'disposal_method']}
+      dataKeys={['date', 'batch_code', 'vessel_count', 'type_of_mortality', 'possible_source', 'disposal_method']}
       api={{
         get: indoorApi.getMortalityRecord,
         create: indoorApi.createMortalityRecord,
@@ -97,7 +116,7 @@ function MortalityRecord() {
       mapToForm={(r) => ({
         id: r.id,
         date: r.date,
-        batchName: r.batch_name,
+        batchName: r.batch_code,
         vesselCount: String(r.vessel_count),
         typeOfMortality: r.type_of_mortality,
         possibleSource: r.possible_source,
@@ -115,7 +134,7 @@ function MortalityRecord() {
         if (key === 'date' && value) return value.split('T')[0];
         return value;
       }}
-      filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      filterFields={{ field1Key: 'date', field1Label: 'Date', field2Key: 'batch_code', field2Label: 'Batch Name' }}
       section="Incubation"
     />
   );

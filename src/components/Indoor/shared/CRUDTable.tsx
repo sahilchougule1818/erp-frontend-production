@@ -16,9 +16,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 interface Field {
   key: string;           // Field identifier
   label: string;         // Display label
-  type?: string;         // Input type (text, date, time, number, textarea)
+  type?: string;         // Input type (text, date, time, number, textarea, custom, select)
   placeholder?: string;  // Placeholder text
   span?: number;         // Column span for grid layout
+  render?: () => React.ReactNode; // Custom render function for custom type
+  options?: Array<{value: string; label: string}>; // Options for select type
+  onChange?: (value: any, setForm: any, form: any) => void; // Custom onChange handler
+  readOnly?: boolean;    // Read-only field
+  fieldKey?: string;     // Unique key to force re-render
 }
 
 // Props interface for CRUDTable component
@@ -35,9 +40,10 @@ interface CRUDTableProps {
   };
   mapToForm: (record: any) => any;
   mapToPayload: (form: any) => any;
-  renderCell?: (key: string, value: any) => React.ReactNode;
+  renderCell?: (key: string, value: any, record: any) => React.ReactNode;
   filterFields?: { field1Key: string; field1Label: string; field2Key: string; field2Label: string };
   section?: string; // Section name for filtering operators
+  onModalClose?: () => void; // Callback when modal closes
 }
 
 /**
@@ -49,7 +55,7 @@ interface CRUDTableProps {
  * - Operator dropdown integration
  * - Custom cell rendering support
  */
-export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, mapToPayload, renderCell, filterFields, section }: CRUDTableProps) {
+export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, mapToPayload, renderCell, filterFields, section, onModalClose }: CRUDTableProps) {
   // State management
   const [records, setRecords] = useState([]);           // All records from database
   const [operators, setOperators] = useState([]);       // List of operators for dropdown
@@ -79,14 +85,17 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
   const fetchOperators = async () => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-      const endpoint = section 
-        ? `${apiUrl}/operators/section/${encodeURIComponent(section)}`
-        : `${apiUrl}/operators`;
-      const res = await fetch(endpoint);
+      const res = await fetch(`${apiUrl}/operators`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setOperators(data.filter((op: any) => op.is_active));
+      const ops = Array.isArray(data) ? data : [];
+      const filtered = section 
+        ? ops.filter((op: any) => op.is_active && op.section === section)
+        : ops.filter((op: any) => op.is_active);
+      setOperators(filtered);
+      console.log('Operators loaded:', filtered.length);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Failed to load operators:', error);
       setOperators([]);
     }
   };
@@ -229,7 +238,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
   const handleSave = async () => {
     try {
       const emptyFields = fields
-        .filter(f => f.key !== 'remark' && f.key !== 'contamination' && f.type !== 'textarea')
+        .filter(f => f.type !== 'custom' && f.key !== 'remark' && f.key !== 'contamination' && f.type !== 'textarea' && f.key !== 'notes' && f.key !== 'currentQuantity' && !f.readOnly)
         .filter(f => !form[f.key] || form[f.key].toString().trim() === '')
         .map(f => f.label);
       
@@ -253,8 +262,10 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
       fetchRecords();
       setDeleteConfirm(false);
       setDeleteId(null);
-    } catch (error) {
+      alert('Deleted successfully!');
+    } catch (error: any) {
       console.error('Error:', error);
+      alert('Error deleting: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -265,6 +276,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
     setModal(false);
     setForm({});
     setEdit(false);
+    if (onModalClose) onModalClose();
   };
 
   /**
@@ -272,6 +284,29 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
    * Special handling for operator dropdown and textarea fields
    */
   const renderField = (f: Field) => {
+    if (f.type === 'custom' && f.render) {
+      return f.render();
+    }
+    if (f.type === 'select' && f.options) {
+      return (
+        <Select key={f.fieldKey || f.key} value={form[f.key] || ''} onValueChange={(v) => {
+          if (f.onChange) {
+            f.onChange(v, setForm, form);
+          } else {
+            setForm({...form, [f.key]: v});
+          }
+        }}>
+          <SelectTrigger>
+            <SelectValue placeholder={f.placeholder || `Select ${f.label.toLowerCase()}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {f.options.map(opt => (
+              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    }
     if (f.key === 'operatorName' || f.key === 'operator') {
       return (
         <Select value={form[f.key] || ''} onValueChange={(v) => setForm({...form, [f.key]: v})}>
@@ -294,7 +329,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
     if (f.type === 'textarea') return <Textarea placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
     if (f.type === 'date') return <Input type="date" value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
     if (f.type === 'time') return <Input type="time" value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} className="cursor-pointer" />;
-    return <Input type={f.type || 'text'} placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} />;
+    return <Input type={f.type || 'text'} placeholder={f.placeholder} value={form[f.key] || ''} onChange={(e) => setForm({...form, [f.key]: e.target.value})} readOnly={f.readOnly} disabled={f.readOnly} className={f.readOnly ? 'bg-gray-100' : ''} />;
   };
 
   return (
@@ -332,7 +367,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                   <DialogHeader><DialogTitle>{edit ? 'Edit' : 'Add'} {title}</DialogTitle></DialogHeader>
                   <div className="grid grid-cols-2 gap-4 py-4">
                     {fields.map(f => (
-                      <div key={f.key} className={`space-y-2 ${f.span === 2 ? 'col-span-2' : ''}`}>
+                      <div key={f.fieldKey || f.key} className={`space-y-2 ${f.span === 2 ? 'col-span-2' : ''}`}>
                         <Label>{f.label}</Label>
                         {renderField(f)}
                       </div>
@@ -340,7 +375,7 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                   </div>
                   <div className="flex justify-end gap-3">
                     <Button variant="outline" onClick={closeModal}>Cancel</Button>
-                    {edit && <Button variant="destructive" onClick={() => { setDeleteId(form.id); setDeleteConfirm(true); setModal(false); }}><Trash2 className="w-4 h-4 mr-2" />Delete</Button>}
+                    {edit && form.id && <Button variant="destructive" onClick={() => { setDeleteId(form.id); setDeleteConfirm(true); setModal(false); }}><Trash2 className="w-4 h-4 mr-2" />Delete</Button>}
                     <Button className="bg-green-600 hover:bg-green-700" onClick={handleSave}>Save</Button>
                   </div>
                 </DialogContent>
@@ -416,11 +451,11 @@ export function CRUDTable({ title, fields, columns, dataKeys, api, mapToForm, ma
                       <tr key={record.id} className="border-b hover:bg-gray-50">
                         {dataKeys.map(key => (
                           <td key={key} className="px-4 py-3 text-sm whitespace-nowrap">
-                            {renderCell ? renderCell(key, record[key]) : (key.includes('date') && record[key] ? record[key].split('T')[0] : record[key])}
+                            {renderCell ? renderCell(key, record[key], record) : (key.includes('date') && record[key] ? record[key].split('T')[0] : record[key])}
                           </td>
                         ))}
                         <td className="px-4 py-3 text-sm sticky right-0 bg-white hover:bg-gray-50">
-                          <Button variant="ghost" size="sm" onClick={() => { setForm(mapToForm(record)); setEdit(true); setModal(true); }}>
+                          <Button variant="ghost" size="sm" onClick={() => { const formData = mapToForm(record); formData.id = record.id; setForm(formData); setEdit(true); setModal(true); }}>
                             <PenSquare className="w-4 h-4" />
                           </Button>
                         </td>

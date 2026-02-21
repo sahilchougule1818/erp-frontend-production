@@ -1,11 +1,27 @@
 import { CRUDTable } from './shared/CRUDTable';
 import { Badge } from '../ui/badge';
 import * as indoorApi from '../../services/indoorApi';
+import { useIndoorBatches } from '../../hooks/useIndoorBatches';
 
-const FIELDS = [
-  { key: 'sampleDate', label: 'Sample Date', type: 'date' },
-  { key: 'cropName', label: 'Crop Name', placeholder: 'Rose' },
-  { key: 'batchName', label: 'Batch Name', placeholder: 'B-2024-1145' },
+export function Sampling() {
+  const { batches } = useIndoorBatches();
+  
+  const FIELDS = [
+    { key: 'sampleDate', label: 'Sample Date', type: 'date' },
+    { key: 'cropName', label: 'Crop Name', readOnly: true },
+    { 
+      key: 'batchName', 
+      label: 'Batch Name', 
+      type: 'select', 
+      options: batches,
+      onChange: (value, setForm, form) => {
+        const selected = batches.find(b => b.value === value);
+        if (selected) {
+          const cropName = selected.label.split('(')[1]?.replace(')', '') || '';
+          setForm({...form, batchName: value, cropName});
+        }
+      }
+    },
   { key: 'stage', label: 'Stage', placeholder: 'Subculturing' },
   { key: 'sentDate', label: 'Sent Date', type: 'date' },
   { key: 'receivedDate', label: 'Received Date', type: 'date' },
@@ -15,7 +31,6 @@ const FIELDS = [
   { key: 'reason', label: 'Reason (if rejected)', type: 'textarea', span: 2 }
 ];
 
-export function Sampling() {
   return (
     <div className="p-6">
       <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground mb-6">
@@ -27,7 +42,7 @@ export function Sampling() {
       title=""
       fields={FIELDS}
       columns={['Sample Date', 'Crop Name', 'Batch Name', 'Stage', 'Sent Date', 'Received Date', 'Status', 'Govt Certificate', 'Certificate No', 'Reason']}
-      dataKeys={['sample_date', 'crop_name', 'batch_name', 'stage', 'sent_date', 'received_date', 'status', 'govt_certificate', 'certificate_no', 'reason']}
+      dataKeys={['sample_date', 'crop_name', 'batch_code', 'stage', 'sent_date', 'received_date', 'status', 'govt_certificate', 'certificate_no', 'reason']}
       api={{
         get: indoorApi.getSampling,
         create: indoorApi.createSampling,
@@ -38,7 +53,7 @@ export function Sampling() {
         id: r.id,
         sampleDate: r.sample_date,
         cropName: r.crop_name,
-        batchName: r.batch_name,
+        batchName: r.batch_code,
         stage: r.stage,
         sentDate: r.sent_date,
         receivedDate: r.received_date,
@@ -66,7 +81,7 @@ export function Sampling() {
         if (key === 'status') return <Badge className={value === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>{value}</Badge>;
         return value;
       }}
-      filterFields={{ field1Key: 'sample_date', field1Label: 'Date', field2Key: 'batch_name', field2Label: 'Batch Name' }}
+      filterFields={{ field1Key: 'sample_date', field1Label: 'Date', field2Key: 'batch_code', field2Label: 'Batch Name' }}
       section="Sampling"
     />
     </div>

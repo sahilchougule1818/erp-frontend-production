@@ -3,10 +3,10 @@ import { Badge } from '../ui/badge';
 import { TreeDeciduous, AlertTriangle, Package, Sprout } from 'lucide-react';
 
 const tunnelData = [
-  { id: 'T1', name: 'Tunnel T1', occupied: 85, capacity: 100, status: 'normal' },
-  { id: 'T2', name: 'Tunnel T2', occupied: 92, capacity: 100, status: 'normal' },
-  { id: 'T3', name: 'Tunnel T3', occupied: 78, capacity: 100, status: 'mortality' },
-  { id: 'T4', name: 'Tunnel T4', occupied: 65, capacity: 100, status: 'normal' },
+  { id: 'T1', name: 'Tunnel T1', occupied: 85, capacity: 100, status: 'normal', batches: ['SB-01', 'MS-01'] },
+  { id: 'T2', name: 'Tunnel T2', occupied: 92, capacity: 100, status: 'normal', batches: ['GR-01'] },
+  { id: 'T3', name: 'Tunnel T3', occupied: 78, capacity: 100, status: 'mortality', batches: ['B-2024-1142'] },
+  { id: 'T4', name: 'Tunnel T4', occupied: 65, capacity: 100, status: 'normal', batches: ['B-2024-1140'] },
 ];
 
 export function OutdoorDashboard() {
@@ -117,6 +117,11 @@ export function OutdoorDashboard() {
               </div>
 
               <div className="text-xs text-gray-500 text-center">
+                {tunnel.batches.length > 0 && (
+                  <div className="mb-1 font-medium text-gray-700">
+                    Batches: {tunnel.batches.join(', ')}
+                  </div>
+                )}
                 Click to expand tray details
               </div>
             </div>

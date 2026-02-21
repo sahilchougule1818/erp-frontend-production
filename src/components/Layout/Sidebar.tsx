@@ -78,7 +78,8 @@ export function Sidebar({ currentPage, onNavigate, user }: SidebarProps) {
         { id: 'subculturing', label: 'Subculturing', icon: Microscope, page: 'subculturing', breadcrumbs: ['Indoor', 'Subculturing'] },
         { id: 'incubation', label: 'Incubation', icon: Thermometer, page: 'incubation', breadcrumbs: ['Indoor', 'Incubation'] },
         { id: 'cleaning-record', label: 'Cleaning Record', icon: ShieldCheck, page: 'cleaning-record', breadcrumbs: ['Indoor', 'Cleaning Record'] },
-        { id: 'sampling', label: 'Sampling', icon: TestTube, page: 'sampling', breadcrumbs: ['Indoor', 'Sampling'] }
+        { id: 'sampling', label: 'Sampling', icon: TestTube, page: 'sampling', breadcrumbs: ['Indoor', 'Sampling'] },
+        { id: 'indoor-batch-timeline', label: 'Batch Timeline', icon: Clock, page: 'indoor-batch-timeline', breadcrumbs: ['Indoor', 'Batch Timeline'] }
       ]
     },
     {
@@ -93,8 +94,8 @@ export function Sidebar({ currentPage, onNavigate, user }: SidebarProps) {
         { id: 'outdoor-contamination', label: 'Mortality', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Mortality'] },
         { id: 'fertilization', label: 'Fertilization', icon: Droplets, page: 'fertilization', breadcrumbs: ['Outdoor', 'Fertilization'] },
         { id: 'holding-area', label: 'Holding Area', icon: Package, page: 'holding-area', breadcrumbs: ['Outdoor', 'Holding Area'] },
-        { id: 'batch-timeline', label: 'Batch Timeline', icon: Clock, page: 'batch-timeline', breadcrumbs: ['Outdoor', 'Batch Timeline'] },
-        { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] }
+        { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] },
+        { id: 'batch-timeline', label: 'Batch Timeline', icon: Clock, page: 'batch-timeline', breadcrumbs: ['Outdoor', 'Batch Timeline'] }
       ]
     },
     {

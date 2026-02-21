@@ -8,6 +8,7 @@ import { IndoorDashboard } from './components/Indoor/IndoorDashboard';
 import { MediaPreparation } from './components/Indoor/MediaPreparation';
 import { Subculturing } from './components/Indoor/Subculturing';
 import { Incubation } from './components/Indoor/Incubation';
+import { IndoorBatchTimeline } from './components/Indoor/IndoorBatchTimeline';
 import { CleaningRecord } from './components/Indoor/CleaningRecord';
 import { Sampling } from './components/Indoor/Sampling';
 import { OutdoorDashboard } from './components/Outdoor/OutdoorDashboard';
@@ -58,7 +59,7 @@ function AppContent() {
     if (!user) return false;
     if (user.role === 'owner') return true;
 
-    const indoorPages = ['indoor-dashboard', 'operator-master', 'media-preparation', 'subculturing', 'incubation', 'cleaning-record', 'sampling'];
+    const indoorPages = ['indoor-dashboard', 'operator-master', 'media-preparation', 'subculturing', 'incubation', 'indoor-batch-timeline', 'cleaning-record', 'sampling'];
     const outdoorPages = ['outdoor-dashboard', 'primary-hardening', 'secondary-hardening', 'shifting', 'outdoor-contamination', 'fertilization', 'holding-area', 'batch-timeline', 'outdoor-sampling'];
     const salesPages = ['sales-buyer', 'sales-seller', 'sales-ledger', 'inventory-dashboard'];
     const inventorySupplierPages = ['inventory-record', 'supplier-detail'];
@@ -122,6 +123,7 @@ function AppContent() {
             <Route path="/media-preparation" element={<MediaPreparation />} />
             <Route path="/subculturing" element={<Subculturing />} />
             <Route path="/incubation" element={<Incubation />} />
+            <Route path="/indoor-batch-timeline" element={<IndoorBatchTimeline />} />
             <Route path="/cleaning-record" element={<CleaningRecord />} />
             <Route path="/sampling" element={<Sampling />} />
             <Route path="/outdoor-dashboard" element={<OutdoorDashboard />} />

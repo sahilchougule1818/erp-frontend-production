@@ -19,8 +19,8 @@ router.get('/operators/section/:sectionName', async (req, res) => {
   try {
     const { sectionName } = req.params;
     const [rows] = await db.query(
-      'SELECT * FROM operators WHERE JSON_CONTAINS(sections, ?) AND is_active = TRUE',
-      [JSON.stringify(sectionName)]
+      'SELECT * FROM operators WHERE section = ? AND is_active = TRUE',
+      [sectionName]
     );
     res.json(rows);
   } catch (error) {
@@ -31,10 +31,10 @@ router.get('/operators/section/:sectionName', async (req, res) => {
 // POST /api/operators - Create operator
 router.post('/operators', async (req, res) => {
   try {
-    const { firstName, middleName, lastName, shortName, role, sections, age, gender, isActive } = req.body;
+    const { firstName, lastName, shortName, role, section, isActive } = req.body;
     const [result] = await db.query(
-      'INSERT INTO operators (first_name, middle_name, last_name, short_name, role, sections, age, gender, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [firstName, middleName, lastName, shortName, role, JSON.stringify(sections), age, gender, isActive]
+      'INSERT INTO operators (first_name, last_name, short_name, role, section, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+      [firstName, lastName, shortName, role, section, isActive]
     );
     res.json({ id: result.insertId, message: 'Operator created' });
   } catch (error) {
@@ -46,10 +46,10 @@ router.post('/operators', async (req, res) => {
 router.put('/operators/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, middleName, lastName, shortName, role, sections, age, gender, isActive } = req.body;
+    const { firstName, lastName, shortName, role, section, isActive } = req.body;
     await db.query(
-      'UPDATE operators SET first_name=?, middle_name=?, last_name=?, short_name=?, role=?, sections=?, age=?, gender=?, is_active=? WHERE id=?',
-      [firstName, middleName, lastName, shortName, role, JSON.stringify(sections), age, gender, isActive, id]
+      'UPDATE operators SET first_name=?, last_name=?, short_name=?, role=?, section=?, is_active=? WHERE id=?',
+      [firstName, lastName, shortName, role, section, isActive, id]
     );
     res.json({ message: 'Operator updated' });
   } catch (error) {

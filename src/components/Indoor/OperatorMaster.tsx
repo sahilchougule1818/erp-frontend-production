@@ -23,13 +23,10 @@ export function OperatorMaster() {
   const [form, setForm] = useState({
     id: null,
     firstName: '',
-    middleName: '',
     lastName: '',
     shortName: '',
     role: '',
-    sections: [],
-    age: '',
-    gender: '',
+    section: '',
     isActive: true
   });
 
@@ -45,32 +42,23 @@ export function OperatorMaster() {
     }
   };
 
-  const generateShortName = (first: string, middle: string, last: string) => {
+  const generateShortName = (first: string, last: string) => {
     const f = first.trim().charAt(0).toUpperCase();
-    const m = middle.trim().charAt(0).toUpperCase();
     const l = last.trim().charAt(0).toUpperCase();
-    return m ? `${f}${m}${l}` : `${f}${l}`;
+    return `${f}${l}`;
   };
 
   const handleNameChange = (field: string, value: string) => {
     const updated = { ...form, [field]: value };
     const shortName = generateShortName(
       field === 'firstName' ? value : form.firstName,
-      field === 'middleName' ? value : form.middleName,
       field === 'lastName' ? value : form.lastName
     );
     setForm({ ...updated, shortName });
   };
 
-  const toggleSection = (section: string) => {
-    const sections = form.sections.includes(section)
-      ? form.sections.filter(s => s !== section)
-      : [...form.sections, section];
-    setForm({ ...form, sections });
-  };
-
   const handleSave = async () => {
-    if (!form.firstName || !form.lastName || !form.role || form.sections.length === 0) {
+    if (!form.firstName || !form.lastName || !form.role || !form.section) {
       return alert('Please fill all required fields');
     }
     try {
@@ -91,13 +79,10 @@ export function OperatorMaster() {
     setForm({
       id: op.id,
       firstName: op.first_name,
-      middleName: op.middle_name || '',
       lastName: op.last_name,
       shortName: op.short_name,
       role: op.role,
-      sections: op.sections || [],
-      age: String(op.age || ''),
-      gender: op.gender || '',
+      section: op.section || '',
       isActive: op.is_active
     });
     setModal(true);
@@ -116,7 +101,7 @@ export function OperatorMaster() {
 
   const handleExport = () => {
     if (!exportRange.from || !exportRange.to) return alert('Please select date range');
-    const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{color:#16a34a}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background-color:#f3f4f6}</style></head><body><h1>Operator Master</h1><p>Period: ${exportRange.from} to ${exportRange.to}</p><table><thead><tr><th>Short Name</th><th>Full Name</th><th>Role</th><th>Sections</th><th>Status</th></tr></thead><tbody>${operators.map(op => `<tr><td>${op.short_name}</td><td>${op.first_name} ${op.middle_name || ''} ${op.last_name}</td><td>${op.role}</td><td>${(op.sections || []).join(', ')}</td><td>${op.is_active ? 'Active' : 'Inactive'}</td></tr>`).join('')}</tbody></table></body></html>`;
+    const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{color:#16a34a}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background-color:#f3f4f6}</style></head><body><h1>Operator Master</h1><p>Period: ${exportRange.from} to ${exportRange.to}</p><table><thead><tr><th>Short Name</th><th>Full Name</th><th>Role</th><th>Section</th><th>Status</th></tr></thead><tbody>${operators.map(op => `<tr><td>${op.short_name}</td><td>${op.first_name} ${op.last_name}</td><td>${op.role}</td><td>${op.section || ''}</td><td>${op.is_active ? 'Active' : 'Inactive'}</td></tr>`).join('')}</tbody></table></body></html>`;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -133,13 +118,10 @@ export function OperatorMaster() {
     setForm({
       id: null,
       firstName: '',
-      middleName: '',
       lastName: '',
       shortName: '',
       role: '',
-      sections: [],
-      age: '',
-      gender: '',
+      section: '',
       isActive: true
     });
   };
@@ -191,14 +173,10 @@ export function OperatorMaster() {
                 <div className="space-y-4 py-4">
                   <div className="space-y-3">
                     <h3 className="font-semibold text-sm text-gray-700">Personal Information</h3>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label>First Name *</Label>
                         <Input value={form.firstName} onChange={(e) => handleNameChange('firstName', e.target.value)} />
-                      </div>
-                      <div>
-                        <Label>Middle Name</Label>
-                        <Input value={form.middleName} onChange={(e) => handleNameChange('middleName', e.target.value)} />
                       </div>
                       <div>
                         <Label>Last Name *</Label>
@@ -224,52 +202,28 @@ export function OperatorMaster() {
                         </Select>
                       </div>
                       <div>
-                        <Label>Working Sections *</Label>
-                        <div className="border rounded-md p-3 space-y-2 max-h-32 overflow-y-auto">
-                          {SECTIONS.map(section => (
-                            <label key={section} className="flex items-center space-x-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={form.sections.includes(section)}
-                                onChange={() => toggleSection(section)}
-                                className="w-4 h-4 text-green-600"
-                              />
-                              <span className="text-sm">{section}</span>
-                            </label>
-                          ))}
-                        </div>
+                        <Label>Section *</Label>
+                        <Select value={form.section} onValueChange={(v) => setForm({ ...form, section: v })}>
+                          <SelectTrigger><SelectValue placeholder="Select section" /></SelectTrigger>
+                          <SelectContent>
+                            {SECTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-sm text-gray-700">Additional Information</h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <Label>Age</Label>
-                        <Input type="number" value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} />
-                      </div>
-                      <div>
-                        <Label>Gender</Label>
-                        <Select value={form.gender} onValueChange={(v) => setForm({ ...form, gender: v })}>
-                          <SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Status</Label>
-                        <Select value={form.isActive ? 'active' : 'inactive'} onValueChange={(v) => setForm({ ...form, isActive: v === 'active' })}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="active">Active</SelectItem>
-                            <SelectItem value="inactive">Inactive</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <h3 className="font-semibold text-sm text-gray-700">Status</h3>
+                    <div>
+                      <Label>Status</Label>
+                      <Select value={form.isActive ? 'active' : 'inactive'} onValueChange={(v) => setForm({ ...form, isActive: v === 'active' })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
@@ -295,7 +249,7 @@ export function OperatorMaster() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Short Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Full Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Role</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Assigned Sections</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Section</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap">Status</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 whitespace-nowrap sticky right-0 bg-gray-50">Actions</th>
                 </tr>
@@ -307,15 +261,9 @@ export function OperatorMaster() {
                   operators.map(op => (
                     <tr key={op.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm font-bold whitespace-nowrap">{op.short_name}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{`${op.first_name} ${op.middle_name || ''} ${op.last_name}`.trim()}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{`${op.first_name} ${op.last_name}`}</td>
                       <td className="px-4 py-3 text-sm whitespace-nowrap">{op.role}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <div className="flex flex-wrap gap-1">
-                          {(op.sections || []).map((s: string) => (
-                            <Badge key={s} variant="outline" className="text-xs bg-green-50 text-green-700">{s}</Badge>
-                          ))}
-                        </div>
-                      </td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">{op.section || '-'}</td>
                       <td className="px-4 py-3 text-sm whitespace-nowrap">
                         <Badge className={op.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
                           {op.is_active ? 'Active' : 'Inactive'}

@@ -1,6 +1,10 @@
 node_modules/
 build/
-node_modules/
-build/
 dist/
 .DS_Store
+
+# Local environment (don't commit)
+.env
+
+# Production environment (commit this)
+# .env.production

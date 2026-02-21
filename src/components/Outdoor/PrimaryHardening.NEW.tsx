@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CRUDTable } from '../Indoor/shared/CRUDTable';
+import { Badge } from '../ui/badge';
 import { outdoorApi } from '../../services/outdoorApi';
 import { Plus, Trash2 } from 'lucide-react';
 import { useOutdoorBatches } from '../../hooks/useOutdoorBatches';
@@ -109,14 +110,13 @@ export function PrimaryHardening() {
   ];
 
   const customMapToPayload = (form: any) => {
-    // Clean tray data - remove any old IDs and send only necessary fields
     const cleanTrays = traySizes.map(tray => ({
       name: tray.name,
       cavityCount: tray.cavityCount,
       quantity: tray.quantity
     }));
     
-    const payload = {
+    return {
       date: form.date,
       cropName: form.cropName,
       batchName: form.batchName,
@@ -126,16 +126,13 @@ export function PrimaryHardening() {
       trays: cleanTrays,
       notes: form.notes
     };
-    console.log('Payload being sent:', payload);
-    return payload;
   };
 
   const customMapToForm = async (record: any) => {
     try {
-      // Fetch tray details from API
       const response = await outdoorApi.primaryHardening.getTrayDetails(record.id);
       const trayData = response.data.map((t: any) => ({
-        id: Date.now().toString() + Math.random(), // Generate new frontend ID
+        id: Date.now().toString() + Math.random(),
         name: t.tray_name,
         cavityCount: t.cavity_count,
         quantity: t.quantity
@@ -160,6 +157,9 @@ export function PrimaryHardening() {
     if (key === 'tray_count') {
       return record.tray_display || '0';
     }
+    if (key === 'batch_code') {
+      return <Badge variant="outline" className="bg-green-50 text-green-700">{value}</Badge>;
+    }
     if (key.includes('date') && value) {
       return value.split('T')[0];
     }
@@ -168,7 +168,7 @@ export function PrimaryHardening() {
 
   return (
     <CRUDTable
-      title="Primary Hardening"
+      title="Primary Hardening Register"
       fields={fields}
       columns={['Date', 'Crop Name', 'Batch Name', 'Tunnel', 'Tray Count', 'Plants', 'Workers', 'Waiting Period', 'Notes']}
       dataKeys={['date', 'crop_name', 'batch_code', 'tunnel', 'tray_count', 'plants', 'workers', 'waiting_period', 'notes']}
@@ -182,6 +182,7 @@ export function PrimaryHardening() {
       mapToPayload={customMapToPayload}
       renderCell={renderCell}
       filterFields={{ field1Key: 'crop_name', field1Label: 'Crop Name', field2Key: 'batch_code', field2Label: 'Batch Name' }}
+      section="Outdoor"
     />
   );
 }

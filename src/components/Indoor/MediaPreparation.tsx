@@ -3,31 +3,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { CRUDTable } from './shared/CRUDTable';
 import * as indoorApi from '../../services/indoorApi';
-
-const AUTOCLAVE_FIELDS = [
-  { key: 'date', label: 'Date', type: 'date' },
-  { key: 'mediaCode', label: 'Media Code', placeholder: 'MS-001' },
-  { key: 'operatorName', label: 'Operator Name' },
-  { key: 'typeOfMedia', label: 'Type of Media', placeholder: 'MS Medium' },
-  { key: 'autoclaveOnTime', label: 'Autoclave ON Time', type: 'time' },
-  { key: 'mediaLoadingTime', label: 'Media Loading Time', type: 'time' },
-  { key: 'pressureTime', label: 'Pressure Time', type: 'time' },
-  { key: 'offTime', label: 'Off Time', type: 'time' },
-  { key: 'openTime', label: 'Open Time', type: 'time' },
-  { key: 'mediaTotal', label: 'Media Total', placeholder: '3:00' },
-  { key: 'remark', label: 'Remark', type: 'textarea', span: 2 }
-];
-
-const BATCH_FIELDS = [
-  { key: 'date', label: 'Date', type: 'date' },
-  { key: 'mediaCode', label: 'Media Code', placeholder: 'MS-001' },
-  { key: 'operatorName', label: 'Operator Name' },
-  { key: 'quantity', label: 'Quantity', placeholder: '5L' },
-  { key: 'bottles', label: 'Bottles', type: 'number', placeholder: '120' },
-  { key: 'contamination', label: 'Contamination', type: 'textarea' }
-];
+import { useMediaCodes } from '../../hooks/useMediaCodes';
 
 function AutoclaveCycle() {
+  const { mediaCodes } = useMediaCodes();
+  
+  const AUTOCLAVE_FIELDS = [
+    { key: 'date', label: 'Date', type: 'date' },
+    { key: 'mediaCode', label: 'Media Code', type: 'select', options: mediaCodes },
+    { key: 'operatorName', label: 'Operator Name' },
+    { key: 'typeOfMedia', label: 'Type of Media', placeholder: 'MS Medium' },
+    { key: 'autoclaveOnTime', label: 'Autoclave ON Time', type: 'time' },
+    { key: 'mediaLoadingTime', label: 'Media Loading Time', type: 'time' },
+    { key: 'pressureTime', label: 'Pressure Time', type: 'time' },
+    { key: 'offTime', label: 'Off Time', type: 'time' },
+    { key: 'openTime', label: 'Open Time', type: 'time' },
+    { key: 'mediaTotal', label: 'Media Total', placeholder: '3:00' },
+    { key: 'remark', label: 'Remark', type: 'textarea', span: 2 }
+  ];
   return (
     <CRUDTable
       title=""
@@ -64,6 +57,14 @@ function AutoclaveCycle() {
 }
 
 function MediaBatch() {
+  const BATCH_FIELDS = [
+    { key: 'date', label: 'Date', type: 'date' },
+    { key: 'mediaCode', label: 'Media Code', placeholder: 'MS-001' },
+    { key: 'operatorName', label: 'Operator Name' },
+    { key: 'quantity', label: 'Quantity', placeholder: '5L' },
+    { key: 'bottles', label: 'Bottles', type: 'number', placeholder: '120' },
+    { key: 'contamination', label: 'Contamination', type: 'textarea' }
+  ];
   return (
     <CRUDTable
       title=""
