@@ -21,7 +21,7 @@ function CleaningRecordTable() {
       title=""
       fields={CLEANING_FIELDS}
       columns={['Date', 'Operator Name', 'Area Cleaned']}
-      dataKeys={['date', 'operator_name', 'area_cleaned']}
+      dataKeys={['date', 'operator_name', 'area']}
       api={{
         get: indoorApi.getCleaningRecord,
         create: indoorApi.createCleaningRecord,
@@ -32,7 +32,7 @@ function CleaningRecordTable() {
         id: r.id,
         date: r.date,
         operatorName: r.operator_name,
-        areaCleaned: r.area_cleaned
+        areaCleaned: r.area
       })}
       mapToPayload={(f) => ({
         date: f.date,
