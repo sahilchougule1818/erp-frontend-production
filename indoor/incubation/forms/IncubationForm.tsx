@@ -1,0 +1,188 @@
+import { useState, useEffect } from 'react';
+import { Label } from '../../shared/ui/label';
+import { Input } from '../../shared/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
+import { Button } from '../../shared/ui/button';
+import { Trash2, Info } from 'lucide-react';
+import { OperatorSelector } from '../../operators/components/OperatorSelector';
+import { ModalLayout } from '../../shared/components/ModalLayout';
+import apiClient from '../../shared/services/apiClient';
+
+interface IncubationFormProps {
+  initialData: any;
+  selectedBatch: any; // Change to selectedBatch to avoid conflicts
+  operators: any[];
+  onSubmit: (data: any) => void;
+  onDelete?: (id: number) => void;
+  onCancel: () => void;
+}
+
+const emptyForm = {
+  batchCode: '',
+  plantName: '',
+  noOfBottles: '',
+  mediaCode: '',
+  contamination: '0',
+  remainingBottles: '',
+  incubationPeriod: '',
+  temperature: '',
+  humidity: '',
+  lightIntensity: '',
+  operatorIds: []
+};
+
+export function IncubationForm({ initialData, selectedBatch, operators, onSubmit, onDelete, onCancel }: IncubationFormProps) {
+  const [form, setForm] = useState<any>(emptyForm);
+
+  const updateForm = (field: string, value: any) => {
+    setForm({ ...form, [field]: value });
+  };
+
+  useEffect(() => {
+    setForm({
+      ...emptyForm,
+      batchCode: selectedBatch?.batch_code || '',
+      plantName: selectedBatch?.plant_name || '',
+      noOfBottles: selectedBatch?.current_bottles_count || '',
+      mediaCode: selectedBatch?.media_code || '',
+      ...initialData
+    });
+    if (initialData?.id) fetchOperatorIds(initialData.id);
+  }, [initialData, selectedBatch]);
+
+const fetchOperatorIds = async (recordId: number) => {
+    try {
+      // Since operators are now included in the main record response,
+      // we can get them from the record data instead of a separate API call
+      const record = initialData;
+      if (record && record.operators) {
+        const operatorIds = record.operators.map((op: any) => parseInt(op.operator_id));
+        setForm((prev: any) => ({ ...prev, operatorIds }));
+      } else {
+        // Fallback to API call if operators not in record
+        const data = await apiClient.get(`/form-data/incubation/${recordId}/operators`);
+        setForm((prev: any) => ({ ...prev, operatorIds: data.map(id => parseInt(id)) }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch operator IDs:', err);
+    }
+  };
+
+  const handleContaminationChange = (value: string) => {
+    const contamination = parseInt(value) || 0;
+    setForm({ ...form, contamination: value, remainingBottles: (parseInt(form.noOfBottles) || 0) - contamination });
+  };
+
+  const handleSubmit = () => onSubmit({
+    id: form.id,
+    batchName: selectedBatch?.batch_code,
+    plantName: selectedBatch?.plant_name,
+    noOfBottles: selectedBatch?.current_bottles_count || form.noOfBottles,
+    mediaCode: form.mediaCode,
+    contaminationCount: form.contamination,
+    incubationPeriod: form.incubationPeriod,
+    temperature: form.temperature,
+    humidity: form.humidity,
+    lightIntensity: form.lightIntensity,
+    operatorIds: form.operatorIds
+  });
+
+  return (
+    <ModalLayout title={initialData ? 'Edit Incubation Record' : 'Record Incubation'}>
+      <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
+        <div className="space-y-3">
+          <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="text-center mb-3">
+              <div className="text-sm text-gray-600">Incubating Batch</div>
+              <div className="font-semibold text-amber-800 text-lg">{selectedBatch?.batch_code}</div>
+              <div className="text-sm text-gray-600 mt-1">{selectedBatch?.plant_name}</div>
+            </div>
+            {selectedBatch && (
+              <div className="flex items-center space-x-2 justify-center">
+                <Info className="w-5 h-5 text-amber-600" />
+                <div>
+                  <div className="font-semibold text-amber-800">
+                    Incubating at {selectedBatch.stage}
+                  </div>
+                  <div className="text-sm text-amber-700">
+                    Incubation keeps the batch in the same stage but changes phase to 'incubation'
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="font-semibold text-sm text-gray-700">Batch Details</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Plant Name</Label>
+              <Input value={selectedBatch?.plant_name || ''} readOnly className="bg-gray-100" />
+            </div>
+            <div className="space-y-2">
+              <Label>Current Bottles</Label>
+              <Input type="number" value={selectedBatch?.current_bottles_count || ''} readOnly className="bg-gray-100" />
+            </div>
+            <div className="col-span-2 space-y-2">
+              <Label>Media Code</Label>
+              <Input value={form.mediaCode || 'N/A'} readOnly className="bg-gray-100" />
+            </div>
+            {initialData && (
+              <>
+                <div className="space-y-2">
+                  <Label>Contamination Count</Label>
+                  <Input type="number" value={form.contamination} onChange={(e) => handleContaminationChange(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Remaining Bottles</Label>
+                  <Input type="number" value={form.remainingBottles} readOnly className="bg-gray-100" />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="font-semibold text-sm text-gray-700">Incubation Conditions</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Incubation Period (days)</Label>
+              <Input type="number" placeholder="7" value={form.incubationPeriod} onChange={(e) => updateForm('incubationPeriod', e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Temperature</Label>
+              <Input placeholder="25°C" value={form.temperature} onChange={(e) => updateForm('temperature', e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Humidity</Label>
+              <Input placeholder="70%" value={form.humidity} onChange={(e) => updateForm('humidity', e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Light Intensity</Label>
+              <Input placeholder="3000 lux" value={form.lightIntensity} onChange={(e) => updateForm('lightIntensity', e.target.value)} />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="font-semibold text-sm text-gray-700">Operator Assignment</h3>
+          <OperatorSelector operators={operators} selectedIds={form.operatorIds} onChange={(ids) => updateForm('operatorIds', ids)} />
+        </div>
+      </div>
+      
+      <div className="border-t px-6 py-4 bg-gray-50" style={{ flexShrink: 0 }}>
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={onCancel}>Cancel</Button>
+          {initialData && onDelete && (
+            <Button variant="destructive" onClick={() => onDelete(form.id)}>
+              <Trash2 className="w-4 h-4 mr-2" />Delete
+            </Button>
+          )}
+          <Button className="bg-green-600 hover:bg-green-700" onClick={handleSubmit}>Save</Button>
+        </div>
+      </div>
+    </ModalLayout>
+  );
+}

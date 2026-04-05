@@ -1,0 +1,85 @@
+import { useState, useEffect } from 'react';
+import { LayoutList } from 'lucide-react';
+import { Badge } from '../../shared/ui/badge';
+import { DataTable } from '../../shared/components/DataTable';
+import { inventoryApi } from '../../shared/services/inventoryApi';
+import { format } from 'date-fns';
+
+type Transaction = {
+  transaction_id: string;
+  item_id: number;
+  item_name: string;
+  unit: string;
+  type: 'purchase' | 'withdrawal' | 'usage';
+  quantity: number;
+  date: string;
+  current_stock: number;
+  notes?: string;
+};
+
+export function WithdrawalLog() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 10;
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
+  const fetchData = async () => {
+    try {
+      const res = await inventoryApi.stockUsage.getHistory(currentPage, limit);
+      const data = res?.data || res;
+      setTransactions(Array.isArray(data) ? data : []);
+      if (res?.pagination) {
+        const backendPage = res.pagination.currentPage || res.pagination.page || currentPage;
+        setCurrentPage(backendPage);
+        setTotalPages(res.pagination.totalPages);
+        setTotal(res.pagination.total);
+      }
+    } catch {
+      setTransactions([]);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const usageRecords = transactions.filter(t => t.type === 'withdrawal' || t.type === 'usage');
+
+  const columns = [
+    {
+      key: 'date',
+      label: 'Date',
+      render: (val: string) => format(new Date(val), 'dd MMM yyyy')
+    },
+    { key: 'item_name', label: 'Item' },
+    { key: 'quantity', label: 'Qty Used' },
+    { key: 'notes', label: 'Notes' },
+  ];
+
+  return (
+    <div className="p-6">
+      <DataTable
+        title="Withdrawal Log"
+        columns={columns}
+        records={usageRecords}
+        filterConfig={{
+          filter1Key: 'item_name',
+          filter1Label: 'Search item...',
+        }}
+        exportFileName="stock_usage_log"
+        pagination={{
+          currentPage,
+          totalPages,
+          total,
+          limit,
+          onPageChange: handlePageChange
+        }}
+      />
+    </div>
+  );
+}

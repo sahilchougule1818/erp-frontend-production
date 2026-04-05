@@ -1,0 +1,6 @@
+# ERP Project Rules
+
+## Module Modification Constraints
+- **NO EDITS** are allowed in the `indoor` and `outdoor` modules. These are considered finalized and stable.
+- All development and maintenance should focus on the `sales` module and other requested features outside these two protected modules.
+- If a change is requested that seems to require modification of `indoor` or `outdoor`, it should be approached via integration layers or external services rather than direct modification of those modules.

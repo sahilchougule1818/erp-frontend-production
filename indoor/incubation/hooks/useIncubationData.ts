@@ -1,0 +1,45 @@
+import { useState, useEffect } from 'react';
+import { indoorApi } from '../../indoorApi';
+
+export function useIncubationData() {
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 10;
+
+  useEffect(() => {
+    fetchRecords(currentPage);
+  }, [currentPage]);
+
+  const fetchRecords = async (page: number) => {
+    setLoading(true);
+    try {
+      const res = await indoorApi.phaseViews.getIncubation(page, limit);
+      const data = (res as any)?.data || [];
+      setRecords(data);
+      const pagination = (res as any)?.pagination;
+      setTotalPages(pagination?.totalPages || (res as any)?.totalPages || 1);
+      setTotal(pagination?.total || (res as any)?.total || data.length);
+    } catch (err) {
+      console.error('Failed to fetch records:', err);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { 
+    records, 
+    loading, 
+    refetch: () => fetchRecords(currentPage),
+    pagination: {
+      currentPage,
+      totalPages,
+      total,
+      limit,
+      onPageChange: setCurrentPage
+    }
+  };
+}

@@ -1,0 +1,154 @@
+import React, { useState } from 'react';
+import { useBankAccounts } from '../../shared/hooks/useSalesApi';
+import { Button } from '../../shared/ui/button';
+import { Badge } from '../../shared/ui/badge';
+import { BankAccount, bankAccountsApi } from '../../shared/services/salesApi';
+import { Plus, Pencil, Trash2, Lock } from 'lucide-react';
+import { DataTable } from '../../shared/components/DataTable';
+import { useNotify } from '../../shared/hooks/useNotify';
+import { cn } from '../../shared/ui/utils';
+import CreateBankAccountDialog from '../components/CreateBankAccountDialog';
+import EditBankAccountDialog from '../components/EditBankAccountDialog';
+
+const BankAccountSection: React.FC = () => {
+  const { accounts, refetch } = useBankAccounts(true);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<BankAccount | null>(null);
+  const notify = useNotify();
+
+  const hasTransactions = (a: BankAccount) =>
+    Number(a.total_credits || 0) > 0 || Number(a.total_debits || 0) > 0;
+
+  const handleDelete = async (account: BankAccount) => {
+    if (!window.confirm(`Permanently delete "${account.account_name}"?`)) return;
+    try {
+      await bankAccountsApi.delete(account.id);
+      notify.success('Account deleted');
+      refetch();
+    } catch (err: any) {
+      notify.error(err.message || 'Delete failed');
+    }
+  };
+
+  const columns = [
+    {
+      key: 'account_name',
+      label: 'Account Name',
+      render: (val: string) => val
+    },
+    {
+      key: 'bank_name',
+      label: 'Bank',
+      render: (val: string) => val
+    },
+    {
+      key: 'branch',
+      label: 'Branch',
+      render: (val: string) => val || 'Main Branch'
+    },
+    {
+      key: 'account_number',
+      label: 'Account No.',
+      render: (val: string) => <span className="font-mono">{val}</span>
+    },
+    {
+      key: 'ifsc_code',
+      label: 'IFSC',
+      render: (val: string) => val ? <span className="font-mono">{val}</span> : '—'
+    },
+    {
+      key: 'total_credits',
+      label: 'Funds In (₹)',
+      render: (val: number) => `₹${Number(val).toLocaleString()}`
+    },
+    {
+      key: 'total_debits',
+      label: 'Funds Out (₹)',
+      render: (val: number) => `₹${Number(val).toLocaleString()}`
+    },
+    {
+      key: 'is_active',
+      label: 'Status',
+      render: (val: boolean) => (
+        <Badge variant="outline">
+          {val ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+    {
+      key: '_actions',
+      label: 'Actions',
+      render: (_: any, record: BankAccount) => {
+        const locked = hasTransactions(record);
+        return (
+          <div className="flex items-center gap-1">
+            {locked ? (
+              <span className="flex items-center gap-1 text-xs text-gray-400">
+                <Lock className="h-3 w-3" /> Locked
+              </span>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingAccount(record)}
+                title="Edit account"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDelete(record)}
+              title="Delete account"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        );
+      }
+    }
+  ];
+
+  return (
+    <div className="p-6">
+      <DataTable
+        title="Bank Account Master"
+        columns={columns}
+        records={accounts}
+        filterConfig={{
+          filter1Key: 'bank_name',
+          filter1Label: 'Bank',
+          filter2Key: 'account_name',
+          filter2Label: 'Search Account'
+        }}
+        addButton={
+          <Button
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white h-9"
+            onClick={() => setIsCreateOpen(true)}
+          >
+            <Plus className="w-4 h-4 mr-1.5" /> Register Account
+          </Button>
+        }
+        exportFileName="bank_accounts"
+      />
+
+      <CreateBankAccountDialog
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        onSuccess={refetch}
+      />
+
+      <EditBankAccountDialog
+        account={editingAccount}
+        open={!!editingAccount}
+        onOpenChange={(v) => { if (!v) setEditingAccount(null); }}
+        onSuccess={refetch}
+      />
+    </div>
+  );
+};
+
+export default BankAccountSection;
+export { BankAccountSection };
