@@ -64,6 +64,7 @@ export function CleaningRecord() {
             records={cleaningRecords}
             exportFileName="cleaning_records"
             onEdit={(record) => setEditingAssignment({ ...record, type: 'standard' })}
+            onDelete={(record) => { setDeleteId(record.id); setDeleteConfirm(true); }}
             filterConfig={{
               filter1Key: 'date',
               filter1Label: 'Date',
@@ -86,6 +87,7 @@ export function CleaningRecord() {
             records={deepCleaningRecords}
             exportFileName="deep_cleaning_records"
             onEdit={(record) => setEditingAssignment({ ...record, type: 'deep' })}
+            onDelete={(record) => { setDeleteId(record.id); setDeleteConfirm(true); }}
             filterConfig={{
               filter1Key: 'date',
               filter1Label: 'Date',
