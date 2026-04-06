@@ -52,6 +52,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
   const quantityNum = parseFloat(formValues.quantity) || 0;
   const hasStockError =
     isInstantSell && isStockFulfillment && bCode && availableStock !== null && quantityNum > availableStock;
+  const missingDeliveryDate = !isInstantSell && !formValues.expected_delivery_date;
 
   const fields: FieldConfig[] = [
     // ── Customer ─────────────────────────────────────────────────────────────
@@ -223,11 +224,12 @@ export const CreateBookingDialog: React.FC<Props> = ({
         );
       },
     },
-    // ── Expected Delivery Date — hidden for instant sells ─────────────────────
+    // ── Expected Delivery Date — required for pre-bookings ────────────────────
     {
       name: 'expected_delivery_date',
       label: 'Expected Delivery Date',
       type: 'date',
+      required: true,
       gridColumn: 'col-span-2',
       showWhen: (fv) => !Boolean(fv.is_instant_sell),
     },
@@ -270,7 +272,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
       onClose={() => { setErrorMessage(null); onOpenChange(false); }}
       onFormChange={setFormValues}
       submitLabel={isSubmitting ? 'Creating...' : 'Complete Booking'}
-      submitDisabled={Boolean(hasStockError) || isSubmitting}
+      submitDisabled={Boolean(hasStockError) || Boolean(missingDeliveryDate) || isSubmitting}
       maxWidth="max-w-2xl"
       bodyPrefix={
         errorMessage ? (

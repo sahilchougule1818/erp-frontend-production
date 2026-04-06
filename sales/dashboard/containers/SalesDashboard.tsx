@@ -1,7 +1,7 @@
 import { Badge } from '../../shared/ui/badge';
 import { Package, ArrowUp } from 'lucide-react';
 import { DataTable } from '../../shared/components/DataTable';
-import { useIndoorStock, useOutdoorStock } from '../../shared/hooks/useSalesApi';
+import { useIndoorStock, useOutdoorStock, useDashboardStats } from '../../shared/hooks/useSalesApi';
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
 
@@ -46,9 +46,10 @@ function SectionHeader({ title, sub }: { title: string; sub: string }) {
 export function SalesDashboard() {
   const { stock: indoorStock } = useIndoorStock();
   const { stock: outdoorStock } = useOutdoorStock();
+  const { stats } = useDashboardStats();
 
-  const totalIndoorBottles = indoorStock.reduce((a, b) => a + (Number(b.bookable_bottles) || 0), 0);
-  const totalOutdoorPlants = outdoorStock.reduce((a, b) => a + (Number(b.bookable_plants) || 0), 0);
+  const totalIndoorBottles = Number(stats?.total_indoor_bottles) || 0;
+  const totalOutdoorPlants = Number(stats?.total_outdoor_plants) || 0;
 
   // ── Columns ──────────────────────────────────────────────────────────────
 

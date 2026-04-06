@@ -163,8 +163,12 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
               />
             </div>
             {errorMessage && (
-              <div className="bg-red-100 border border-red-300 rounded p-2 text-xs text-red-700">
-                <AlertTriangle className="h-3 w-3 inline mr-1" />{errorMessage}
+              <div className="bg-red-100 border border-red-300 rounded p-2 text-xs text-red-700 flex items-start gap-1">
+                <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
+                <span className="flex-1">{errorMessage}</span>
+                <button type="button" onClick={() => setErrorMessage(null)} className="text-red-400 hover:text-red-700 ml-1 shrink-0">
+                  <X className="h-3 w-3" />
+                </button>
               </div>
             )}
           </div>
@@ -191,7 +195,10 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
         {errorMessage && (
           <div className="bg-red-50 border border-red-200 rounded p-3 text-sm text-red-700 flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
-            <span>{errorMessage}</span>
+            <span className="flex-1">{errorMessage}</span>
+            <button type="button" onClick={() => setErrorMessage(null)} className="text-red-400 hover:text-red-700 shrink-0">
+              <X className="h-4 w-4" />
+            </button>
           </div>
         )}
 
@@ -457,7 +464,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
               <Button
                 variant="outline" size="sm"
                 className="text-red-600 border-red-200 hover:bg-red-50 text-xs"
-                onClick={() => setShowCancelConfirm(true)}
+                onClick={() => { setErrorMessage(null); setShowCancelConfirm(true); }}
               >
                 <XCircle className="h-3 w-3 mr-1" /> Cancel
               </Button>

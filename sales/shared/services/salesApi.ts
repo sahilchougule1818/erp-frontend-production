@@ -211,6 +211,8 @@ export type DashboardStats = {
   net_inflow: number;
   net_outflow: number;
   net_pending: number;
+  total_indoor_bottles: number;
+  total_outdoor_plants: number;
 };
 
 export type PaginatedResponse<T> = {
