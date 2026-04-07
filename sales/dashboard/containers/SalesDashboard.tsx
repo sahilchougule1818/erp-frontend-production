@@ -1,4 +1,3 @@
-import { Badge } from '../../shared/ui/badge';
 import { Package, ArrowUp } from 'lucide-react';
 import { DataTable } from '../../shared/components/DataTable';
 import { useIndoorStock, useOutdoorStock, useDashboardStats } from '../../shared/hooks/useSalesApi';
@@ -54,18 +53,18 @@ export function SalesDashboard() {
   // ── Columns ──────────────────────────────────────────────────────────────
 
   const indoorColumns = [
-    { key: 'batch_code', label: 'Batch Code', render: (val: string) => <span className="font-semibold text-blue-600">{val}</span> },
+    { key: 'batch_code', label: 'Batch Code' },
     { key: 'plant_name', label: 'Plant Name' },
     { key: 'stage', label: 'Stage' },
-    { key: 'bookable_bottles', label: 'Bookable Bottles', render: (val: number) => <span className="font-bold text-green-600">{Number(val).toLocaleString()}</span> },
-    { key: 'age_days', label: 'Age (days)', render: (val: any) => <span className="font-medium text-orange-600">{val || 0}</span> }
+    { key: 'bookable_bottles', label: 'Bookable Bottles', render: (val: number) => Number(val).toLocaleString() },
+    { key: 'age_days', label: 'Age (days)', render: (val: any) => val || 0 }
   ];
 
   const outdoorColumns = [
-    { key: 'batch_code', label: 'Batch Code', render: (val: string) => <span className="font-semibold text-blue-600">{val}</span> },
+    { key: 'batch_code', label: 'Batch Code' },
     { key: 'plant_name', label: 'Plant Name' },
-    { key: 'bookable_plants', label: 'Bookable Plants', render: (val: number) => <span className="font-bold text-green-600">{Number(val).toLocaleString()}</span> },
-    { key: 'age_days', label: 'Age (days)', render: (val: any) => <span className="font-medium text-orange-600">{val || 0}</span> }
+    { key: 'bookable_plants', label: 'Bookable Plants', render: (val: number) => Number(val).toLocaleString() },
+    { key: 'age_days', label: 'Age (days)', render: (val: any) => val || 0 }
   ];
 
   return (

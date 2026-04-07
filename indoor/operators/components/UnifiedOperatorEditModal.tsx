@@ -88,7 +88,6 @@ export function UnifiedOperatorEditModal({
           short_name: a.short_name,
           first_name: a.first_name,
           last_name: a.last_name,
-          role: a.role,
           assignmentId: a.id
         })));
       } catch (error: any) {
@@ -112,8 +111,7 @@ export function UnifiedOperatorEditModal({
         id: operator.id,
         short_name: operator.short_name,
         first_name: operator.first_name,
-        last_name: operator.last_name,
-        role: 'operator'
+        last_name: operator.last_name
       }]);
     }
   };
@@ -142,7 +140,6 @@ export function UnifiedOperatorEditModal({
             cleaning_id,
             cleaning_type,
             operator_id: op.id,
-            role: op.role,
             activity_type: activityType,
             batch_code: batchCode,
             stage: stage

@@ -136,11 +136,7 @@ const CustomerSection: React.FC = () => {
   const isFrozen = (b: any) => b.delivery_status === 'Cancelled';
   
   const columns = [
-    {
-      key: 'booking_id',
-      label: 'Booking ID',
-      render: (val: string) => <span className="font-mono">{val}</span>
-    },
+    { key: 'booking_id', label: 'Booking ID' },
     {
       key: 'created_at',
       label: 'Created Date',
@@ -148,26 +144,10 @@ const CustomerSection: React.FC = () => {
         ? new Date(val).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
         : '—'
     },
-    {
-      key: 'customer_id',
-      label: 'Customer ID',
-      render: (val: string) => <span className="font-mono">{val}</span>
-    },
-    {
-      key: 'customer_name',
-      label: 'Customer Name',
-      render: (val: string) => val
-    },
-    {
-      key: 'plant_name',
-      label: 'Plant',
-      render: (val: string) => val
-    },
-    {
-      key: 'quantity',
-      label: 'Qty',
-      render: (val: number) => val
-    },
+    { key: 'customer_id', label: 'Customer ID' },
+    { key: 'customer_name', label: 'Customer Name' },
+    { key: 'plant_name', label: 'Plant' },
+    { key: 'quantity', label: 'Qty' },
     {
       key: 'amount_paid_at_booking',
       label: 'Amt. at Booking',
@@ -220,28 +200,20 @@ const CustomerSection: React.FC = () => {
           'Partially Paid': 'bg-blue-100 text-blue-700',
           'Pending': 'bg-amber-100 text-amber-700',
         };
-        return (
-          <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>
-            {val}
-          </Badge>
-        );
+        return <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>{val}</Badge>;
       }
     },
     {
       key: 'delivery_status',
       label: 'Delivery',
-      render: (val: string, row: any) => {
+      render: (val: string) => {
         const styles: any = {
           'Pending': 'bg-amber-100 text-amber-700',
           'Ready': 'bg-blue-100 text-blue-700',
           'Delivered': 'bg-green-100 text-green-700',
           'Cancelled': 'bg-red-100 text-red-700',
         };
-        return (
-          <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>
-            {val || 'Pending'}
-          </Badge>
-        );
+        return <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>{val || 'Pending'}</Badge>;
       }
     },
   ];

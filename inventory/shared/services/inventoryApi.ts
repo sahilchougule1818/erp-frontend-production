@@ -4,6 +4,7 @@ export const inventoryApi = {
   // Item Master
   items: {
     getAll: (page?: number, limit?: number) => apiClient.get(`/inventory/items?page=${page || 1}&limit=${limit || 10}`),
+    getDashboardStats: () => apiClient.get('/inventory/items/dashboard-stats'),
     create: (data: any) => apiClient.post('/inventory/items', data),
     update: (id: number, data: any) => apiClient.put(`/inventory/items/${id}`, data),
     delete: (id: number) => apiClient.delete(`/inventory/items/${id}`),

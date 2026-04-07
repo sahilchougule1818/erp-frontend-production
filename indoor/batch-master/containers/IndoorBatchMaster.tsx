@@ -130,7 +130,7 @@ const IndoorBatchMaster: React.FC = () => {
       currentBottles: data.currentBottles,
       newBottlesCount: parseInt(data.noOfBottles) || 0,
       notes: data.notes || '',
-      operators: data.operatorIds.map((id: any) => ({ id: parseInt(id), role: 'operator' }))
+      operators: data.operatorIds.map((id: any) => ({ id: parseInt(id) }))
     };
     
     const result = await recordSubculture(selectedBatch.batch_code, apiData);
@@ -152,7 +152,7 @@ const IndoorBatchMaster: React.FC = () => {
       humidity: data.humidity ? parseFloat(data.humidity) : undefined,
       lightIntensity: data.lightIntensity ? parseFloat(data.lightIntensity) : undefined,
       contaminationCount: data.contaminationCount ? parseInt(data.contaminationCount) : 0,
-      operators: data.operatorIds ? data.operatorIds.map((id: any) => ({ id: parseInt(id), role: 'operator' })) : []
+      operators: data.operatorIds ? data.operatorIds.map((id: any) => ({ id: parseInt(id) })) : []
     };
     
     const result = await recordIncubation(selectedBatch.batch_code, apiData);

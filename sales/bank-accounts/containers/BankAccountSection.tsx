@@ -31,30 +31,18 @@ const BankAccountSection: React.FC = () => {
   };
 
   const columns = [
-    {
-      key: 'account_name',
-      label: 'Account Name',
-      render: (val: string) => val
-    },
-    {
-      key: 'bank_name',
-      label: 'Bank',
-      render: (val: string) => val
-    },
+    { key: 'account_name', label: 'Account Name' },
+    { key: 'bank_name', label: 'Bank' },
     {
       key: 'branch',
       label: 'Branch',
       render: (val: string) => val || 'Main Branch'
     },
-    {
-      key: 'account_number',
-      label: 'Account No.',
-      render: (val: string) => <span className="font-mono">{val}</span>
-    },
+    { key: 'account_number', label: 'Account No.' },
     {
       key: 'ifsc_code',
       label: 'IFSC',
-      render: (val: string) => val ? <span className="font-mono">{val}</span> : '—'
+      render: (val: string) => val || '—'
     },
     {
       key: 'total_credits',

@@ -246,6 +246,5 @@ function _mapWorkers(selectedIds: number[], workers: Worker[]) {
       id: w.id,
       name: w.short_name,
       short_name: w.short_name,
-      role: w.role ?? 'worker',
     }));
 }

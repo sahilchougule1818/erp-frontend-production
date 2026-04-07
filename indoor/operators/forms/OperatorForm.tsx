@@ -2,19 +2,12 @@ import { useState, useEffect } from 'react';
 import { Label } from '../../shared/ui/label';
 import { Input } from '../../shared/ui/input';
 import { Button } from '../../shared/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
 import { Trash2 } from 'lucide-react';
 
-const ROLES = ['Lab Assistant', 'Senior Technician', 'Supervisor', 'QC Officer'];
-const SECTIONS = ['Media Preparation', 'Subculturing', 'Incubation', 'Cleaning Record', 'Sampling'];
-
 const INITIAL_FORM = {
-  id: null,
+  id: null as number | null,
   firstName: '',
   lastName: '',
-  shortName: '',
-  role: '',
-  section: '',
   isActive: true
 };
 
@@ -34,9 +27,6 @@ export function OperatorForm({ initialData, onSubmit, onDelete, onCancel }: Oper
         id: initialData.id,
         firstName: initialData.first_name,
         lastName: initialData.last_name,
-        shortName: initialData.short_name,
-        role: initialData.role,
-        section: initialData.section || '',
         isActive: initialData.is_active
       });
     } else {
@@ -44,95 +34,38 @@ export function OperatorForm({ initialData, onSubmit, onDelete, onCancel }: Oper
     }
   }, [initialData]);
 
-  const generateShortName = (first: string, last: string) => {
-    return `${first.trim().charAt(0).toUpperCase()}${last.trim().charAt(0).toUpperCase()}`;
-  };
-
-  const handleFormChange = (field: string, value: string | boolean) => {
-    const updated = { ...form, [field]: value };
-    if (field === 'firstName' || field === 'lastName') {
-      updated.shortName = generateShortName(
-        field === 'firstName' ? value as string : form.firstName,
-        field === 'lastName' ? value as string : form.lastName
-      );
-    }
-    setForm(updated);
-  };
-
   const handleSubmit = () => {
-    const { firstName, lastName, role, section } = form;
-    if (!firstName || !lastName || !role || !section) {
-      return alert('Please fill all required fields');
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      return alert('Please enter both first name and last name');
     }
     onSubmit(form);
   };
 
   return (
-    <div className="space-y-4 py-4">
+    <div className="space-y-4 py-2">
       <div className="space-y-3">
-        <h3 className="font-semibold text-sm text-gray-700">Personal Information</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>First Name *</Label>
-            <Input value={form.firstName} onChange={(e) => handleFormChange('firstName', e.target.value)} />
+            <Input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} placeholder="First name" />
           </div>
           <div>
             <Label>Last Name *</Label>
-            <Input value={form.lastName} onChange={(e) => handleFormChange('lastName', e.target.value)} />
-          </div>
-        </div>
-        <div>
-          <Label>Short Name (Auto-generated)</Label>
-          <Input value={form.shortName} disabled className="bg-gray-50 font-bold" />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="font-semibold text-sm text-gray-700">Professional Information</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Role *</Label>
-            <Select value={form.role} onValueChange={(v) => handleFormChange('role', v)}>
-              <SelectTrigger><SelectValue placeholder="Select role" /></SelectTrigger>
-              <SelectContent>
-                {ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Section *</Label>
-            <Select value={form.section} onValueChange={(v) => handleFormChange('section', v)}>
-              <SelectTrigger><SelectValue placeholder="Select section" /></SelectTrigger>
-              <SelectContent>
-                {SECTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} placeholder="Last name" />
           </div>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="font-semibold text-sm text-gray-700">Status</h3>
-        <div>
-          <Label>Status</Label>
-          <Select value={form.isActive ? 'active' : 'inactive'} onValueChange={(v) => handleFormChange('isActive', v === 'active')}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-3">
+      <div className="flex justify-end gap-3 pt-2">
         <Button variant="outline" onClick={onCancel}>Cancel</Button>
         {form.id && onDelete && (
-          <Button variant="destructive" onClick={() => onDelete(form.id)}>
+          <Button variant="destructive" onClick={() => onDelete(form.id!)}>
             <Trash2 className="w-4 h-4 mr-2" />Delete
           </Button>
         )}
-        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSubmit}>Save</Button>
+        <Button style={{ backgroundColor: '#4f46e5', color: '#fff' }} className="hover:opacity-90" onClick={handleSubmit}>
+          {form.id ? 'Update' : 'Register'}
+        </Button>
       </div>
     </div>
   );

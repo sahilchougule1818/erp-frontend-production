@@ -23,8 +23,7 @@ interface StagedWorker {
   short_name: string;
   first_name: string;
   last_name: string;
-  role: string;
-  assignmentId?: number; // Present if already in DB
+  assignmentId?: number;
 }
 
 export function UnifiedEditModal({
@@ -75,7 +74,6 @@ export function UnifiedEditModal({
           short_name: a.worker_shortname,
           first_name: a.first_name,
           last_name: a.last_name,
-          role: a.role,
           assignmentId: a.id
         })));
       } catch (error: any) {
@@ -101,8 +99,7 @@ export function UnifiedEditModal({
       id: worker.id,
       short_name: worker.short_name,
       first_name: worker.first_name,
-      last_name: worker.last_name,
-      role: 'worker' // Default role
+      last_name: worker.last_name
     }]);
   };
 
@@ -134,7 +131,6 @@ export function UnifiedEditModal({
           additions.map(w => outdoorApi.workers.addAssignment({
             event_code: eventCode,
             worker_id: w.id,
-            role: w.role,
             tunnel,
             phase,
             activity_type: activityType,

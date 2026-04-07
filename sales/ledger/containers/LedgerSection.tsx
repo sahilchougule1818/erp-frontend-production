@@ -36,9 +36,9 @@ const LedgerSection: React.FC = () => {
     refetch(page);
   };
 
-  const netInflow  = entries.reduce((s, e) => s + Number(e.credit_amount || 0), 0);
-  const netOutflow = entries.reduce((s, e) => s + Number(e.debit_amount  || 0), 0);
-  const netPending = stats ? Number(stats.net_pending) : 0;
+  const netInflow  = Number(stats?.net_inflow)  || 0;
+  const netOutflow = Number(stats?.net_outflow) || 0;
+  const netPending = Number(stats?.net_pending) || 0;
 
   const fmt = (n: number) =>
     n >= 1_00_000 ? `₹${(n / 1_00_000).toFixed(1)}L`
@@ -56,11 +56,7 @@ const LedgerSection: React.FC = () => {
       label: 'Particular',
       render: (val: string) => {
         const meta = ENTRY_TYPE_LABELS[val] ?? { label: val, color: 'bg-slate-100 text-slate-600' };
-        return (
-          <Badge className={meta.color}>
-            {meta.label}
-          </Badge>
-        );
+        return <Badge className={meta.color}>{meta.label}</Badge>;
       }
     },
     {
@@ -71,12 +67,12 @@ const LedgerSection: React.FC = () => {
     {
       key: 'booking_id',
       label: 'Booking ID',
-      render: (val: string) => val ? <span className="font-mono text-xs">{val}</span> : '—'
+      render: (val: string) => val || '—'
     },
     {
       key: 'transaction_number',
       label: 'System TXN No.',
-      render: (val: string) => <span className="font-mono text-xs">{val || '—'}</span>
+      render: (val: string) => val || '—'
     },
     {
       key: 'payment_reference',
@@ -86,26 +82,22 @@ const LedgerSection: React.FC = () => {
     {
       key: 'payment_method',
       label: 'Method',
-      render: (val: string) => (
-        <Badge variant="outline">
-          {val || 'Cash'}
-        </Badge>
-      )
+      render: (val: string) => val || 'Cash'
     },
     {
       key: 'bank_account_name',
       label: 'Account',
-      render: (val: string) => val || 'Cash'
+      render: (val: string) => val || '—'
     },
     {
       key: 'refund_id',
       label: 'Refund ID',
-      render: (val: string) => val ? <span className="font-mono text-xs">{val}</span> : '—'
+      render: (val: string) => val || '—'
     },
     {
       key: 'stock_purchase_id',
       label: 'Purchase ID',
-      render: (val: string) => val ? <span className="font-mono text-xs">{val}</span> : '—'
+      render: (val: string) => val || '—'
     },
     {
       key: 'debit_amount',

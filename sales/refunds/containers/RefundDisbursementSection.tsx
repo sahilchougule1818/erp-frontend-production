@@ -96,21 +96,9 @@ const RefundDisbursementSection: React.FC = () => {
   };
 
   const columns = [
-    {
-      key: 'refund_id',
-      label: 'Refund ID',
-      render: (val: string) => <span className="font-mono">{val}</span>
-    },
-    {
-      key: 'booking_id',
-      label: 'Booking ID',
-      render: (val: string) => <span className="font-mono">{val}</span>
-    },
-    {
-      key: 'customer_name',
-      label: 'Customer',
-      render: (val: string) => val
-    },
+    { key: 'refund_id', label: 'Refund ID' },
+    { key: 'booking_id', label: 'Booking ID' },
+    { key: 'customer_name', label: 'Customer' },
     {
       key: 'phone_number',
       label: 'Phone',
@@ -150,11 +138,7 @@ const RefundDisbursementSection: React.FC = () => {
           'Partial': 'bg-blue-100 text-blue-700',
           'Completed': 'bg-emerald-100 text-emerald-700',
         };
-        return (
-          <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>
-            {val}
-          </Badge>
-        );
+        return <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>{val}</Badge>;
       }
     },
     {

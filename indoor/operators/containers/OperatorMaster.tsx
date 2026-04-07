@@ -1,14 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../../shared/ui/button';
-import { 
-  Users, 
-  UserPlus,
-  Trash2, 
-  Edit2, 
-  History,
-  Plus
-} from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { UserPlus, Trash2, Edit2, Plus } from 'lucide-react';
+import { ModalLayout } from '../../shared/components/ModalLayout';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { Badge } from '../../shared/ui/badge';
@@ -76,32 +69,16 @@ export function OperatorMaster() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center gap-4 pb-2">
-        <div className="p-2.5 bg-indigo-600 rounded-xl shadow-md shadow-indigo-100/50">
-          <Users className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900">
-            Operator Master
-          </h1>
-          <p className="text-slate-500 text-sm font-bold uppercase tracking-wider opacity-70">
-            Workforce Management & Activity Monitoring
-          </p>
-        </div>
-      </div>
+      <h1 className="text-3xl font-black tracking-tight text-slate-900 pb-2">
+        Operator Master
+      </h1>
 
       <Separator className="bg-slate-200/60" />
 
       <Tabs defaultValue="master" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="master">
-            <Users className="w-4 h-4" />
-            Operator Master
-          </TabsTrigger>
-          <TabsTrigger value="logs">
-            <History className="w-4 h-4" />
-            Activity Monitoring
-          </TabsTrigger>
+          <TabsTrigger value="master">Operator Master</TabsTrigger>
+          <TabsTrigger value="logs">Activity Monitoring</TabsTrigger>
         </TabsList>
 
         <TabsContent value="master">
@@ -109,37 +86,28 @@ export function OperatorMaster() {
             title="Operator Directory"
             records={operators}
             columns={[
-              { 
-                key: 'short_name', 
-                label: 'Operator', 
-                render: (val, op) => (
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold border border-indigo-100">
-                      {val}
-                    </div>
-                    <div>
-                      <div className="font-bold text-slate-900 text-base">{op.first_name} {op.last_name}</div>
-                      <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold opacity-70">ID: {op.id}</div>
-                    </div>
-                  </div>
-                )
+              {
+                key: 'id',
+                label: 'ID',
+                render: (val) => <span className="text-xs text-slate-500 font-mono">{val}</span>
               },
-              { 
-                key: 'role', 
-                label: 'Role',
-                render: (val) => (
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-100 px-3 py-1 font-medium capitalize">
-                    {val}
-                  </Badge>
-                )
+              {
+                key: 'short_name',
+                label: 'Short Name',
+                render: (val) => <span className="font-bold text-indigo-600">{val}</span>
               },
-              { 
-                key: 'is_active', 
+              {
+                key: 'full_name',
+                label: 'Full Name',
+                render: (_: any, op: any) => <span className="font-medium text-slate-900">{op.first_name} {op.last_name}</span>
+              },
+              {
+                key: 'is_active',
                 label: 'Status',
                 render: (val) => (
-                  <Badge className={val ? "bg-emerald-50 text-emerald-700 border-emerald-100 px-3 py-1 font-bold" : "bg-slate-100 text-slate-600 border-slate-200 px-3 py-1 font-bold"}>
+                  <span className={val ? "text-emerald-700 font-semibold" : "text-slate-500 font-semibold"}>
                     {val ? 'Active' : 'Inactive'}
-                  </Badge>
+                  </span>
                 )
               }
             ]}
@@ -148,7 +116,7 @@ export function OperatorMaster() {
             exportFileName="operator_directory"
             pagination={operatorPagination}
             addButton={
-              <Button onClick={() => toggleModal('operator', true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-100 rounded-xl px-4 py-2 flex items-center gap-2 transition-all hover:scale-105 active:scale-95">
+              <Button onClick={() => toggleModal('operator', true)} style={{ backgroundColor: '#4f46e5', color: '#fff' }} className="font-bold shadow-md shadow-indigo-100 rounded-xl px-4 py-2 flex items-center gap-2 transition-all hover:opacity-90 active:scale-95">
                 <Plus className="w-4 h-4" />
                 Register Operator
               </Button>
@@ -226,23 +194,22 @@ export function OperatorMaster() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={modals.operator} onOpenChange={(open: boolean) => toggleModal('operator', open)}>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl border-none shadow-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl font-black tracking-tight text-slate-900">
-              {selectedOperator ? <Edit2 className="w-6 h-6 text-indigo-600" /> : <UserPlus className="w-6 h-6 text-indigo-600" />}
-              {selectedOperator ? 'Edit Profile' : 'Register Operator'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="pt-2">
-            <OperatorForm 
-              initialData={selectedOperator} 
+      {modals.operator && (
+        <ModalLayout
+          title={selectedOperator ? 'Edit Profile' : 'Register Operator'}
+          icon={selectedOperator ? <Edit2 className="w-5 h-5 text-indigo-600" /> : <UserPlus className="w-5 h-5 text-indigo-600" />}
+          maxWidth="480px"
+          onClose={closeModal}
+        >
+          <div className="px-6 pb-4">
+            <OperatorForm
+              initialData={selectedOperator}
               onSubmit={handleOperatorSubmit}
               onCancel={closeModal}
             />
           </div>
-        </DialogContent>
-      </Dialog>
+        </ModalLayout>
+      )}
 
       <AlertDialog open={!!deleteId} onOpenChange={(open: boolean) => !open && setDeleteId(null)}>
         <AlertDialogContent className="rounded-2xl border-none shadow-2xl">

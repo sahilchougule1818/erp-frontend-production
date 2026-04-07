@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Box, Trash2, LayoutDashboard } from 'lucide-react';
-import { Badge } from '../../shared/ui/badge';
+import { Box, AlertTriangle } from 'lucide-react';
 import { DataTable } from '../../shared/components/DataTable';
 import { inventoryApi } from '../../shared/services/inventoryApi';
 
 export function InventoryDashboard() {
-  const [items, setItems] = useState<any[]>([]);
   const [stockLevels, setStockLevels] = useState<any[]>([]);
+  const [stats, setStats] = useState<{ total_items: number; low_stock_items: number } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -16,13 +15,15 @@ export function InventoryDashboard() {
     fetchData();
   }, [currentPage]);
 
+  useEffect(() => {
+    inventoryApi.items.getDashboardStats()
+      .then((res: any) => setStats(res))
+      .catch((e: any) => console.error('Failed to fetch stats:', e));
+  }, []);
+
   const fetchData = async () => {
     try {
-      const [itemRes, stockRes] = await Promise.all([
-        inventoryApi.items.getAll(),
-        inventoryApi.stockUsage.getStockLevels(currentPage, limit)
-      ]);
-      setItems(Array.isArray(itemRes) ? itemRes : []);
+      const stockRes = await inventoryApi.stockUsage.getStockLevels(currentPage, limit);
       const stockData = stockRes?.data || stockRes;
       setStockLevels(Array.isArray(stockData) ? stockData : []);
       if (stockRes?.pagination) {
@@ -54,23 +55,25 @@ export function InventoryDashboard() {
             <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#047857' }} className="uppercase tracking-wider">Total Items</span>
             <Box style={{ color: '#059669', width: '20px', height: '20px' }} />
           </div>
-          <div style={{ fontSize: '1.875rem', fontWeight: '900', color: '#064e3b', marginTop: '8px' }}>{(items || []).length}</div>
+          <div style={{ fontSize: '1.875rem', fontWeight: '900', color: '#064e3b', marginTop: '8px' }}>
+            {stats ? Number(stats.total_items) : 0}
+          </div>
         </div>
-        
+
         <div style={{ padding: '20px', backgroundColor: '#fff1f2', borderRadius: '12px', borderBottom: '4px solid #f43f5e', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#be123c' }} className="uppercase tracking-wider">Low Stock Items</span>
-            <Trash2 style={{ color: '#e11d48', width: '20px', height: '20px' }} />
+            <AlertTriangle style={{ color: '#e11d48', width: '20px', height: '20px' }} />
           </div>
           <div style={{ fontSize: '1.875rem', fontWeight: '900', color: '#881337', marginTop: '8px' }}>
-            {(stockLevels || []).filter(s => parseFloat(s.current_stock) <= parseFloat(s.min_stock)).length}
+            {stats ? Number(stats.low_stock_items) : 0}
           </div>
         </div>
       </div>
 
-      <DataTable 
-        title="Live Stock Inventory" 
-        columns={stockColumns} 
+      <DataTable
+        title="Live Stock Inventory"
+        columns={stockColumns}
         records={stockLevels}
         pagination={{
           currentPage,

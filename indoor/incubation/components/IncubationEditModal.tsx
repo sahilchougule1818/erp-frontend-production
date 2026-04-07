@@ -20,7 +20,6 @@ interface StagedOperator {
   short_name: string;
   first_name: string;
   last_name: string;
-  role: string;
   assignmentId?: number;
 }
 
@@ -74,7 +73,6 @@ export function IncubationEditModal({ record, onClose, onSuccess }: IncubationEd
           short_name: a.short_name,
           first_name: a.first_name,
           last_name: a.last_name,
-          role: a.role,
           assignmentId: a.id
         })));
       } catch (error: any) {
@@ -98,8 +96,7 @@ export function IncubationEditModal({ record, onClose, onSuccess }: IncubationEd
         id: operator.id,
         short_name: operator.short_name,
         first_name: operator.first_name,
-        last_name: operator.last_name,
-        role: 'operator'
+        last_name: operator.last_name
       }]);
     }
   };
@@ -122,7 +119,6 @@ export function IncubationEditModal({ record, onClose, onSuccess }: IncubationEd
           additions.map(op => indoorApi.operators.addAssignment({
             event_code: record.event_code,
             operator_id: op.id,
-            role: op.role,
             activity_type: 'event',
             batch_code: record.batch_code,
             stage: record.stage

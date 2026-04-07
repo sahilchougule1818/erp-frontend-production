@@ -71,16 +71,8 @@ export function CustomersManagement() {
   };
 
   const columns = [
-    {
-      key: 'customer_id',
-      label: 'Customer ID',
-      render: (val: string) => <span className="font-mono">{val}</span>
-    },
-    {
-      key: 'name',
-      label: 'Name',
-      render: (val: string) => val
-    },
+    { key: 'customer_id', label: 'Customer ID' },
+    { key: 'name', label: 'Name' },
     {
       key: 'phone_number',
       label: 'Phone',
@@ -89,11 +81,7 @@ export function CustomersManagement() {
     {
       key: 'address',
       label: 'Address',
-      render: (val: string) => (
-        <span className="max-w-[200px] truncate block" title={val}>
-          {val || '—'}
-        </span>
-      )
+      render: (val: string) => val || '—'
     },
     {
       key: 'created_at',

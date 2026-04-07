@@ -14,6 +14,7 @@ interface Column {
 
 interface DataTableProps {
   title: string;
+  description?: string;
   columns: Column[];
   records: any[];
   onEdit?: (record: any) => void;
@@ -38,6 +39,7 @@ interface DataTableProps {
 
 export function DataTable({
   title,
+  description,
   columns,
   records = [],
   onEdit,
@@ -80,7 +82,10 @@ export function DataTable({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{title}</CardTitle>
+        <div>
+          <CardTitle>{title}</CardTitle>
+          {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+        </div>
         <div className="flex gap-2">
           {addButton}
           <Button variant="outline" size="sm" onClick={handleExport}>

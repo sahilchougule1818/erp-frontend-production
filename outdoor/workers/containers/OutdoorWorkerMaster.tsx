@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../../shared/ui/button';
 import { Plus } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../shared/ui/dialog';
+import { ModalLayout } from '../../shared/components/ModalLayout';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { Badge } from '../../shared/ui/badge';
@@ -34,10 +34,9 @@ export function OutdoorWorkerMaster() {
   const notify = useNotify();
 
   const columns = [
+    { key: 'id', label: 'ID', render: (val: number) => <span className="text-xs text-slate-500 font-mono">{val}</span> },
     { key: 'short_name', label: 'Short Name', render: (val: string) => <span className="font-bold">{val}</span> },
     { key: 'full_name', label: 'Full Name', render: (_: any, record: any) => `${record.first_name} ${record.last_name}` },
-    { key: 'role', label: 'Role' },
-    { key: 'section', label: 'Section', render: (val: string) => val || '-' },
     { key: 'is_active', label: 'Status', render: (val: boolean) => (
       <Badge className={val ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
         {val ? 'Active' : 'Inactive'}
@@ -51,15 +50,15 @@ export function OutdoorWorkerMaster() {
       const activity = val || record.phase;
       return (
         <span className={`px-2 py-1 rounded text-xs font-medium ${
-          activity === 'Import' 
+          activity === 'Import'
             ? 'bg-green-100 text-green-700'
-          : activity === 'Shifting' 
+          : activity === 'Shifting'
             ? 'bg-blue-100 text-blue-700'
-          : activity === 'Phase Transition' 
+          : activity === 'Phase Transition'
             ? 'bg-purple-100 text-purple-700'
-          : activity === 'Fertilization' 
+          : activity === 'Fertilization'
             ? 'bg-amber-100 text-amber-700'
-          : activity === 'Sampling' 
+          : activity === 'Sampling'
             ? 'bg-cyan-100 text-cyan-700'
           : 'bg-gray-100 text-gray-700'
         }`}>
@@ -120,7 +119,7 @@ export function OutdoorWorkerMaster() {
           <TabsTrigger value="operator-log">Worker Log Register</TabsTrigger>
           <TabsTrigger value="tunnel-master">Tunnel Master</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="operators">
           <DataTable
             title="Worker Master"
@@ -130,13 +129,13 @@ export function OutdoorWorkerMaster() {
             exportFileName="workers"
             pagination={paginationWorkers}
             addButton={
-              <Button className="bg-green-600 hover:bg-green-700" onClick={() => toggleModal('operator', true)}>
+              <Button style={{ backgroundColor: '#16a34a', color: '#fff' }} className="hover:opacity-90" onClick={() => toggleModal('operator', true)}>
                 <Plus className="w-4 h-4 mr-2" />Add Worker
               </Button>
             }
           />
         </TabsContent>
-        
+
         <TabsContent value="operator-log">
           <DataTable
             title="Worker Log Register"
@@ -163,25 +162,28 @@ export function OutdoorWorkerMaster() {
             }
           />
         </TabsContent>
-        
+
         <TabsContent value="tunnel-master">
           <Tunnels />
         </TabsContent>
       </Tabs>
 
-      <Dialog open={modals.operator} onOpenChange={(o: boolean) => { toggleModal('operator', o); if (!o) closeModal(); }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{selectedOperator ? 'Edit' : 'Add'} Worker</DialogTitle>
-          </DialogHeader>
-          <WorkerForm
-            initialData={selectedOperator}
-            onSubmit={handleOperatorSubmit}
-            onDelete={(id) => { setDeleteId(id); toggleModal('delete', true); toggleModal('operator', false); }}
-            onCancel={closeModal}
-          />
-        </DialogContent>
-      </Dialog>
+      {modals.operator && (
+        <ModalLayout
+          title={selectedOperator ? 'Edit Worker' : 'Add Worker'}
+          maxWidth="480px"
+          onClose={closeModal}
+        >
+          <div className="px-6 pb-4">
+            <WorkerForm
+              initialData={selectedOperator}
+              onSubmit={handleOperatorSubmit}
+              onDelete={(id) => { setDeleteId(id); toggleModal('delete', true); toggleModal('operator', false); }}
+              onCancel={closeModal}
+            />
+          </div>
+        </ModalLayout>
+      )}
 
       <AlertDialog open={modals.delete} onOpenChange={(open: boolean) => toggleModal('delete', open)}>
         <AlertDialogContent>
@@ -195,8 +197,6 @@ export function OutdoorWorkerMaster() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-
     </div>
   );
 }

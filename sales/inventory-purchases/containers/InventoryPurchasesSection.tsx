@@ -48,11 +48,7 @@ const InventoryPurchasesSection: React.FC = () => {
   };
 
   const columns = [
-    {
-      key: 'purchase_id',
-      label: 'Purchase ID',
-      render: (val: string) => <span className="font-mono text-xs">{val}</span>
-    },
+    { key: 'purchase_id', label: 'Purchase ID' },
     {
       key: 'purchase_date',
       label: 'Date',
