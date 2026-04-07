@@ -114,7 +114,7 @@ const InventoryPurchasesSection: React.FC = () => {
     <div className="p-6">
       <DataTable
         title="Inventory Purchases"
-        description="Track all inventory purchases with automatic stock updates and financial integration."
+
         columns={columns}
         records={payments}
         filterConfig={{

@@ -222,7 +222,7 @@ const CustomerSection: React.FC = () => {
     <div className="p-6 space-y-6">
       <DataTable
         title="Customer Bookings"
-        description="Manage customer orders and sales trackings."
+
         columns={columns}
         records={bookings}
         onEdit={(r) => { setSelectedBooking(r); setIsEditOpen(true); }}

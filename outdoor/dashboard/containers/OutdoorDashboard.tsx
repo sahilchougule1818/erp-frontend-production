@@ -223,19 +223,6 @@ export const OutdoorDashboard = () => {
 
   return (
     <div style={{ padding: '24px', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '900', color: '#0f172a' }}>Outdoor Dashboard</h1>
-          <p style={{ margin: '4px 0 0', fontSize: '0.875rem', color: '#64748b' }}>Real-time tunnel occupancy and health</p>
-        </div>
-        {!loading && (
-          <div style={{ fontSize: '0.75rem', color: '#94a3b8', backgroundColor: 'white', padding: '6px 12px', borderRadius: '999px', border: '1px solid #f1f5f9' }}>
-            {new Date().toLocaleTimeString()}
-          </div>
-        )}
-      </div>
-
       {/* KPI Cards Row */}
       {!loading && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>

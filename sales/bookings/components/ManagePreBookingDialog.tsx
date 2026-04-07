@@ -71,7 +71,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
 
   if (!open || !selectedBooking) return null;
 
-  const isFirstPayment = payments.length === 0;
+  const isFirstPayment = payments.length === 0 && Number(selectedBooking.paid_amount) <= 0;
   const mostRecent = payments[payments.length - 1];
   const deliveryStatusChanged = localDeliveryStatus !== selectedBooking.delivery_status;
   const needsBatchSelection = deliveryStatusChanged && localDeliveryStatus === 'Delivered' && !selectedBooking.batch_code && !selectedBatchCode;

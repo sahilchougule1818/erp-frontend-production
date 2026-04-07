@@ -97,7 +97,7 @@ export function CustomersManagement() {
     <div className="p-6">
       <DataTable
         title="Customers"
-        description="Master list of all customers. Select a customer when creating a booking."
+
         columns={columns}
         records={customers.filter(b => !b.is_deleted)}
         onEdit={openEdit}

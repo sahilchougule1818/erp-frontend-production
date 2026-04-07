@@ -9,8 +9,8 @@ interface ModalLayoutProps {
 
 export function ModalLayout({ title, children, width = 'w-[600px]', maxHeight = 'max-h-[90vh]' }: ModalLayoutProps) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`${width} bg-white rounded-xl border shadow-lg flex flex-col ${maxHeight}`}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className={`${width} bg-white rounded-xl border border-gray-200 ring-1 ring-black/5 flex flex-col ${maxHeight}`} style={{ boxShadow: '0 25px 60px -12px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.05)' }}>
         <div className="px-6 pt-6 pb-4 border-b flex-shrink-0">
           <h4 className="text-lg font-semibold">{title}</h4>
         </div>

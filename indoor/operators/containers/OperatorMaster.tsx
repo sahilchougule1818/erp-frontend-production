@@ -5,7 +5,7 @@ import { ModalLayout } from '../../shared/components/ModalLayout';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { Badge } from '../../shared/ui/badge';
-import { Separator } from '../../shared/ui/separator';
+
 import { useOperatorMaster } from '../hooks/useOperatorMaster';
 import { OperatorForm } from '../forms/OperatorForm';
 import { DataTable } from '../../shared/components/DataTable';
@@ -69,12 +69,6 @@ export function OperatorMaster() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-3xl font-black tracking-tight text-slate-900 pb-2">
-        Operator Master
-      </h1>
-
-      <Separator className="bg-slate-200/60" />
-
       <Tabs defaultValue="master" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="master">Operator Master</TabsTrigger>

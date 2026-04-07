@@ -159,7 +159,7 @@ const RefundDisbursementSection: React.FC = () => {
     <div className="p-6 space-y-6">
       <DataTable
         title="Refund Disbursements"
-        description="Manage refund disbursements for cancelled bookings. Click a row to record disbursement terms."
+
         columns={columns}
         records={refunds}
         onEdit={handleOpenDetail}

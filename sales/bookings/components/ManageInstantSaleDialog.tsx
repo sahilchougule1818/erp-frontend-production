@@ -61,7 +61,7 @@ export const ManageInstantSaleDialog: React.FC<ManageInstantSaleDialogProps> = (
 
   if (!open || !selectedSale) return null;
 
-  const isFirstPayment = payments.length === 0;
+  const isFirstPayment = payments.length === 0 && Number(selectedSale.paid_amount) <= 0;
   const mostRecent = payments[payments.length - 1];
   const hasPaymentToSave = Number(formData.amount) > 0 && Number(selectedSale.remaining_amount) > 0;
   const isCancelled = selectedSale.delivery_status === 'Cancelled';
