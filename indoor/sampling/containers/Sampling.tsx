@@ -23,7 +23,7 @@ export function Sampling() {
       if (activeTab === 'report') endpoint = 'results';
       
       const response = await apiClient.get(`/indoor/sampling/${endpoint}`);
-      setSamples(Array.isArray(response) ? response : []);
+      setSamples(response?.data ? response.data : (Array.isArray(response) ? response : []));
     } catch (error) {
       console.error('Failed to load samples:', error);
       setSamples([]);
