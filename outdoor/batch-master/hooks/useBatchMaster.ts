@@ -21,7 +21,7 @@ export function useBatchMaster() {
       const [batchesRes, tunnelsRes, workersRes] = await Promise.all([
         outdoorApi.unified.getRegistry(page, limit),
         outdoorApi.tunnels.getAll(),
-        outdoorApi.workers.getAll(1, 1000),
+        outdoorApi.workers.getAll(1, 500),
       ]);
       const batchesData = batchesRes?.data || batchesRes;
       const workersData = workersRes?.data || workersRes;

@@ -26,7 +26,7 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
   onClose
 }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-xl border shadow-lg flex flex-col" style={{ width: '850px', maxHeight: '90vh' }}>
         <div className="px-6 pt-6 pb-4 border-b flex-shrink-0">
           <div className="flex justify-between items-start mb-3">

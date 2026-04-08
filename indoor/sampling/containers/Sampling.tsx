@@ -145,7 +145,7 @@ export function Sampling() {
   return (
     <div className="p-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="w-full">
           <TabsTrigger value="summary">Summary</TabsTrigger>
           <TabsTrigger value="create">Submissions</TabsTrigger>
           <TabsTrigger value="report">Results</TabsTrigger>

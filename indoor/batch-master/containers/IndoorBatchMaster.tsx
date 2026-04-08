@@ -528,128 +528,124 @@ const IndoorBatchMaster: React.FC = () => {
       )}
 
       {activeModal === 'TIMELINE' && selectedBatch && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl border shadow-lg flex flex-col" style={{ width: '850px', maxHeight: '90vh' }}>
-            <div className="px-6 pt-6 pb-4 border-b flex-shrink-0">
-              <div className="flex justify-between items-start mb-3">
-                <h4 className="text-lg font-semibold">Indoor Batch Timeline — {selectedBatch.batch_code}</h4>
-                <Button variant="outline" size="sm" onClick={closeModal}>Close</Button>
-              </div>
-              <div className="grid grid-cols-3 gap-3 text-sm">
-                <div><span className="text-gray-600">Plant: </span><span className="font-semibold">{selectedBatch.plant_name}</span></div>
-                <div><span className="text-gray-600">Stage: </span><span className="font-semibold">{selectedBatch.stage}</span></div>
-                <div><span className="text-gray-600">Phase: </span><span className="font-semibold">{selectedBatch.phase_display}</span></div>
-                <div><span className="text-gray-600">Age: </span><span className="font-semibold text-green-600">{selectedBatch.current_age} days</span></div>
-                <div><span className="text-gray-600">Bottles: </span><span className="font-semibold text-blue-600">{selectedBatch.current_bottles_count}</span></div>
-                <div><span className="text-gray-600">Contamination: </span><span className="font-semibold text-red-600">{selectedBatch.contamination_count}</span></div>
-              </div>
+        <ModalLayout title={`Indoor Batch Timeline — ${selectedBatch.batch_code}`} width="850px">
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div><span className="text-gray-600">Plant: </span><span className="font-semibold">{selectedBatch.plant_name}</span></div>
+              <div><span className="text-gray-600">Stage: </span><span className="font-semibold">{selectedBatch.stage}</span></div>
+              <div><span className="text-gray-600">Phase: </span><span className="font-semibold">{selectedBatch.phase_display}</span></div>
+              <div><span className="text-gray-600">Age: </span><span className="font-semibold text-green-600">{selectedBatch.current_age} days</span></div>
+              <div><span className="text-gray-600">Bottles: </span><span className="font-semibold text-blue-600">{selectedBatch.current_bottles_count}</span></div>
+              <div><span className="text-gray-600">Contamination: </span><span className="font-semibold text-red-600">{selectedBatch.contamination_count}</span></div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-4" style={{ minHeight: 0 }}>
-              {timelineData.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">No events found for this batch</div>
-              ) : (
-                <div className="relative">
-                  <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
-                  <div className="space-y-4">
-                    {timelineData.filter(event => event.event_type !== 'CREATE').map((event, idx) => {
-                      const eventData = event.event_data || {};
-                      const getIcon = () => {
-                        switch (event.event_type) {
-                          case 'CREATE': return Plus;
-                          case 'SUBCULTURE': return FlaskConical;
-                          case 'INCUBATE': return Microscope;
-                          case 'EXPORT': return ArrowUpRight;
-                          default: return Clock;
-                        }
-                      };
-                      const getColor = () => {
-                        switch (event.event_type) {
-                          case 'CREATE': return 'bg-green-100 text-green-600';
-                          case 'SUBCULTURE': return 'bg-blue-100 text-blue-600';
-                          case 'INCUBATE': return 'bg-purple-100 text-purple-600';
-                          case 'EXPORT': return 'bg-orange-100 text-orange-600';
-                          default: return 'bg-gray-100 text-gray-600';
-                        }
-                      };
-                      const Icon = getIcon();
-                      const colorClass = getColor();
-                      return (
-                        <div key={idx} className="relative flex gap-3">
-                          <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${colorClass}`}>
-                            <Icon className="w-5 h-5" />
-                          </div>
-                          <div className="flex-1 pb-2">
-                            <div className="bg-white border rounded-lg p-3 shadow-sm">
-                              <div className="flex items-start justify-between mb-2">
-                                <h3 className="font-medium">
-                                  {event.event_type === 'CREATE' && 'Batch Created'}
-                                  {event.event_type === 'SUBCULTURE' && `Subculture to ${eventData.next_stage || eventData.nextStage || 'Next Stage'}`}
-                                  {event.event_type === 'INCUBATE' && `Incubation at ${eventData.stage || eventData.current_stage || 'Current Stage'}`}
-                                  {event.event_type === 'EXPORT' && 'Exported to Outdoor'}
-                                </h3>
-                                <div className="text-xs text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
-                              </div>
-                              <div className="bg-gray-50 rounded p-2 space-y-1.5 text-sm text-gray-600">
-                                {event.age_at_arrival !== null && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-400 min-w-[120px]">Arrival Age</span>
-                                    <span className="font-semibold text-green-600">{event.age_at_arrival} days</span>
-                                  </div>
-                                )}
-                                {event.age_at_departure !== null && event.event_state === 'completed' && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-400 min-w-[120px]">Departure Age</span>
-                                    <span className="font-semibold text-green-600">{event.age_at_departure} days</span>
-                                  </div>
-                                )}
-                                {eventData.media_code && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-400 min-w-[120px]">Media Code</span>
-                                    <span className="font-semibold text-gray-800">{eventData.media_code}</span>
-                                  </div>
-                                )}
-                                {eventData.current_bottles_count !== null && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-400 min-w-[120px]">Bottles (Before)</span>
-                                    <span className="font-semibold text-gray-800">{eventData.current_bottles_count}</span>
-                                  </div>
-                                )}
-                                {eventData.new_bottles_count !== null && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-400 min-w-[120px]">Bottles (After)</span>
-                                    <span className="font-semibold text-blue-600">{eventData.new_bottles_count}</span>
-                                  </div>
-                                )}
-                                {event.contamination_count > 0 && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-400 min-w-[120px]">Contamination</span>
-                                    <span className="font-semibold text-red-600">{event.contamination_count}</span>
-                                  </div>
-                                )}
-                                {eventData.notes && (
-                                  <div className="flex items-start gap-2 pt-1 border-t border-gray-200">
-                                    <span className="text-gray-400 min-w-[120px]">Notes</span>
-                                    <span className="text-gray-700">{eventData.notes}</span>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="mt-2 text-right">
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${event.event_state === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                                  {event.event_state}
-                                </span>
-                              </div>
+            {timelineData.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">No events found for this batch</div>
+            ) : (
+              <div className="relative">
+                <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
+                <div className="space-y-4">
+                  {timelineData.filter(event => event.event_type !== 'CREATE').map((event, idx) => {
+                    const eventData = event.event_data || {};
+                    const getIcon = () => {
+                      switch (event.event_type) {
+                        case 'CREATE': return Plus;
+                        case 'SUBCULTURE': return FlaskConical;
+                        case 'INCUBATE': return Microscope;
+                        case 'EXPORT': return ArrowUpRight;
+                        default: return Clock;
+                      }
+                    };
+                    const getColor = () => {
+                      switch (event.event_type) {
+                        case 'CREATE': return 'bg-green-100 text-green-600';
+                        case 'SUBCULTURE': return 'bg-blue-100 text-blue-600';
+                        case 'INCUBATE': return 'bg-purple-100 text-purple-600';
+                        case 'EXPORT': return 'bg-orange-100 text-orange-600';
+                        default: return 'bg-gray-100 text-gray-600';
+                      }
+                    };
+                    const Icon = getIcon();
+                    const colorClass = getColor();
+                    return (
+                      <div key={idx} className="relative flex gap-3">
+                        <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${colorClass}`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1 pb-2">
+                          <div className="bg-white border rounded-lg p-3 shadow-sm">
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-medium">
+                                {event.event_type === 'CREATE' && 'Batch Created'}
+                                {event.event_type === 'SUBCULTURE' && `Subculture to ${eventData.next_stage || eventData.nextStage || 'Next Stage'}`}
+                                {event.event_type === 'INCUBATE' && `Incubation at ${eventData.stage || eventData.current_stage || 'Current Stage'}`}
+                                {event.event_type === 'EXPORT' && 'Exported to Outdoor'}
+                              </h3>
+                              <div className="text-xs text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
+                            </div>
+                            <div className="bg-gray-50 rounded p-2 space-y-1.5 text-sm text-gray-600">
+                              {event.age_at_arrival !== null && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-400 min-w-[120px]">Arrival Age</span>
+                                  <span className="font-semibold text-green-600">{event.age_at_arrival} days</span>
+                                </div>
+                              )}
+                              {event.age_at_departure !== null && event.event_state === 'completed' && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-400 min-w-[120px]">Departure Age</span>
+                                  <span className="font-semibold text-green-600">{event.age_at_departure} days</span>
+                                </div>
+                              )}
+                              {eventData.media_code && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-400 min-w-[120px]">Media Code</span>
+                                  <span className="font-semibold text-gray-800">{eventData.media_code}</span>
+                                </div>
+                              )}
+                              {eventData.current_bottles_count !== null && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-400 min-w-[120px]">Bottles (Before)</span>
+                                  <span className="font-semibold text-gray-800">{eventData.current_bottles_count}</span>
+                                </div>
+                              )}
+                              {eventData.new_bottles_count !== null && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-400 min-w-[120px]">Bottles (After)</span>
+                                  <span className="font-semibold text-blue-600">{eventData.new_bottles_count}</span>
+                                </div>
+                              )}
+                              {event.contamination_count > 0 && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-400 min-w-[120px]">Contamination</span>
+                                  <span className="font-semibold text-red-600">{event.contamination_count}</span>
+                                </div>
+                              )}
+                              {eventData.notes && (
+                                <div className="flex items-start gap-2 pt-1 border-t border-gray-200">
+                                  <span className="text-gray-400 min-w-[120px]">Notes</span>
+                                  <span className="text-gray-700">{eventData.notes}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="mt-2 text-right">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${event.event_state === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                                {event.event_state}
+                              </span>
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
+            )}
+
+            <div className="flex justify-end pt-2">
+              <Button variant="outline" onClick={closeModal}>Close</Button>
             </div>
           </div>
-        </div>
+        </ModalLayout>
       )}
     </div>
   );

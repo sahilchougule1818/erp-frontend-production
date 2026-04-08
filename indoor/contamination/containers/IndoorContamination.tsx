@@ -47,7 +47,7 @@ export function IndoorContamination() {
   return (
     <div className="p-6">
       <Tabs defaultValue="summary" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="w-full">
           <TabsTrigger value="summary">Contamination Summary</TabsTrigger>
           <TabsTrigger value="records">Detailed Records</TabsTrigger>
         </TabsList>

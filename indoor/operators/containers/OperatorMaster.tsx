@@ -70,7 +70,7 @@ export function OperatorMaster() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <Tabs defaultValue="master" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="w-full">
           <TabsTrigger value="master">Operator Master</TabsTrigger>
           <TabsTrigger value="logs">Activity Monitoring</TabsTrigger>
         </TabsList>

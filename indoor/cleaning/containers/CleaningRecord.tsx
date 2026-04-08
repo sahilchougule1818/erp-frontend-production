@@ -52,7 +52,7 @@ export function CleaningRecord() {
   return (
     <div className="p-6">
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="w-full">
           <TabsTrigger value="cleaning">Cleaning Record</TabsTrigger>
           <TabsTrigger value="deep">Deep Cleaning Record</TabsTrigger>
         </TabsList>

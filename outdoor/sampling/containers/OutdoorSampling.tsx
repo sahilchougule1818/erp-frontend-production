@@ -149,7 +149,7 @@ export function OutdoorSampling() {
         onValueChange={(v: any) => handleTabChange(v as typeof activeTab)}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="w-full">
           <TabsTrigger value="summary">Summary</TabsTrigger>
           <TabsTrigger value="submissions">Submissions</TabsTrigger>  {/* was: Create */}
           <TabsTrigger value="results">Results</TabsTrigger>           {/* was: Report */}

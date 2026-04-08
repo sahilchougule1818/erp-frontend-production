@@ -38,7 +38,7 @@ export function OutdoorMortality() {
   return (
     <div className="p-6">
       <Tabs defaultValue="summary" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="w-full">
           <TabsTrigger value="summary">Mortality Summary</TabsTrigger>
           <TabsTrigger value="history">Change History</TabsTrigger>
         </TabsList>

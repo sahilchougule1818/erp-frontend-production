@@ -1,7 +1,5 @@
-import axios from 'axios';
 import { useState } from 'react';
-
-const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+import apiClient from './shared/services/apiClient';
 
 export const useReportsApi = () => {
   const [loading, setLoading] = useState(false);
@@ -11,12 +9,18 @@ export const useReportsApi = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/reports/${tab}`, {
+      const response = await apiClient.get(`/reports/${tab}`, {
         params: { startDate, endDate }
       });
-      return response.data;
+      return response;
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch report data');
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to fetch report data';
+      console.error('Reports API Error:', {
+        tab,
+        error: errorMessage,
+        status: err.response?.status
+      });
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);

@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { MoreVertical, PackageMinus, AlertTriangle, Plus, RotateCcw } from 'lucide-react';
+import { MoreVertical, PackageMinus, Plus, RotateCcw } from 'lucide-react';
 import { Badge } from '../../shared/ui/badge';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from '../../shared/ui/dropdown-menu';
 import { Button } from '../../shared/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { ModalLayout } from '../../shared/components/ModalLayout';
 import { Input } from '../../shared/ui/input';
 import { Label } from '../../shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
@@ -124,7 +124,16 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
       key: 'id',
       label: '',
       render: (_: any, record: any) => {
-        const item: Item = { id: record.id, name: record.name, unit: record.unit, min_stock: record.min_stock };
+        const item: Item = { 
+          id: record.id, 
+          name: record.name, 
+          unit: record.unit, 
+          min_stock: record.min_stock,
+          current_stock: record.current_stock || 0,
+          last_withdrawal_id: record.last_withdrawal_id || null,
+          last_withdrawal_quantity: record.last_withdrawal_quantity || null,
+          last_withdrawal_date: record.last_withdrawal_date || null
+        };
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -174,18 +183,19 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
         }
       />
 
-      {/* Withdraw Stock Dialog */}
-      <Dialog open={!!withdrawItem} onOpenChange={v => { if (!v) setWithdrawItem(null); }}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">Withdraw Stock</DialogTitle>
-            {withdrawItem && (
-              <div className="flex items-center gap-2 mt-1">
-                <Badge className="bg-red-50 text-red-700 border-red-200 font-semibold">{withdrawItem.name}</Badge>
-                <span className="text-xs text-slate-400">Unit: {withdrawItem.unit}</span>
-              </div>
-            )}
-          </DialogHeader>
+      {/* Withdraw Stock Modal */}
+      {withdrawItem && (
+        <ModalLayout
+          title="Withdraw Stock"
+          subtitle={
+            <div className="flex items-center gap-2">
+              <Badge className="bg-red-50 text-red-700 border-red-200 font-semibold">{withdrawItem.name}</Badge>
+              <span className="text-xs text-slate-400">Unit: {withdrawItem.unit}</span>
+            </div>
+          }
+          onClose={() => setWithdrawItem(null)}
+          maxWidth="400px"
+        >
           <div className="space-y-4 pt-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -212,15 +222,16 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </ModalLayout>
+      )}
 
-      {/* Add Item Dialog */}
-      <Dialog open={addItemOpen} onOpenChange={setAddItemOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">Add New Item</DialogTitle>
-          </DialogHeader>
+      {/* Add Item Modal */}
+      {addItemOpen && (
+        <ModalLayout
+          title="Add New Item"
+          onClose={() => setAddItemOpen(false)}
+          maxWidth="400px"
+        >
           <div className="space-y-4 pt-2">
             <div className="space-y-1.5">
               <Label>Item Name *</Label>
@@ -233,7 +244,7 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Unit *</Label>
-                <Select value={itemForm.unit} onValueChange={v => setItemForm({ ...itemForm, unit: v })}>
+                <Select value={itemForm.unit} onValueChange={(v: string) => setItemForm({ ...itemForm, unit: v })}>
                   <SelectTrigger><SelectValue placeholder="Select unit" /></SelectTrigger>
                   <SelectContent>
                     {UNITS.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
@@ -256,8 +267,8 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </ModalLayout>
+      )}
     </>
   );
 }

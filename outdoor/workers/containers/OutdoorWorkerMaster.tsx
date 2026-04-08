@@ -114,7 +114,7 @@ export function OutdoorWorkerMaster() {
   return (
     <div className="p-6">
       <Tabs defaultValue="operators" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="w-full max-w-md">
           <TabsTrigger value="operators">Worker Master</TabsTrigger>
           <TabsTrigger value="operator-log">Worker Log Register</TabsTrigger>
           <TabsTrigger value="tunnel-master">Tunnel Master</TabsTrigger>

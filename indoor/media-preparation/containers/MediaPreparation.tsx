@@ -89,7 +89,7 @@ export function MediaPreparation() {
   return (
     <div className="p-6">
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="w-full">
           <TabsTrigger value="batch">Media Batch Register</TabsTrigger>
           <TabsTrigger value="autoclave">Autoclave Cycle</TabsTrigger>
         </TabsList>
