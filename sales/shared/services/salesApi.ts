@@ -38,7 +38,7 @@ class ApiClient {
     if (options?.params) {
       const p = new URLSearchParams();
       Object.entries(options.params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && value !== '' && value !== 'all') {
           p.append(key, String(value));
         }
       });
