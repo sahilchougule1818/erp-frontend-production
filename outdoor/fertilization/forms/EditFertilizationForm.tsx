@@ -56,7 +56,7 @@ export function EditFertilizationForm({ initialData, batches, onSubmit, onDelete
   return (
     <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4 py-4">
       <div className="space-y-3">
-        <h3 className="font-semibold text-sm text-gray-700">Fertilization Details</h3>
+        <h3 className="font-semibold text-base text-gray-700">Fertilization Details</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Application Date *</Label>

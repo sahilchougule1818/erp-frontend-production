@@ -1,3 +1,4 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { useTunnelShiftsData } from '../hooks';
 import { DataTable } from '../../shared/components/DataTable';
 
@@ -12,12 +13,12 @@ const movementTypeLabel = (val: string) => {
 
 const movementTypeBadge = (val: string) => {
   const cls =
-    val === 'IMPORT' ? 'bg-green-100 text-green-800' :
-    val === 'SHIFT' ? 'bg-blue-100 text-blue-800' :
-    val === 'TRANSITION' ? 'bg-purple-100 text-purple-800' :
-    'bg-gray-100 text-gray-600';
+    val === 'IMPORT' ? 'bg-green-50 text-green-700 border-green-200' :
+    val === 'SHIFT' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+    val === 'TRANSITION' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+    'bg-gray-50 text-gray-600 border-gray-200';
   return (
-    <span className={`px-2 py-1 rounded text-xs font-semibold ${cls}`}>
+    <span className={`px-2 py-1 rounded border text-base shadow-none ${cls}`}>
       {movementTypeLabel(val)}
     </span>
   );
@@ -86,17 +87,25 @@ export function TunnelShifts() {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Movement Journal"
-        columns={columns}
-        records={records}
-        filterConfig={{
-          filter1Key: 'batch_code', filter1Label: 'Batch Code',
-          filter2Key: 'movement_type', filter2Label: 'Type',
-        }}
-        exportFileName="movement-journal"
-        pagination={pagination}
-      />
+      <Tabs defaultValue="shifts" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="shifts">Shifting Records</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="shifts">
+          <DataTable
+            title=""
+            columns={columns}
+            records={records}
+            filterConfig={{
+              filter1Key: 'batch_code', filter1Label: 'Batch Code',
+              filter2Key: 'movement_type', filter2Label: 'Type',
+            }}
+            exportFileName="movement-journal"
+            pagination={pagination}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

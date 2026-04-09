@@ -58,7 +58,7 @@ export function MortalityForm({ batch, onClose, onSuccess }: MortalityFormProps)
   return (
     <ModalLayout title="Record Mortality">
       <CardContent className="space-y-4 py-4">
-        <div className="bg-gray-50 p-3 rounded-md space-y-1 text-sm text-gray-600">
+        <div className="bg-gray-50 p-3 rounded-md space-y-1 text-base text-gray-600">
           <p>Batch: <span className="font-semibold text-gray-900">{batch.batch_code}</span></p>
           <p>Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel}</span></p>
           <p>Available: <span className="font-semibold text-green-700">{batch.available_plants}</span></p>

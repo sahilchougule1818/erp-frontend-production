@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { LayoutList } from 'lucide-react';
 import { Badge } from '../../shared/ui/badge';
 import { DataTable } from '../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { inventoryApi } from '../../shared/services/inventoryApi';
 import { format } from 'date-fns';
 
@@ -63,23 +64,31 @@ export function WithdrawalLog() {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Withdrawal Log"
-        columns={columns}
-        records={usageRecords}
-        filterConfig={{
-          filter1Key: 'item_name',
-          filter1Label: 'Search item...',
-        }}
-        exportFileName="stock_usage_log"
-        pagination={{
-          currentPage,
-          totalPages,
-          total,
-          limit,
-          onPageChange: handlePageChange
-        }}
-      />
+      <Tabs defaultValue="withdrawal" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="withdrawal">Withdrawal Log</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="withdrawal">
+          <DataTable
+            title=""
+            columns={columns}
+            records={usageRecords}
+            filterConfig={{
+              filter1Key: 'item_name',
+              filter1Label: 'Search item...',
+            }}
+            exportFileName="stock_usage_log"
+            pagination={{
+              currentPage,
+              totalPages,
+              total,
+              limit,
+              onPageChange: handlePageChange
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

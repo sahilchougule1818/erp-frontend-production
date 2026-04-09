@@ -24,22 +24,22 @@ export const SampleForm: React.FC<SampleFormProps> = ({ batch, onClose, onSubmit
       <div className="px-6 py-4 max-w-lg mx-auto">
         <div className="space-y-4">
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+            <h3 className="font-semibold text-base text-gray-700">Batch Information</h3>
             <div className="bg-gray-50 p-3 rounded-md space-y-1">
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Phase: <span className="font-semibold text-gray-900">{batch.current_phase}</span>
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel}</span>
               </p>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">Sample Details</h3>
+            <h3 className="font-semibold text-base text-gray-700">Sample Details</h3>
             <div className="space-y-2">
               <div className="space-y-2">
                 <Label className="text-sm">Sample Date *</Label>

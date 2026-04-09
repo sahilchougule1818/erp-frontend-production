@@ -11,6 +11,7 @@ import { PAYMENT_METHODS } from '../../shared/constants/EventTypes';
 import { useNotify } from '../../shared/hooks/useNotify';
 import { cn } from '../../shared/ui/utils';
 import { format } from 'date-fns';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import {
   History as HistoryIcon,
   Banknote,
@@ -157,27 +158,35 @@ const RefundDisbursementSection: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <DataTable
-        title="Refund Disbursements"
+      <Tabs defaultValue="refunds" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="refunds">Refund Disbursements</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="refunds">
+          <DataTable
+            title=""
 
-        columns={columns}
-        records={refunds}
-        onEdit={handleOpenDetail}
-        filterConfig={{
-          filter1Key: 'customer_name',
-          filter1Label: 'Search customer...',
-          filter2Key: 'refund_id',
-          filter2Label: 'Refund ID'
-        }}
-        exportFileName="refund_disbursements"
-        pagination={{
-          currentPage: pagination.page,
-          totalPages: pagination.totalPages,
-          total: pagination.total,
-          limit: pagination.limit,
-          onPageChange: handlePageChange
-        }}
-      />
+            columns={columns}
+            records={refunds}
+            onEdit={handleOpenDetail}
+            filterConfig={{
+              filter1Key: 'customer_name',
+              filter1Label: 'Search customer...',
+              filter2Key: 'refund_id',
+              filter2Label: 'Refund ID'
+            }}
+            exportFileName="refund_disbursements"
+            pagination={{
+              currentPage: pagination.page,
+              totalPages: pagination.totalPages,
+              total: pagination.total,
+              limit: pagination.limit,
+              onPageChange: handlePageChange
+            }}
+          />
+        </TabsContent>
+      </Tabs>
 
       {/* Refund Detail Dialog */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>

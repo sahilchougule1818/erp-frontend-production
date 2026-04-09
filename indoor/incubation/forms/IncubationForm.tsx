@@ -90,32 +90,29 @@ const fetchOperatorIds = async (recordId: number) => {
   return (
     <ModalLayout title={initialData ? 'Edit Incubation Record' : 'Record Incubation'}>
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
-        <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <div className="text-center mb-3">
-              <div className="text-sm text-gray-600">Incubating Batch</div>
-              <div className="font-semibold text-amber-800 text-lg">{selectedBatch?.batch_code}</div>
-              <div className="text-sm text-gray-600 mt-1">{selectedBatch?.plant_name}</div>
-            </div>
-            {selectedBatch && (
-              <div className="flex items-center space-x-2 justify-center">
-                <Info className="w-5 h-5 text-amber-600" />
-                <div>
-                  <div className="font-semibold text-amber-800">
-                    Incubating at {selectedBatch.stage}
-                  </div>
-                  <div className="text-sm text-amber-700">
-                    Incubation keeps the batch in the same stage but changes phase to 'incubation'
-                  </div>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="text-center mb-3">
+            <div className="text-base text-gray-600">Incubating Batch</div>
+            <div className="font-semibold text-amber-800 text-xl">{selectedBatch?.batch_code}</div>
+            <div className="text-base text-gray-600 mt-1">{selectedBatch?.plant_name}</div>
+          </div>
+          {selectedBatch && (
+            <div className="flex items-center space-x-2 justify-center">
+              <Info className="w-5 h-5 text-amber-600" />
+              <div>
+                <div className="font-semibold text-amber-800">
+                  Incubating at {selectedBatch.stage}
+                </div>
+                <div className="text-base text-amber-700">
+                  Incubation keeps the batch in the same stage but changes phase to 'incubation'
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Batch Details</h3>
+          <h3 className="font-semibold text-base text-gray-700">Batch Details</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Plant Name</Label>
@@ -145,7 +142,7 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Incubation Conditions</h3>
+          <h3 className="font-semibold text-base text-gray-700">Incubation Conditions</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Incubation Period (days)</Label>
@@ -167,7 +164,7 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Operator Assignment</h3>
+          <h3 className="font-semibold text-base text-gray-700">Operator Assignment</h3>
           <OperatorSelector operators={operators} selectedIds={form.operatorIds} onChange={(ids) => updateForm('operatorIds', ids)} />
         </div>
       </div>

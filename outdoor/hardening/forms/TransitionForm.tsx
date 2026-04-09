@@ -58,22 +58,22 @@ export function TransitionForm({ batch, tunnels, workers, onSubmit, onClose }: T
     <ModalLayout title="Phase Transition (Maturity Step-Up)">
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+          <h3 className="font-semibold text-base text-gray-700">Batch Information</h3>
           <div className="bg-gray-50 p-3 rounded-md space-y-1">
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Current Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel || '—'}</span>
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Current Phase: <span className="font-semibold text-gray-900">{batch.current_phase?.replace(/_/g, ' ')}</span>
             </p>
           </div>
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Transition Details</h3>
+          <h3 className="font-semibold text-base text-gray-700">Transition Details</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Target Phase *</Label>
@@ -125,12 +125,12 @@ export function TransitionForm({ batch, tunnels, workers, onSubmit, onClose }: T
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Worker Assignment</h3>
+          <h3 className="font-semibold text-base text-gray-700">Worker Assignment</h3>
           <WorkerSelector workers={workers} selectedIds={selectedWorkers} onChange={setSelectedWorkers} />
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Tray Configuration</h3>
+          <h3 className="font-semibold text-base text-gray-700">Tray Configuration</h3>
           <TrayInput trays={trays} onChange={setTrays} />
         </div>
       </div>

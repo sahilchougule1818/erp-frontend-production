@@ -183,8 +183,10 @@ export function useBatchMaster() {
 
   const reportSampleResult = async (batchCode: string, data: any) => {
     try {
-      const submissions = await outdoorApi.sampling.getSubmissions();
-      const submission  = (Array.isArray(submissions) ? (submissions as any) : []).find((s: any) => s.batch_code === batchCode);
+      // Get all submissions without pagination to find the specific batch (backend limit is 500)
+      const submissions = await outdoorApi.sampling.getSubmissions(1, 500);
+      const submissionData = submissions?.data || submissions;
+      const submission = (Array.isArray(submissionData) ? submissionData : []).find((s: any) => s.batch_code === batchCode);
       if (!submission) {
         notify.error('Sample submission record not found');
         return false;

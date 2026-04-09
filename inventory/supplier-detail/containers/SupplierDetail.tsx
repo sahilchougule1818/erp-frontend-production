@@ -7,6 +7,7 @@ import { Label } from '../../shared/ui/label';
 import { Badge } from '../../shared/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
 import { DataTable } from '../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { inventoryApi } from '../../shared/services/inventoryApi';
 
 type Supplier = {
@@ -118,27 +119,35 @@ export function SupplierDetail() {
 
   return (
     <div className="p-6">
-      <DataTable 
-        title="Supplier Master" 
-        columns={supplierColumns} 
-        records={suppliers}
-        pagination={{
-          currentPage,
-          totalPages,
-          total,
-          limit,
-          onPageChange: handlePageChange
-        }}
-        addButton={
-          <Button className="bg-green-600 hover:bg-green-700" onClick={() => {
-            setEditingSupplier(null);
-            setSupplierForm({ name: '', contact: '', location: '', items_supplied: [] });
-            setIsSupplierModalOpen(true);
-          }}>
-            <Plus className="h-4 w-4 mr-2" />Add New Supplier
-          </Button>
-        }
-      />
+      <Tabs defaultValue="supplier" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="supplier">Supplier Master</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="supplier">
+          <DataTable 
+            title="" 
+            columns={supplierColumns} 
+            records={suppliers}
+            pagination={{
+              currentPage,
+              totalPages,
+              total,
+              limit,
+              onPageChange: handlePageChange
+            }}
+            addButton={
+              <Button className="bg-green-600 hover:bg-green-700" onClick={() => {
+                setEditingSupplier(null);
+                setSupplierForm({ name: '', contact: '', location: '', items_supplied: [] });
+                setIsSupplierModalOpen(true);
+              }}>
+                <Plus className="h-4 w-4 mr-2" />Add New Supplier
+              </Button>
+            }
+          />
+        </TabsContent>
+      </Tabs>
 
       {/* Supplier Modal */}
       <Dialog open={isSupplierModalOpen} onOpenChange={(v: boolean) => setIsSupplierModalOpen(v)}>

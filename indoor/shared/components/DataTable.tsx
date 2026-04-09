@@ -10,6 +10,7 @@ interface Column {
   key: string;
   label: string;
   render?: (value: any, record: any) => React.ReactNode;
+  align?: 'left' | 'right' | 'center';
 }
 
 interface DataTableProps {
@@ -123,15 +124,15 @@ export function DataTable({
         )}
         <div className="border rounded-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-100 border-b">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 {columns.map(col => (
-                  <th key={col.key} className="px-4 py-3 text-left text-xs font-normal text-gray-700 whitespace-nowrap">
+                  <th key={col.key} className={`px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap ${col.key === '_actions' ? 'sticky right-0 bg-gray-50 z-10 w-24' : ''}`}>
                     {col.label}
                   </th>
                 ))}
                 {(onEdit || onEditWorkers || onDelete) && (
-                  <th className="px-4 py-3 text-left text-xs font-normal text-gray-700 whitespace-nowrap sticky right-0 bg-gray-100 z-10 w-24">
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap sticky right-0 bg-gray-50 z-10 w-24">
                     Actions
                   </th>
                 )}
@@ -150,12 +151,12 @@ export function DataTable({
                   return (
                     <tr key={record.id || record.booking_id || record.batch_id || record.batch_code || index} className="border-b hover:bg-gray-50">
                       {columns.map(col => (
-                        <td key={col.key} className="px-4 py-3 text-sm font-normal whitespace-nowrap">
+                        <td key={col.key} className={`px-4 py-4 text-base font-normal whitespace-nowrap align-middle text-center ${col.key === '_actions' ? 'sticky right-0 bg-white z-10' : ''}`}>
                           {col.render ? col.render(record[col.key], record) : record[col.key]}
                         </td>
                       ))}
                       {(onEdit || onEditWorkers || onDelete) && (
-                        <td className="px-4 py-3 text-sm font-normal sticky right-0 bg-white hover:bg-gray-50 z-10">
+                        <td className="px-4 py-3 text-sm font-normal sticky right-0 bg-white z-10">
                           <div className="flex gap-1">
                             {onEdit && (
                               <Button

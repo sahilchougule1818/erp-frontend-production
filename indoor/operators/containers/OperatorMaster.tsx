@@ -69,7 +69,7 @@ export function OperatorMaster() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <Tabs defaultValue="master" className="space-y-6">
+      <Tabs defaultValue="master" className="w-full">
         <TabsList className="w-full">
           <TabsTrigger value="master">Operator Master</TabsTrigger>
           <TabsTrigger value="logs">Activity Monitoring</TabsTrigger>
@@ -77,29 +77,29 @@ export function OperatorMaster() {
 
         <TabsContent value="master">
           <DataTable
-            title="Operator Directory"
+            title=""
             records={operators}
             columns={[
               {
                 key: 'id',
                 label: 'ID',
-                render: (val) => <span className="text-xs text-slate-500 font-mono">{val}</span>
+                render: (val) => <span className="text-base text-slate-500 font-mono">{val}</span>
               },
               {
                 key: 'short_name',
                 label: 'Short Name',
-                render: (val) => <span className="font-bold text-indigo-600">{val}</span>
+                render: (val) => <span className="text-base">{val}</span>
               },
               {
                 key: 'full_name',
                 label: 'Full Name',
-                render: (_: any, op: any) => <span className="font-medium text-slate-900">{op.first_name} {op.last_name}</span>
+                render: (_: any, op: any) => <span className="text-base">{op.first_name} {op.last_name}</span>
               },
               {
                 key: 'is_active',
                 label: 'Status',
                 render: (val) => (
-                  <span className={val ? "text-emerald-700 font-semibold" : "text-slate-500 font-semibold"}>
+                  <span className={val ? "text-emerald-700 text-base" : "text-slate-500 text-base"}>
                     {val ? 'Active' : 'Inactive'}
                   </span>
                 )
@@ -120,19 +120,19 @@ export function OperatorMaster() {
 
         <TabsContent value="logs">
           <DataTable
-            title="Staff Utilization Audit Log"
+            title=""
             records={activityLogs}
             columns={[
               { 
                 key: 'activity_date', 
                 label: 'Date', 
-                render: (val) => new Date(val).toLocaleDateString() 
+                render: (val) => <span className="text-base">{new Date(val).toLocaleDateString()}</span>
               },
               { 
                 key: 'category', 
                 label: 'Category',
                 render: (val) => (
-                  <Badge variant="outline" className={`font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                  <Badge variant="outline" className={`px-2 py-0.5 text-base uppercase tracking-wider ${
                     val === 'Production' 
                       ? "bg-purple-50 text-purple-700 border-purple-100" 
                       : val === 'Cleaning'
@@ -147,33 +147,22 @@ export function OperatorMaster() {
               { 
                 key: 'phase', 
                 label: 'Activity/Phase',
-                render: (val) => (
-                  <span className={val === 'Autoclave Cycle' ? "text-orange-700 font-black underline decoration-orange-200 underline-offset-4" : "text-slate-700 font-bold"}>
-                    {val}
-                  </span>
-                )
+                render: (val) => <span className="text-base">{val}</span>
               },
               { 
                 key: 'stage', 
                 label: 'Stage',
-                render: (val) => <span className="italic text-slate-500 font-medium">{val || '-'}</span>
+                render: (val) => <span className="text-base">{val || '-'}</span>
               },
               { 
                 key: 'operator', 
                 label: 'Worker',
-                render: (val, log) => (
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-[11px] font-black text-indigo-700">
-                      {val}
-                    </div>
-                    <span className="font-bold text-slate-700">{log.full_name}</span>
-                  </div>
-                )
+                render: (val, log) => <span className="text-base">{log.full_name}</span>
               },
               { 
                 key: 'notes', 
                 label: 'Notes',
-                render: (val) => <span className="text-xs text-slate-500 line-clamp-1 max-w-[150px] italic">{val || '-'}</span>
+                render: (val) => <span className="text-base text-slate-500 line-clamp-1 max-w-[150px] italic">{val || '-'}</span>
               }
             ]}
             filterConfig={{

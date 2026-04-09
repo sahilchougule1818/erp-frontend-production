@@ -36,16 +36,16 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
       <div className="px-6 py-4 max-w-lg mx-auto">
         <div className="space-y-4">
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+            <h3 className="font-semibold text-base text-gray-700">Batch Information</h3>
             <div className="bg-gray-50 p-3 rounded-md">
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
               </p>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">Result Details</h3>
+            <h3 className="font-semibold text-base text-gray-700">Result Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm">Result Date *</Label>
@@ -71,7 +71,7 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">Certificate Information</h3>
+            <h3 className="font-semibold text-base text-gray-700">Certificate Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm">Certificate No {status === 'Yes' && '*'}</Label>
@@ -95,7 +95,7 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">Additional Information</h3>
+            <h3 className="font-semibold text-base text-gray-700">Additional Information</h3>
             <div className="space-y-2">
               <Label className="text-sm">Notes</Label>
               <Textarea 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { Tooltip, TooltipProvider } from '../../shared/ui/tooltip';
 import { Button } from '../../shared/ui/button';
 import {
@@ -48,12 +49,12 @@ const phaseLabel = (phase: string) => {
 
 const phaseBadge = (batch: Batch) => {
   const color = batch.is_in_holding_area
-    ? 'bg-orange-100 text-orange-700'
+    ? 'bg-orange-50 text-orange-700 border-orange-200'
     : batch.current_phase === 'primary_hardening'
-    ? 'bg-green-100 text-green-700'
-    : 'bg-blue-100 text-blue-700';
+    ? 'bg-green-50 text-green-700 border-green-200'
+    : 'bg-blue-50 text-blue-700 border-blue-200';
   return (
-    <Badge className={cn(color, "font-medium border-none shadow-none")}>
+    <Badge className={cn(color, "border shadow-none text-base")}>
       {phaseLabel(batch.current_phase)}
     </Badge>
   );
@@ -61,10 +62,10 @@ const phaseBadge = (batch: Batch) => {
 
 const sampledBadge = (val: string) => {
   const cfg =
-    val === 'c' ? { label: 'Result Reported',  cls: 'bg-emerald-100 text-emerald-700' } :
-    val === 's' ? { label: 'Sample Sent',  cls: 'bg-amber-100 text-amber-700' } :
-                  { label: 'Not Sampled',    cls: 'bg-slate-100 text-slate-400'   };
-  return <Badge className={cn(cfg.cls, "border-none shadow-none text-xs font-semibold")}>{cfg.label}</Badge>;
+    val === 'c' ? { label: 'Result Reported',  cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' } :
+    val === 's' ? { label: 'Sample Sent',  cls: 'bg-amber-50 text-amber-700 border-amber-200' } :
+                  { label: 'Not Sampled',    cls: 'bg-slate-50 text-slate-400 border-slate-200'   };
+  return <Badge className={cn(cfg.cls, "border shadow-none text-base")}>{cfg.label}</Badge>;
 };
 
 const BatchMaster: React.FC = () => {
@@ -151,26 +152,26 @@ const BatchMaster: React.FC = () => {
   };
 
   const columns = [
-    { key: 'batch_code',             label: 'Batch Code',    render: (v: string) => <span className="font-mono text-xs font-semibold">{v}</span> },
-    { key: 'created_at',             label: 'Created Date',  render: (v: string) => v ? new Date(v).toLocaleDateString() : '—' },
+    { key: 'batch_code',             label: 'Batch Code',    render: (v: string) => <span className="font-medium text-gray-900 text-base">{v}</span> },
+    { key: 'created_at',             label: 'Created Date',  render: (v: string) => <span className="text-base">{v ? new Date(v).toLocaleDateString() : '—'}</span> },
     { key: 'plant_name',             label: 'Plant Name' },
     { key: 'current_phase',          label: 'Current Phase', render: (_: any, r: Batch) => phaseBadge(r) },
-    { key: 'current_tunnel',            label: 'Tunnel',         render: (v: string) => <span className="text-slate-600">{v || '—'}</span> },
-    { key: 'initial_plants',            label: 'Initial Plants', render: (v: number) => <span className="text-slate-600">{Number(v || 0).toLocaleString()}</span> },
-    { key: 'total_mortality',           label: 'Mortality',      render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-red-600' : 'text-slate-400'}>{Number(v || 0).toLocaleString()}</span> },
-    { key: 'total_plants',              label: 'Alive Count',    render: (v: number) => <span className="font-bold text-slate-900">{Number(v || 0).toLocaleString()}</span> },
-    { key: 'sold_plants',               label: 'Total Sold',     render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-red-600' : 'text-slate-400'}>{Number(v || 0).toLocaleString()}</span> },
-    { key: 'available_plants',          label: 'Available',      render: (v: number) => <span className="font-bold text-green-700">{v != null ? Number(v).toLocaleString() : '—'}</span> },
-    { key: 'current_phase_sold',        label: 'Phase Sold',     render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-rose-600' : 'text-slate-400'}>{Number(v || 0).toLocaleString()}</span> },
-    { key: 'current_age',            label: 'Age (Days)',     render: (v: number) => <Badge variant="outline" className="font-bold text-slate-600">{v ?? 0} days</Badge> },
+    { key: 'current_tunnel',            label: 'Tunnel',         render: (v: string) => <span className="text-slate-600 text-base">{v || '—'}</span> },
+    { key: 'initial_plants',            label: 'Initial Plants', render: (v: number) => <span className="text-slate-600 text-base">{Number(v || 0).toLocaleString()}</span> },
+    { key: 'total_mortality',           label: 'Mortality',      render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-red-600 text-base' : 'text-slate-400 text-base'}>{Number(v || 0).toLocaleString()}</span> },
+    { key: 'total_plants',              label: 'Alive Count',    render: (v: number) => <span className="text-slate-900 text-base">{Number(v || 0).toLocaleString()}</span> },
+    { key: 'sold_plants',               label: 'Total Sold',     render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-red-600 text-base' : 'text-slate-400 text-base'}>{Number(v || 0).toLocaleString()}</span> },
+    { key: 'available_plants',          label: 'Available',      render: (v: number) => <span className="text-green-700 text-base">{v != null ? Number(v).toLocaleString() : '—'}</span> },
+    { key: 'current_phase_sold',        label: 'Phase Sold',     render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-rose-600 text-base' : 'text-slate-400 text-base'}>{Number(v || 0).toLocaleString()}</span> },
+    { key: 'current_age',            label: 'Age (Days)',     render: (v: number) => <Badge variant="outline" className="text-slate-600 text-base bg-slate-50 border-slate-200">{v ?? 0} days</Badge> },
     { key: 'is_sampled',             label: 'Sampling',       render: (v: string) => sampledBadge(v) },
     { key: 'state',                  label: 'State',         render: (v: string) => {
       const config = {
-        'SOLD': { label: 'Sold Out', cls: 'bg-rose-100 text-rose-700' },
-        'HOLDING': { label: 'Holding', cls: 'bg-amber-100 text-amber-700' },
-        'ACTIVE': { label: 'Active', cls: 'bg-emerald-100 text-emerald-700' }
-      }[v] || { label: v, cls: 'bg-slate-100 text-slate-600' };
-      return <Badge className={cn(config.cls, "border-none shadow-none text-[10px] uppercase font-black tracking-tighter")}>{config.label}</Badge>;
+        'SOLD': { label: 'Sold Out', cls: 'bg-rose-50 text-rose-700 border-rose-200' },
+        'HOLDING': { label: 'Holding', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
+        'ACTIVE': { label: 'Active', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
+      }[v] || { label: v, cls: 'bg-slate-50 text-slate-600 border-slate-200' };
+      return <Badge className={cn(config.cls, "border shadow-none text-base uppercase tracking-tighter")}>{config.label}</Badge>;
     }},
     {
       key: '_actions',
@@ -279,7 +280,7 @@ const BatchMaster: React.FC = () => {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <DropdownMenuItem onClick={() => handleUndoClick(batch)} className="text-rose-600 font-bold">
+              <DropdownMenuItem onClick={() => handleUndoClick(batch)} className="text-rose-600">
                 <RotateCcw className="h-4 w-4 mr-2" /> Undo Last Action
               </DropdownMenuItem>
             )}
@@ -291,30 +292,38 @@ const BatchMaster: React.FC = () => {
 
   return (
     <div className="p-6">
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border animate-pulse">
-          <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-4" />
-          <p className="text-sm text-slate-500 font-medium tracking-tight">Accessing encrypted registry...</p>
-        </div>
-      ) : (
-        <DataTable
-          title="Consolidated Batch Registry"
-          columns={columns}
-          records={batches}
-          filterConfig={{ filter1Key: 'plant_name', filter1Label: 'Plant Name', filter2Key: 'batch_code', filter2Label: 'Batch Code' }}
-          exportFileName="outdoor_batch_registry"
-          pagination={pagination}
-          addButton={
-            <Button
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold"
-              onClick={async () => { await loadIndoorBatches(); setModal('INDOOR_LIST'); }}
-            >
-              <Upload className="h-4 w-4 mr-2" /> Import from Indoor
-            </Button>
-          }
-        />
-      )}
+      <Tabs defaultValue="master" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="master">Outdoor Batch Master</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="master">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border animate-pulse">
+              <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-4" />
+              <p className="text-sm text-slate-500 font-medium tracking-tight">Accessing encrypted registry...</p>
+            </div>
+          ) : (
+            <DataTable
+              title=""
+              columns={columns}
+              records={batches}
+              filterConfig={{ filter1Key: 'plant_name', filter1Label: 'Plant Name', filter2Key: 'batch_code', filter2Label: 'Batch Code' }}
+              exportFileName="outdoor_batch_registry"
+              pagination={pagination}
+              addButton={
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold"
+                  onClick={async () => { await loadIndoorBatches(); setModal('INDOOR_LIST'); }}
+                >
+                  <Upload className="h-4 w-4 mr-2" /> Import from Indoor
+                </Button>
+              }
+            />
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* ── Modals ─────────────────────────────────────────────────────── */}
       {modal === 'SHIFT' && selectedBatch && (

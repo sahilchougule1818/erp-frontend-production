@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
 import { useFertilizationData } from '../hooks';
@@ -54,16 +55,24 @@ export function Fertilization() {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Fertilization Records"
-        columns={columns}
-        records={records}
-        onEdit={handleEdit}
-        onEditWorkers={(record) => setEditingWorkers(record)}
-        filterConfig={{ filter1Key: 'plant_name', filter1Label: 'Plant Name', filter2Key: 'batch_code', filter2Label: 'Batch Code' }}
-        exportFileName="fertilization"
-        pagination={pagination}
-      />
+      <Tabs defaultValue="fertilization" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="fertilization">Fertilization</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="fertilization">
+          <DataTable
+            title=""
+            columns={columns}
+            records={records}
+            onEdit={handleEdit}
+            onEditWorkers={(record) => setEditingWorkers(record)}
+            filterConfig={{ filter1Key: 'plant_name', filter1Label: 'Plant Name', filter2Key: 'batch_code', filter2Label: 'Batch Code' }}
+            exportFileName="fertilization"
+            pagination={pagination}
+          />
+        </TabsContent>
+      </Tabs>
 
       <Dialog open={modal.open} onOpenChange={(o: boolean) => setModal({ ...modal, open: o })}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>

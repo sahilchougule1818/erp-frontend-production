@@ -58,7 +58,7 @@ export function UnifiedEditModal({
       try {
         const [assignmentsRes, workersRes] = await Promise.all([
           outdoorApi.workers.getAssignments(eventCode, activityType, fertilizationId),
-          outdoorApi.workers.getAll(1, 1000)
+          outdoorApi.workers.getAll(1, 500)
         ]);
         if (!active) return;
         

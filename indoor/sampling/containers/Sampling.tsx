@@ -62,24 +62,24 @@ export function Sampling() {
     {
       key: 'plant_age_at_sampling',
       label: 'Plant Age at Sampling',
-      render: (val: number) => val !== null && val !== undefined ? `${val} days` : '-'
+      render: (val: number) => <span className="text-base">{val !== null && val !== undefined ? `${val} days` : '-'}</span>
     },
-    { key: 'sample_date', label: 'Sample Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '-' },
+    { key: 'sample_date', label: 'Sample Date', render: (val: string) => <span className="text-base">{val ? new Date(val).toLocaleDateString() : '-'}</span> },
     { 
       key: 'status', 
       label: 'Status', 
       render: (val: string) => (
-        <span className={`px-2 py-1 rounded text-xs ${
-          val === 'Yes' ? 'bg-green-100 text-green-800' :
-          val === 'No' ? 'bg-red-100 text-red-800' :
-          'bg-yellow-100 text-yellow-800'
+        <span className={`px-2 py-1 rounded border text-base ${
+          val === 'Yes' ? 'bg-green-50 text-green-700 border-green-200' :
+          val === 'No' ? 'bg-red-50 text-red-700 border-red-200' :
+          'bg-yellow-50 text-yellow-700 border-yellow-200'
         }`}>
           {val || 'Pending'}
         </span>
       )
     },
-    { key: 'received_date', label: 'Received Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '-' },
-    { key: 'certificate_number', label: 'Certificate', render: (val: string) => val || '-' }
+    { key: 'received_date', label: 'Received Date', render: (val: string) => <span className="text-base">{val ? new Date(val).toLocaleDateString() : '-'}</span> },
+    { key: 'certificate_number', label: 'Certificate', render: (val: string) => <span className="text-base">{val || '-'}</span> }
   ];
 
   const createColumns = [
@@ -90,10 +90,10 @@ export function Sampling() {
     {
       key: 'plant_age_at_sampling',
       label: 'Plant Age at Sampling',
-      render: (val: number) => val !== null && val !== undefined ? `${val} days` : '-'
+      render: (val: number) => <span className="text-base">{val !== null && val !== undefined ? `${val} days` : '-'}</span>
     },
-    { key: 'sample_date', label: 'Sample Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '-' },
-    { key: 'notes', label: 'Notes', render: (val: string) => val || '-' },
+    { key: 'sample_date', label: 'Sample Date', render: (val: string) => <span className="text-base">{val ? new Date(val).toLocaleDateString() : '-'}</span> },
+    { key: 'notes', label: 'Notes', render: (val: string) => <span className="text-base">{val || '-'}</span> },
     { 
       key: 'actions', 
       label: 'Actions', 
@@ -111,22 +111,22 @@ export function Sampling() {
 
   const reportColumns = [
     { key: 'batch_code', label: 'Batch Code' },
-    { key: 'received_date', label: 'Received Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '-' },
+    { key: 'received_date', label: 'Received Date', render: (val: string) => <span className="text-base">{val ? new Date(val).toLocaleDateString() : '-'}</span> },
     { 
       key: 'status', 
       label: 'Status', 
       render: (val: string) => (
-        <span className={`px-2 py-1 rounded text-xs ${
-          val === 'Yes' ? 'bg-green-100 text-green-800' :
-          'bg-red-100 text-red-800'
+        <span className={`px-2 py-1 rounded border text-base ${
+          val === 'Yes' ? 'bg-green-50 text-green-700 border-green-200' :
+          'bg-red-50 text-red-700 border-red-200'
         }`}>
           {val}
         </span>
       )
     },
-    { key: 'certificate_number', label: 'Certificate Number', render: (val: string) => val || '-' },
-    { key: 'government_digital_code', label: 'Govt Code', render: (val: string) => val || '-' },
-    { key: 'reason', label: 'Reason', render: (val: string) => val || '-' },
+    { key: 'certificate_number', label: 'Certificate Number', render: (val: string) => <span className="text-base">{val || '-'}</span> },
+    { key: 'government_digital_code', label: 'Govt Code', render: (val: string) => <span className="text-base">{val || '-'}</span> },
+    { key: 'reason', label: 'Reason', render: (val: string) => <span className="text-base">{val || '-'}</span> },
     { 
       key: 'actions', 
       label: 'Actions', 
@@ -153,7 +153,7 @@ export function Sampling() {
 
         <TabsContent value="summary">
           <DataTable
-            title="Sampling Summary"
+            title=""
             columns={summaryColumns}
             records={samples || []}
             filterConfig={{
@@ -169,7 +169,7 @@ export function Sampling() {
 
         <TabsContent value="create">
           <DataTable
-            title="Sampling Submissions"
+            title=""
             columns={createColumns}
             records={samples || []}
             filterConfig={{
@@ -185,7 +185,7 @@ export function Sampling() {
 
         <TabsContent value="report">
           <DataTable
-            title="Sampling Results"
+            title=""
             columns={reportColumns}
             records={samples || []}
             filterConfig={{

@@ -30,39 +30,39 @@ export function MediaPreparation() {
 
   const StatusBadge = ({ status }: { status: string }) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      in_autoclave: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800'
+      pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+      in_autoclave: 'bg-blue-50 text-blue-700 border-blue-200',
+      completed: 'bg-green-50 text-green-700 border-green-200'
     };
     
     return (
-      <Badge className={colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
+      <Badge className={`${colors[status as keyof typeof colors] || 'bg-gray-50 text-gray-700 border-gray-200'} border text-base`}>
         {status.replace('_', ' ').toUpperCase()}
       </Badge>
     );
   };
 
   const batchColumns = [
-    { key: 'prepared_date', label: 'Date', render: (val: any) => val ? String(val).split('T')[0] : 'N/A' },
+    { key: 'prepared_date', label: 'Date', render: (val: any) => <span className="text-base">{val ? String(val).split('T')[0] : 'N/A'}</span> },
     { key: 'media_code', label: 'Media Code' },
-    { key: 'media_type', label: 'Media Type', render: (val: any) => val || 'Not set' },
-    { key: 'media_volume', label: 'Media Total', render: (val: any) => val || 'Not set' },
-    { key: 'bottles_count', label: 'Bottles Count', render: (val: any) => val || 'Not set' },
-    { key: 'contamination', label: 'Contamination', render: (val: any) => val || 'None' },
+    { key: 'media_type', label: 'Media Type', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'media_volume', label: 'Media Total', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'bottles_count', label: 'Bottles Count', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'contamination', label: 'Contamination', render: (val: any) => <span className="text-base">{val || 'None'}</span> },
     { key: 'status', label: 'Status', render: (val: string) => <StatusBadge status={val} /> }
   ];
 
   const autoclaveColumns = [
-    { key: 'cycle_date', label: 'Date', render: (val: any) => val ? String(val).split('T')[0] : 'N/A' },
+    { key: 'cycle_date', label: 'Date', render: (val: any) => <span className="text-base">{val ? String(val).split('T')[0] : 'N/A'}</span> },
     { key: 'media_code', label: 'Media Code' },
     { key: 'media_type', label: 'Type of Media' },
     { key: 'started_at', label: 'Autoclave ON Time' },
-    { key: 'media_loaded_at', label: 'Media Loading Time', render: (val: any) => val || 'Not set' },
-    { key: 'pressure_reached_at', label: 'Pressure Time', render: (val: any) => val || 'Not set' },
-    { key: 'ended_at', label: 'Off Time', render: (val: any) => val || 'Not set' },
-    { key: 'opened_at', label: 'Open Time', render: (val: any) => val || 'Not set' },
-    { key: 'media_volume', label: 'Media Total', render: (val: any) => val || 'Not set' },
-    { key: 'bottles_count', label: 'Bottles Count', render: (val: any) => val || 'Not set' },
+    { key: 'media_loaded_at', label: 'Media Loading Time', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'pressure_reached_at', label: 'Pressure Time', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'ended_at', label: 'Off Time', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'opened_at', label: 'Open Time', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'media_volume', label: 'Media Total', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
+    { key: 'bottles_count', label: 'Bottles Count', render: (val: any) => <span className="text-base">{val || 'Not set'}</span> },
     { key: 'status', label: 'Status', render: (val: string) => <StatusBadge status={val} /> }
   ];
 
@@ -96,7 +96,7 @@ export function MediaPreparation() {
         
         <TabsContent value="batch">
           <DataTable
-            title="Media Batch Register"
+            title=""
             columns={batchColumns}
             records={mediaBatches}
             onEdit={(record) => setModal({ open: true, editData: record, type: 'batch' })}
@@ -118,7 +118,7 @@ export function MediaPreparation() {
         
         <TabsContent value="autoclave">
           <DataTable
-            title="Autoclave Cycle"
+            title=""
             columns={autoclaveColumns}
             records={autoclaveCycles}
             onEdit={(record) => setModal({ open: true, editData: record, type: 'autoclave' })}

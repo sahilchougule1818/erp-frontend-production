@@ -74,14 +74,14 @@ export function OutdoorSampling() {
     { key: 'plant_name',    label: 'Plant Name' },
     { key: 'current_phase', label: 'Phase' },
     { key: 'current_tunnel',label: 'Tunnel' },
-    { key: 'sample_date',   label: 'Sample Date' },
+    { key: 'sample_date',   label: 'Sample Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '—' },
     { key: 'plant_age_at_sampling', label: 'Age at Sampling',
       render: (val: number) => val != null ? `${val} days` : '—' },
     { key: 'status',        label: 'Result',
       render: (val: string) => {
-        if (val === 'c') return <span className="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-800">Completed</span>;
-        if (val === 's') return <span className="px-2 py-1 rounded text-xs font-semibold bg-amber-100 text-amber-800">Sent</span>;
-        return <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-800">Pending</span>;
+        if (val === 'c') return <span className="px-2 py-1 rounded border text-base bg-emerald-50 text-emerald-700 border-emerald-200 shadow-none">Completed</span>;
+        if (val === 's') return <span className="px-2 py-1 rounded border text-base bg-amber-50 text-amber-700 border-amber-200 shadow-none">Sent</span>;
+        return <span className="px-2 py-1 rounded border text-base bg-gray-50 text-gray-600 border-gray-200 shadow-none">Pending</span>;
       }
     },
     { key: 'certificate_number', label: 'Certificate No' },  // was: certificate_no
@@ -90,7 +90,7 @@ export function OutdoorSampling() {
 
   // Submissions columns — sampling_submissions table
   const submissionColumns = [
-    { key: 'sample_date',   label: 'Sample Date' },
+    { key: 'sample_date',   label: 'Sample Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '—' },
     { key: 'batch_code',    label: 'Batch Code' },
     { key: 'plant_name',    label: 'Plant Name' },
     { key: 'current_phase', label: 'Phase' },
@@ -110,12 +110,12 @@ export function OutdoorSampling() {
   // Results columns — sampling_results table
   const resultColumns = [
     { key: 'batch_code',    label: 'Batch Code' },
-    { key: 'received_date', label: 'Received Date' },
+    { key: 'received_date', label: 'Received Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '—' },
     { key: 'status',        label: 'Result',
       render: (val: string) => {
-        if (val === 'c') return <span className="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-800">Completed</span>;
-        if (val === 's') return <span className="px-2 py-1 rounded text-xs font-semibold bg-amber-100 text-amber-800">Sent</span>;
-        return <span className="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-800">Pending</span>;
+        if (val === 'c') return <span className="px-2 py-1 rounded border text-base bg-emerald-50 text-emerald-700 border-emerald-200 shadow-none">Completed</span>;
+        if (val === 's') return <span className="px-2 py-1 rounded border text-base bg-amber-50 text-amber-700 border-amber-200 shadow-none">Sent</span>;
+        return <span className="px-2 py-1 rounded border text-base bg-gray-50 text-gray-600 border-gray-200 shadow-none">Pending</span>;
       }
     },
     { key: 'certificate_number', label: 'Certificate No' },   // was: certificate_no
@@ -157,11 +157,7 @@ export function OutdoorSampling() {
 
         <TabsContent value={activeTab}>
           <DataTable
-            title={
-              activeTab === 'summary'     ? 'Sampling Summary'      :
-              activeTab === 'submissions' ? 'Sampling Submissions'  :
-              'Sampling Results'
-            }
+            title=""
             columns={getColumns()}
             records={samples}
             filterConfig={{

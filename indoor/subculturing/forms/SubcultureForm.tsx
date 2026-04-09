@@ -115,35 +115,32 @@ const fetchOperatorIds = async (recordId: number) => {
   return (
     <ModalLayout title={initialData ? 'Edit Subculture Record' : 'Record Subculture'}>
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
-        <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="text-center mb-3">
-              <div className="text-sm text-gray-600">Subculturing Batch</div>
-              <div className="font-semibold text-blue-800 text-lg">{selectedBatch?.batch_code}</div>
-              <div className="text-sm text-gray-600 mt-1">{selectedBatch?.plant_name}</div>
-            </div>
-            {selectedBatch && (
-              <div className="flex items-center justify-center space-x-4">
-                <div className="text-center">
-                  <div className="text-sm text-gray-600">Current Stage</div>
-                  <div className="font-semibold text-blue-800">{selectedBatch.stage}</div>
-                </div>
-                <ArrowRight className="w-6 h-6 text-blue-600" />
-                <div className="text-center">
-                  <div className="text-sm text-gray-600">After Subculture</div>
-                  <div className="font-semibold text-green-800">{getNextStage(selectedBatch.stage)}</div>
-                </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="text-center mb-3">
+            <div className="text-base text-gray-600">Subculturing Batch</div>
+            <div className="font-semibold text-blue-800 text-xl">{selectedBatch?.batch_code}</div>
+            <div className="text-base text-gray-600 mt-1">{selectedBatch?.plant_name}</div>
+          </div>
+          {selectedBatch && (
+            <div className="flex items-center justify-center space-x-4">
+              <div className="text-center">
+                <div className="text-base text-gray-600">Current Stage</div>
+                <div className="font-semibold text-blue-800">{selectedBatch.stage}</div>
               </div>
-            )}
-            <div className="text-center mt-2 text-sm text-gray-600">
-              Subculturing will automatically advance the batch to the next stage
+              <ArrowRight className="w-6 h-6 text-blue-600" />
+              <div className="text-center">
+                <div className="text-base text-gray-600">After Subculture</div>
+                <div className="font-semibold text-green-800">{getNextStage(selectedBatch.stage)}</div>
+              </div>
             </div>
+          )}
+          <div className="text-center mt-2 text-base text-gray-600">
+            Subculturing will automatically advance the batch to the next stage
           </div>
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Subculture Details</h3>
+          <h3 className="font-semibold text-base text-gray-700">Subculture Details</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Media Code *</Label>
@@ -180,12 +177,12 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Operator Assignment</h3>
+          <h3 className="font-semibold text-base text-gray-700">Operator Assignment</h3>
           <OperatorSelector operators={operators} selectedIds={form.operatorIds} onChange={(ids) => updateForm('operatorIds', ids)} />
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Additional Information</h3>
+          <h3 className="font-semibold text-base text-gray-700">Additional Information</h3>
           <div className="space-y-2">
             <Label>Notes</Label>
             <Textarea value={form.notes} onChange={(e) => updateForm('notes', e.target.value)} />

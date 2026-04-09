@@ -1,3 +1,4 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { useHoldingAreaData } from '../hooks';
 import { DataTable } from '../../shared/components/DataTable';
 import { createPhaseColumns, phaseColumnConfigs } from '../../shared/components/phaseColumns';
@@ -21,15 +22,23 @@ export function HoldingArea() {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Holding Area"
-        columns={columns}
-        records={records}
-        filterConfig={{ filter1Key: 'batch_code', filter1Label: 'Batch Code', filter2Key: 'plant_name', filter2Label: 'Plant Name' }}
-        exportFileName="holding-area"
-        onEdit={onEditRecord}
-        pagination={pagination}
-      />
+      <Tabs defaultValue="holding" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="holding">Holding Area</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="holding">
+          <DataTable
+            title=""
+            columns={columns}
+            records={records}
+            filterConfig={{ filter1Key: 'batch_code', filter1Label: 'Batch Code', filter2Key: 'plant_name', filter2Label: 'Plant Name' }}
+            exportFileName="holding-area"
+            onEdit={onEditRecord}
+            pagination={pagination}
+          />
+        </TabsContent>
+      </Tabs>
 
       {editingRecord && (
         <UnifiedEditModal

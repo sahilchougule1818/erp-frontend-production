@@ -60,22 +60,22 @@ export function QuickFertilizeForm({ open, batch, workers, onSubmit, onClose }: 
 
           <div className="py-4 space-y-4">
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+              <h3 className="font-semibold text-base text-gray-700">Batch Information</h3>
               <div className="bg-gray-50 p-3 rounded-md space-y-1">
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Phase: <span className="font-semibold text-gray-900">{batch.current_phase}</span>
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel}</span>
                 </p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Fertilization Details</h3>
+              <h3 className="font-semibold text-base text-gray-700">Fertilization Details</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Fertilizer Name *</Label>
@@ -108,7 +108,7 @@ export function QuickFertilizeForm({ open, batch, workers, onSubmit, onClose }: 
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Worker Assignment</h3>
+              <h3 className="font-semibold text-base text-gray-700">Worker Assignment</h3>
               <WorkerSelector 
                 workers={workers} 
                 selectedIds={selectedWorkers} 

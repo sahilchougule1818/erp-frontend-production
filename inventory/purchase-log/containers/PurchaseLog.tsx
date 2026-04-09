@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { Badge } from '../../shared/ui/badge';
 import { DataTable } from '../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { inventoryApi } from '../../shared/services/inventoryApi';
 import { format } from 'date-fns';
 
@@ -66,25 +67,33 @@ export function PurchaseLog() {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Purchase Log"
-        columns={columns}
-        records={purchases}
-        filterConfig={{
-          filter1Key: 'item_name',
-          filter1Label: 'Search item...',
-          filter2Key: 'supplier_name',
-          filter2Label: 'Supplier',
-        }}
-        exportFileName="purchase_log"
-        pagination={{
-          currentPage,
-          totalPages,
-          total,
-          limit,
-          onPageChange: handlePageChange
-        }}
-      />
+      <Tabs defaultValue="purchase" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="purchase">Purchase Log</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="purchase">
+          <DataTable
+            title=""
+            columns={columns}
+            records={purchases}
+            filterConfig={{
+              filter1Key: 'item_name',
+              filter1Label: 'Search item...',
+              filter2Key: 'supplier_name',
+              filter2Label: 'Supplier',
+            }}
+            exportFileName="purchase_log"
+            pagination={{
+              currentPage,
+              totalPages,
+              total,
+              limit,
+              onPageChange: handlePageChange
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

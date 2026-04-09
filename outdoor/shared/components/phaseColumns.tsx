@@ -68,7 +68,7 @@ export const createPhaseColumns = (config: PhaseColumnConfig = {}) => {
   if (includeStockColumns) {
     columns.push(
       { key: 'sold_count',       label: 'Sold', render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-rose-600' : 'text-slate-400'}>{Number(v ?? 0).toLocaleString()}</span> },
-      { key: 'available_plants', label: 'Available',  render: (v: number) => <span className="font-bold text-green-700">{Number(v ?? 0).toLocaleString()}</span> },
+      { key: 'available_plants', label: 'Available',  render: (v: number) => <span className="text-green-700">{Number(v ?? 0).toLocaleString()}</span> },
     );
   }
 

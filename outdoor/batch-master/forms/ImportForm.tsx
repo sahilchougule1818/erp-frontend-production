@@ -50,7 +50,7 @@ export function ImportForm({ indoorBatch, tunnels, workers, onSubmit, onClose }:
   return (
     <ModalLayout title="Import from Indoor">
       <CardContent className="overflow-y-auto">
-        <p className="mb-4 text-sm text-gray-600">
+        <p className="mb-4 text-base text-gray-600">
           Batch: <span className="font-semibold">{indoorBatch.batch_code}</span><br />
           Plant: <span className="font-semibold">{indoorBatch.plant_name}</span>
         </p>

@@ -57,7 +57,7 @@ export function IncubationEditModal({ record, onClose, onSuccess }: IncubationEd
             event_code: record.event_code,
             activity_type: 'event'
           }),
-          indoorApi.operators.getAll({ page: 1, limit: 1000 })
+          indoorApi.operators.getAll({ page: 1, limit: 500 })
         ]);
         if (!active) return;
         

@@ -34,22 +34,22 @@ export function OutdoorWorkerMaster() {
   const notify = useNotify();
 
   const columns = [
-    { key: 'id', label: 'ID', render: (val: number) => <span className="text-xs text-slate-500 font-mono">{val}</span> },
-    { key: 'short_name', label: 'Short Name', render: (val: string) => <span className="font-bold">{val}</span> },
-    { key: 'full_name', label: 'Full Name', render: (_: any, record: any) => `${record.first_name} ${record.last_name}` },
+    { key: 'id', label: 'ID', render: (val: number) => <span className="text-base text-slate-500 font-mono">{val}</span> },
+    { key: 'short_name', label: 'Short Name', render: (val: string) => <span className="font-bold text-base">{val}</span> },
+    { key: 'full_name', label: 'Full Name', render: (_: any, record: any) => <span className="text-base">{`${record.first_name} ${record.last_name}`}</span> },
     { key: 'is_active', label: 'Status', render: (val: boolean) => (
-      <Badge className={val ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
+      <Badge className={val ? 'bg-green-100 text-green-700 text-base' : 'bg-gray-100 text-gray-700 text-base'}>
         {val ? 'Active' : 'Inactive'}
       </Badge>
     )}
   ];
 
   const logColumns = [
-    { key: 'batch_code', label: 'Batch Code', render: (val: string) => <span className="font-medium">{val}</span> },
+    { key: 'batch_code', label: 'Batch Code', render: (val: string) => <span className="font-medium text-base">{val}</span> },
     { key: 'activity', label: 'Activity', render: (val: string, record: any) => {
       const activity = val || record.phase;
       return (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
+        <span className={`px-2 py-1 rounded text-base font-medium ${
           activity === 'Import'
             ? 'bg-green-100 text-green-700'
           : activity === 'Shifting'
@@ -66,10 +66,10 @@ export function OutdoorWorkerMaster() {
         </span>
       );
     }},
-    { key: 'phase', label: 'Phase', render: (val: string) => <span className="capitalize">{val?.replace(/_/g, ' ')}</span> },
-    { key: 'tunnel', label: 'Tunnel', render: (val: string) => val || '-' },
-    { key: 'worker_name', label: 'Worker', render: (_: any, record: any) => record.worker_name || record.worker_shortname },
-    { key: 'date', label: 'Date', render: (val: string) => val ? new Date(val).toLocaleDateString() : '' }
+    { key: 'phase', label: 'Phase', render: (val: string) => <span className="capitalize text-base">{val?.replace(/_/g, ' ')}</span> },
+    { key: 'tunnel', label: 'Tunnel', render: (val: string) => <span className="text-base">{val || '-'}</span> },
+    { key: 'worker_name', label: 'Worker', render: (_: any, record: any) => <span className="text-base">{record.worker_name || record.worker_shortname}</span> },
+    { key: 'date', label: 'Date', render: (val: string) => <span className="text-base">{val ? new Date(val).toLocaleDateString() : ''}</span> }
   ];
 
   const toggleModal = (type: keyof typeof modals, open?: boolean) => {

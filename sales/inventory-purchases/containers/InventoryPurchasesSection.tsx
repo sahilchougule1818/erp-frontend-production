@@ -9,6 +9,7 @@ import { DataTable } from '../../shared/components/DataTable';
 import { useNotify } from '../../shared/hooks/useNotify';
 import { cn } from '../../shared/ui/utils';
 import { format } from 'date-fns';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 
 const InventoryPurchasesSection: React.FC = () => {
   const notify = useNotify();
@@ -112,36 +113,44 @@ const InventoryPurchasesSection: React.FC = () => {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Inventory Purchases"
+      <Tabs defaultValue="purchases" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="purchases">Inventory Purchases</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="purchases">
+          <DataTable
+            title=""
 
-        columns={columns}
-        records={payments}
-        filterConfig={{
-          filter1Key: 'item_name',
-          filter1Label: 'Search item...',
-          filter2Key: 'supplier_name',
-          filter2Label: 'Supplier'
-        }}
-        exportFileName="inventory_purchases"
-        addButton={
-          <Button
-            size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            onClick={() => setCreateOpen(true)}
-          >
-            <Plus className="h-3.5 w-3.5 mr-1.5" />
-            Record Purchase
-          </Button>
-        }
-        pagination={{
-          currentPage: pagination.page,
-          totalPages: pagination.totalPages,
-          total: pagination.total,
-          limit: pagination.limit,
-          onPageChange: handlePageChange
-        }}
-      />
+            columns={columns}
+            records={payments}
+            filterConfig={{
+              filter1Key: 'item_name',
+              filter1Label: 'Search item...',
+              filter2Key: 'supplier_name',
+              filter2Label: 'Supplier'
+            }}
+            exportFileName="inventory_purchases"
+            addButton={
+              <Button
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => setCreateOpen(true)}
+              >
+                <Plus className="h-3.5 w-3.5 mr-1.5" />
+                Record Purchase
+              </Button>
+            }
+            pagination={{
+              currentPage: pagination.page,
+              totalPages: pagination.totalPages,
+              total: pagination.total,
+              limit: pagination.limit,
+              onPageChange: handlePageChange
+            }}
+          />
+        </TabsContent>
+      </Tabs>
 
       <CreateWithdrawDialog
         open={createOpen}

@@ -5,6 +5,7 @@ import { Button } from '../../shared/ui/button';
 import { Input } from '../../shared/ui/input';
 import { Label } from '../../shared/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { useCustomers } from '../../shared/hooks/useSalesApi';
 import { useNotify } from '../../shared/hooks/useNotify';
 import { customersApi, Customer } from '../../shared/services/salesApi';
@@ -95,32 +96,40 @@ export function CustomersManagement() {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Customers"
+      <Tabs defaultValue="customers" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="customers">Customers</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="customers">
+          <DataTable
+            title=""
 
-        columns={columns}
-        records={customers.filter(b => !b.is_deleted)}
-        onEdit={openEdit}
-        addButton={
-          <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={openCreate}>
-            <Plus className="w-4 h-4 mr-2" /> Add Customer
-          </Button>
-        }
-        filterConfig={{
-          filter1Key: 'name',
-          filter1Label: 'Search by name...',
-          filter2Key: 'phone_number',
-          filter2Label: 'Phone',
-        }}
-        exportFileName="customers"
-        pagination={{
-          currentPage: pagination.page,
-          totalPages: pagination.totalPages,
-          total: pagination.total,
-          limit: pagination.limit,
-          onPageChange: handlePageChange
-        }}
-      />
+            columns={columns}
+            records={customers.filter(b => !b.is_deleted)}
+            onEdit={openEdit}
+            addButton={
+              <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={openCreate}>
+                <Plus className="w-4 h-4 mr-2" /> Add Customer
+              </Button>
+            }
+            filterConfig={{
+              filter1Key: 'name',
+              filter1Label: 'Search by name...',
+              filter2Key: 'phone_number',
+              filter2Label: 'Phone',
+            }}
+            exportFileName="customers"
+            pagination={{
+              currentPage: pagination.page,
+              totalPages: pagination.totalPages,
+              total: pagination.total,
+              limit: pagination.limit,
+              onPageChange: handlePageChange
+            }}
+          />
+        </TabsContent>
+      </Tabs>
 
       <Dialog open={isOpen} onOpenChange={(v) => { if (!v) { reset(); setEditing(null); } setIsOpen(v); }}>
         <DialogContent className="max-w-sm">

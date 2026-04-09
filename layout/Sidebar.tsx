@@ -116,7 +116,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
         { id: 'secondary-hardening', label: 'Secondary Hardening', icon: TreePine, page: 'secondary-hardening', breadcrumbs: ['Outdoor', 'Secondary Hardening'] },
         { id: 'shifting', label: 'Shifting Records', icon: ArrowRightLeft, page: 'shifting', breadcrumbs: ['Outdoor', 'Shifting Records'] },
         { id: 'holding-area', label: 'Holding Area', icon: Package, page: 'holding-area', breadcrumbs: ['Outdoor', 'Holding Area'] },
-        { id: 'outdoor-contamination', label: 'Outdoor Contamination', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Outdoor Contamination'] },
+        { id: 'outdoor-contamination', label: 'Outdoor Mortality', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Outdoor Mortality'] },
         { id: 'fertilization', label: 'Fertilization', icon: Droplets, page: 'fertilization', breadcrumbs: ['Outdoor', 'Fertilization'] },
         { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] }
       ]
@@ -209,7 +209,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
                 >
                   <div className="flex items-center">
                     <item.icon className={`w-5 h-5 text-green-600 ${isCollapsed ? '' : 'mr-3'}`} />
-                    {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+                    {!isCollapsed && <span className="text-base font-medium">{item.label}</span>}
                   </div>
                   {!isCollapsed && (
                     expandedGroups.includes(item.id) ? (
@@ -228,7 +228,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
                           if (isCollapsed) onToggle();
                           onNavigate(child.page, child.breadcrumbs);
                         }}
-                        className={`w-full flex items-center px-3 pl-12 py-2.5 text-sm transition-colors ${
+                        className={`w-full flex items-center px-3 pl-12 py-2.5 text-base transition-colors ${
                           currentPage === child.page
                             ? 'bg-green-50 text-green-700 border-r-4 border-green-600 font-medium'
                             : 'text-gray-600 hover:bg-green-50 border-l-4 border-transparent'
@@ -247,7 +247,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
                   if (isCollapsed) onToggle();
                   onNavigate(item.page!, item.breadcrumbs!);
                 }}
-                className={`w-full flex items-center px-3 py-2.5 text-sm transition-colors ${
+                className={`w-full flex items-center px-3 py-2.5 text-base transition-colors ${
                   isCollapsed ? 'justify-center' : ''
                 } ${
                   currentPage === item.page

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { Button } from '../../shared/ui/button';
 import {
   Download,
@@ -290,35 +291,35 @@ const IndoorBatchMaster: React.FC = () => {
   if (loading) return <div className="p-4">Loading...</div>;
 
   const columns = [
-    { key: 'batch_code', label: 'Batch Code', render: (v: string) => <span className="font-medium text-gray-900">{v}</span> },
-    { key: 'created_date', label: 'Created Date', render: (v: string) => v ? new Date(v).toLocaleDateString() : '-' },
+    { key: 'batch_code', label: 'Batch Code', render: (v: string) => <span className="font-medium text-gray-900 text-base">{v}</span> },
+    { key: 'created_date', label: 'Created Date', render: (v: string) => <span className="text-base">{v ? new Date(v).toLocaleDateString() : '-'}</span> },
     { key: 'plant_name', label: 'Plant Name' },
-    { key: 'current_age', label: 'Current Age', render: (v: number) => <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">{v} days</span> },
-    { key: 'phase_display', label: 'Phase', render: (v: string) => <span className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">{v}</span> },
-    { key: 'stage', label: 'Stage', render: (v: string) => v ? v.replace('Stage-', '') : '-' },
-    { key: 'current_bottles_count', label: 'Current Bottles', render: (v: number) => v ?? '-' },
-    { key: 'current_contamination', label: 'Current Contamination', render: (v: number) => <span className="text-red-600">{v || 0}</span> },
-    { key: 'current_stage_sold', label: 'Current Stage Sold', render: (v: number) => (v || 0).toLocaleString() },
-    { key: 'available_bottles', label: 'Available Bottles', render: (v: number) => <span className="text-green-700 font-semibold">{(v ?? 0).toLocaleString()}</span> },
-    { key: 'total_sold_bottles', label: 'Total Bottles Sold', render: (v: number) => (v || 0).toLocaleString() },
-    { key: 'contamination_count', label: 'Total Contamination', render: (v: number) => <span className="text-red-600">{v}</span> },
-    { key: 'event_count', label: 'Events', render: (v: number) => <span className="font-semibold">{v}</span> },
+    { key: 'current_age', label: 'Current Age', render: (v: number) => <span className="px-2 py-1 rounded border text-base bg-green-50 text-green-700 border-green-200">{v} days</span> },
+    { key: 'phase_display', label: 'Phase', render: (v: string) => <span className="px-2 py-1 rounded border text-base bg-blue-50 text-blue-700 border-blue-200">{v}</span> },
+    { key: 'stage', label: 'Stage', render: (v: string, record: any) => <span className="text-base">{v ? v.replace('Stage-', '') : '-'}</span> },
+    { key: 'current_bottles_count', label: 'Current Bottles', render: (v: number) => <span className="text-base">{v?.toLocaleString() ?? '-'}</span> },
+    { key: 'current_contamination', label: 'Current Contamination', render: (v: number) => <span className="text-red-600 text-base">{(v || 0).toLocaleString()}</span> },
+    { key: 'current_stage_sold', label: 'Current Stage Sold', render: (v: number) => <span className="text-base">{(v || 0).toLocaleString()}</span> },
+    { key: 'available_bottles', label: 'Available Bottles', render: (v: number) => <span className="text-green-700 text-base">{(v ?? 0).toLocaleString()}</span> },
+    { key: 'total_sold_bottles', label: 'Total Bottles Sold', render: (v: number) => <span className="text-base">{(v || 0).toLocaleString()}</span> },
+    { key: 'contamination_count', label: 'Total Contamination', render: (v: number) => <span className="text-red-600 text-base">{v.toLocaleString()}</span> },
+    { key: 'event_count', label: 'Events', render: (v: number) => <span className="text-base">{v}</span> },
     { key: 'is_sampled', label: 'Sampling', render: (v: string) => (
-      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-        v === 'c' ? 'bg-emerald-100 text-emerald-700' :
-        v === 's' ? 'bg-amber-100 text-amber-700' :
-        'bg-slate-100 text-slate-400'
+      <span className={`px-2 py-1 rounded border text-base ${
+        v === 'c' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+        v === 's' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+        'bg-slate-50 text-slate-400 border-slate-200'
       }`}>
         {v === 'c' ? 'Result Reported' : v === 's' ? 'Sample Sent' : 'Not Sampled'}
       </span>
     )},
     { key: 'state', label: 'State', render: (v: string) => (
-      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-        v === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-        v === 'OUTDOOR_READY' ? 'bg-orange-100 text-orange-800' :
-        v === 'SOLD_OUT' ? 'bg-rose-100 text-rose-800' :
-        v === 'AT_OUTDOOR' ? 'bg-purple-100 text-purple-800' :
-        'bg-gray-100 text-gray-700'
+      <span className={`px-2 py-1 rounded border text-base ${
+        v === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-200' :
+        v === 'OUTDOOR_READY' ? 'bg-orange-50 text-orange-700 border-orange-200' :
+        v === 'SOLD_OUT' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+        v === 'AT_OUTDOOR' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+        'bg-gray-50 text-gray-700 border-gray-200'
       }`}>
         {v}
       </span>
@@ -455,8 +456,14 @@ const IndoorBatchMaster: React.FC = () => {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Indoor Batch Master - Command Center"
+      <Tabs defaultValue="master" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="master">Indoor Batch Master</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="master">
+          <DataTable
+        title=""
         columns={columns}
         records={batches.map(batch => ({
           ...batch,
@@ -484,7 +491,10 @@ const IndoorBatchMaster: React.FC = () => {
           limit: pagination.limit,
           onPageChange: handlePageChange
         }}
+        hideBorder={true}
       />
+        </TabsContent>
+      </Tabs>
 
       {/* Modal forms */}
       {activeModal === 'CREATE' && (

@@ -13,6 +13,7 @@ import { Plus as PlusIcon } from 'lucide-react';
 import { cn } from '../../shared/ui/utils';
 import { DataTable } from '../../shared/components/DataTable';
 import { useNotify } from '../../shared/hooks/useNotify';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { ManageInstantSaleDialog } from '../../bookings/components/ManageInstantSaleDialog';
 import { ManagePreBookingDialog } from '../../bookings/components/ManagePreBookingDialog';
 import { CreateBookingDialog } from '../../bookings/components/CreateBookingDialog';
@@ -140,9 +141,9 @@ const CustomerSection: React.FC = () => {
     {
       key: 'created_at',
       label: 'Created Date',
-      render: (val: string) => val
+      render: (val: string) => <span className="text-base">{val
         ? new Date(val).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-        : '—'
+        : '—'}</span>
     },
     { key: 'customer_id', label: 'Customer ID' },
     { key: 'customer_name', label: 'Customer Name' },
@@ -151,22 +152,22 @@ const CustomerSection: React.FC = () => {
     {
       key: 'amount_paid_at_booking',
       label: 'Amt. at Booking',
-      render: (val: number) => `₹${Number(val).toLocaleString()}`
+      render: (val: number) => <span className="text-base">{`₹${Number(val).toLocaleString()}`}</span>
     },
     {
       key: 'total_amount',
       label: 'Total Amount',
-      render: (val: number) => `₹${Number(val).toLocaleString()}`
+      render: (val: number) => <span className="text-base">{`₹${Number(val).toLocaleString()}`}</span>
     },
     {
       key: 'paid_amount',
       label: 'Total Paid',
-      render: (val: number) => `₹${Number(val).toLocaleString()}`
+      render: (val: number) => <span className="text-base">{`₹${Number(val).toLocaleString()}`}</span>
     },
     {
       key: 'remaining_amount',
       label: 'Remaining',
-      render: (val: number) => `₹${Number(val).toLocaleString()}`
+      render: (val: number) => <span className="text-base">{`₹${Number(val).toLocaleString()}`}</span>
     },
     {
       key: 'fulfillment_type',
@@ -176,31 +177,31 @@ const CustomerSection: React.FC = () => {
           STOCK_FROM_OUTDOOR: 'Outdoor Batch',
           STOCK_FROM_INDOOR: 'Indoor Batch'
         };
-        return labels[val] || val;
+        return <span className="text-base">{labels[val] || val}</span>;
       }
     },
     {
       key: 'batch_code',
       label: 'Batch',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'expected_delivery_date',
       label: 'Exp. Delivery',
-      render: (val: string) => val
+      render: (val: string) => <span className="text-base">{val
         ? new Date(val).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-        : '—'
+        : '—'}</span>
     },
     {
       key: 'payment_status',
       label: 'Payment',
       render: (val: string) => {
         const styles: any = {
-          'Paid': 'bg-green-100 text-green-700',
-          'Partially Paid': 'bg-blue-100 text-blue-700',
-          'Pending': 'bg-amber-100 text-amber-700',
+          'Paid': 'bg-green-50 text-green-700 border-green-200',
+          'Partially Paid': 'bg-blue-50 text-blue-700 border-blue-200',
+          'Pending': 'bg-amber-50 text-amber-700 border-amber-200',
         };
-        return <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>{val}</Badge>;
+        return <Badge className={cn(styles[val] || 'bg-slate-50 text-slate-500 border-slate-200', 'border text-base')}>{val}</Badge>;
       }
     },
     {
@@ -208,47 +209,55 @@ const CustomerSection: React.FC = () => {
       label: 'Delivery',
       render: (val: string) => {
         const styles: any = {
-          'Pending': 'bg-amber-100 text-amber-700',
-          'Ready': 'bg-blue-100 text-blue-700',
-          'Delivered': 'bg-green-100 text-green-700',
-          'Cancelled': 'bg-red-100 text-red-700',
+          'Pending': 'bg-amber-50 text-amber-700 border-amber-200',
+          'Ready': 'bg-blue-50 text-blue-700 border-blue-200',
+          'Delivered': 'bg-green-50 text-green-700 border-green-200',
+          'Cancelled': 'bg-red-50 text-red-700 border-red-200',
         };
-        return <Badge className={styles[val] || 'bg-slate-100 text-slate-500'}>{val || 'Pending'}</Badge>;
+        return <Badge className={cn(styles[val] || 'bg-slate-50 text-slate-500 border-slate-200', 'border text-base')}>{val || 'Pending'}</Badge>;
       }
     },
   ];
 
   return (
     <div className="p-6 space-y-6">
-      <DataTable
-        title="Customer Bookings"
+      <Tabs defaultValue="bookings" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="bookings">Customer Bookings</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="bookings">
+          <DataTable
+            title=""
 
-        columns={columns}
-        records={bookings}
-        onEdit={(r) => { setSelectedBooking(r); setIsEditOpen(true); }}
-        addButton={
-          <Button
-            className="bg-green-600 hover:bg-green-700 text-white"
-            onClick={() => setIsCreateOpen(true)}
-          >
-            <PlusIcon className="w-4 h-4 mr-2" /> New Booking
-          </Button>
-        }
-        filterConfig={{
-          filter1Key: 'customer_name',
-          filter1Label: 'Search customer...',
-          filter2Key: 'booking_id',
-          filter2Label: 'Booking ID'
-        }}
-        exportFileName="bookings_export"
-        pagination={{
-          currentPage: pagination.page,
-          totalPages: pagination.totalPages,
-          total: pagination.total,
-          limit: pagination.limit,
-          onPageChange: handlePageChange
-        }}
-      />
+            columns={columns}
+            records={bookings}
+            onEdit={(r) => { setSelectedBooking(r); setIsEditOpen(true); }}
+            addButton={
+              <Button
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => setIsCreateOpen(true)}
+              >
+                <PlusIcon className="w-4 h-4 mr-2" /> New Booking
+              </Button>
+            }
+            filterConfig={{
+              filter1Key: 'customer_name',
+              filter1Label: 'Search customer...',
+              filter2Key: 'booking_id',
+              filter2Label: 'Booking ID'
+            }}
+            exportFileName="bookings_export"
+            pagination={{
+              currentPage: pagination.page,
+              totalPages: pagination.totalPages,
+              total: pagination.total,
+              limit: pagination.limit,
+              onPageChange: handlePageChange
+            }}
+          />
+        </TabsContent>
+      </Tabs>
 
       <CreateBookingDialog
         open={isCreateOpen}

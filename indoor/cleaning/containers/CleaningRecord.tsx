@@ -59,7 +59,7 @@ export function CleaningRecord() {
         
         <TabsContent value="cleaning">
           <DataTable
-            title="Cleaning Record"
+            title=""
             columns={cleaningColumns}
             records={cleaningRecords}
             exportFileName="cleaning_records"
@@ -82,7 +82,7 @@ export function CleaningRecord() {
         
         <TabsContent value="deep">
           <DataTable
-            title="Deep Cleaning Record"
+            title=""
             columns={deepCleaningColumns}
             records={deepCleaningRecords}
             exportFileName="deep_cleaning_records"

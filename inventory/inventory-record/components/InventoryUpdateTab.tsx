@@ -10,6 +10,7 @@ import { Input } from '../../shared/ui/input';
 import { Label } from '../../shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
 import { DataTable } from '../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import { inventoryApi } from '../../shared/services/inventoryApi';
 import { useNotify } from '../../shared/hooks/useNotify';
 
@@ -166,22 +167,30 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
 
   return (
     <>
-      <DataTable
-        title="Inventory Update"
-        columns={columns}
-        records={records}
-        exportFileName="inventory_update"
-        pagination={pagination}
-        addButton={
-          <Button
-            size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white text-xs"
-            onClick={() => { setItemForm({ name: '', unit: '', min_stock: '' }); setAddItemOpen(true); }}
-          >
-            <Plus className="h-3.5 w-3.5 mr-1.5" />Add Item
-          </Button>
-        }
-      />
+      <Tabs defaultValue="inventory" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="inventory">Inventory Update</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="inventory">
+          <DataTable
+            title=""
+            columns={columns}
+            records={records}
+            exportFileName="inventory_update"
+            pagination={pagination}
+            addButton={
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                onClick={() => { setItemForm({ name: '', unit: '', min_stock: '' }); setAddItemOpen(true); }}
+              >
+                <Plus className="h-3.5 w-3.5 mr-1.5" />Add Item
+              </Button>
+            }
+          />
+        </TabsContent>
+      </Tabs>
 
       {/* Withdraw Stock Modal */}
       {withdrawItem && (

@@ -50,22 +50,22 @@ export function InventoryDashboard() {
   return (
     <div className="p-6 space-y-6">
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
-        <div style={{ padding: '20px', backgroundColor: '#ecfdf5', borderRadius: '12px', borderBottom: '4px solid #10b981', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ padding: '20px', backgroundColor: '#EAF3DE', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#047857' }} className="uppercase tracking-wider">Total Items</span>
-            <Box style={{ color: '#059669', width: '20px', height: '20px' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#3B6D11', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Items</span>
+            <Box style={{ color: '#3B6D11', width: '20px', height: '20px' }} />
           </div>
-          <div style={{ fontSize: '1.875rem', fontWeight: '900', color: '#064e3b', marginTop: '8px' }}>
+          <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#27500A', marginTop: '8px' }}>
             {stats ? Number(stats.total_items) : 0}
           </div>
         </div>
 
-        <div style={{ padding: '20px', backgroundColor: '#fff1f2', borderRadius: '12px', borderBottom: '4px solid #f43f5e', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ padding: '20px', backgroundColor: '#FCEBEB', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#be123c' }} className="uppercase tracking-wider">Low Stock Items</span>
-            <AlertTriangle style={{ color: '#e11d48', width: '20px', height: '20px' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#A32D2D', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Low Stock Items</span>
+            <AlertTriangle style={{ color: '#A32D2D', width: '20px', height: '20px' }} />
           </div>
-          <div style={{ fontSize: '1.875rem', fontWeight: '900', color: '#881337', marginTop: '8px' }}>
+          <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#791F1F', marginTop: '8px' }}>
             {stats ? Number(stats.low_stock_items) : 0}
           </div>
         </div>

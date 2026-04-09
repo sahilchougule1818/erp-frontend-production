@@ -142,15 +142,7 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
 
   return (
     <div className="bg-gradient-to-r from-slate-50 via-blue-50 to-purple-50 border-b border-gray-200">
-      <div className="h-16 px-6 flex items-center justify-between">
-        {/* Left Side - Current Module */}
-        {currentPage && (
-          <div className={`flex items-center gap-2 px-4 py-2 ${colors.bg} rounded-lg border ${colors.border}`}>
-            <ModuleIcon className={`w-5 h-5 ${colors.icon}`} />
-            <span className={`text-sm font-medium ${colors.text}`}>{currentPage}</span>
-          </div>
-        )}
-
+      <div className="h-16 px-6 flex items-center justify-end">
         {/* Right Side */}
         <div className="flex items-center gap-4">
           {/* Notification Bell */}

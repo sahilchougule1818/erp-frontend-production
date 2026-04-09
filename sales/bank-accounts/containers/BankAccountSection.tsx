@@ -7,6 +7,7 @@ import { Plus, Pencil, Trash2, Lock } from 'lucide-react';
 import { DataTable } from '../../shared/components/DataTable';
 import { useNotify } from '../../shared/hooks/useNotify';
 import { cn } from '../../shared/ui/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 import CreateBankAccountDialog from '../components/CreateBankAccountDialog';
 import EditBankAccountDialog from '../components/EditBankAccountDialog';
 
@@ -100,27 +101,35 @@ const BankAccountSection: React.FC = () => {
 
   return (
     <div className="p-6">
-      <DataTable
-        title="Bank Account Master"
-        columns={columns}
-        records={accounts}
-        filterConfig={{
-          filter1Key: 'bank_name',
-          filter1Label: 'Bank',
-          filter2Key: 'account_name',
-          filter2Label: 'Search Account'
-        }}
-        addButton={
-          <Button
-            size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white h-9"
-            onClick={() => setIsCreateOpen(true)}
-          >
-            <Plus className="w-4 h-4 mr-1.5" /> Register Account
-          </Button>
-        }
-        exportFileName="bank_accounts"
-      />
+      <Tabs defaultValue="bank-accounts" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="bank-accounts">Bank Account Master</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="bank-accounts">
+          <DataTable
+            title=""
+            columns={columns}
+            records={accounts}
+            filterConfig={{
+              filter1Key: 'bank_name',
+              filter1Label: 'Bank',
+              filter2Key: 'account_name',
+              filter2Label: 'Search Account'
+            }}
+            addButton={
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white h-9"
+                onClick={() => setIsCreateOpen(true)}
+              >
+                <Plus className="w-4 h-4 mr-1.5" /> Register Account
+              </Button>
+            }
+            exportFileName="bank_accounts"
+          />
+        </TabsContent>
+      </Tabs>
 
       <CreateBankAccountDialog
         open={isCreateOpen}

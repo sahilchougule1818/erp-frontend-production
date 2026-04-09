@@ -54,7 +54,7 @@ export function IndoorContamination() {
 
         <TabsContent value="summary">
           <DataTable
-            title="Contamination Summary by Batch"
+            title=""
             columns={summaryColumns}
             records={summary}
             exportFileName="contamination_summary"
@@ -63,7 +63,7 @@ export function IndoorContamination() {
 
         <TabsContent value="records">
           <DataTable
-            title="Indoor Contamination Records (Read-Only)"
+            title=""
             columns={recordsColumns}
             records={records}
             filterConfig={{

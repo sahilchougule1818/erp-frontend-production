@@ -18,12 +18,12 @@ type StatCardProps = {
 
 function StatCard({ label, value, sub, bg, border, labelColor, valueColor, subColor, icon }: StatCardProps) {
   return (
-    <div style={{ padding: '20px', backgroundColor: bg, borderRadius: '12px', borderBottom: `4px solid ${border}` }}>
+    <div style={{ padding: '20px', backgroundColor: bg, borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: labelColor }}>{label}</span>
+        <span style={{ fontSize: '0.75rem', fontWeight: '600', color: labelColor, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
         {icon}
       </div>
-      <div style={{ fontSize: '1.875rem', fontWeight: '900', color: valueColor, marginTop: '8px' }}>{value}</div>
+      <div style={{ fontSize: '1.875rem', fontWeight: '700', color: valueColor, marginTop: '8px' }}>{value}</div>
       <div style={{ fontSize: '0.7rem', color: subColor, fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>{sub}</div>
     </div>
   );
@@ -76,15 +76,15 @@ export function SalesDashboard() {
           label="Indoor Stock"
           value={totalIndoorBottles.toLocaleString()}
           sub="Available Bottles (Incubation)"
-          bg="#f5f3ff" border="#8b5cf6" labelColor="#6d28d9" valueColor="#4c1d95" subColor="#c4b5fd"
-          icon={<ArrowUp style={{ color: '#7c3aed', width: '20px', height: '20px' }} />}
+          bg="#E6F1FB" border="" labelColor="#185FA5" valueColor="#0C447C" subColor="#185FA5"
+          icon={<ArrowUp style={{ color: '#185FA5', width: '20px', height: '20px' }} />}
         />
         <StatCard
           label="Outdoor Stock"
           value={totalOutdoorPlants.toLocaleString()}
           sub="Available Plants (Holding Area)"
-          bg="#ecfdf5" border="#10b981" labelColor="#047857" valueColor="#064e3b" subColor="#6ee7b7"
-          icon={<Package style={{ color: '#059669', width: '20px', height: '20px' }} />}
+          bg="#EAF3DE" border="" labelColor="#3B6D11" valueColor="#27500A" subColor="#3B6D11"
+          icon={<Package style={{ color: '#3B6D11', width: '20px', height: '20px' }} />}
         />
       </div>
 
@@ -94,19 +94,23 @@ export function SalesDashboard() {
           title="Stock Analysis"
           sub="Current batches across indoor incubation and outdoor holding areas"
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-          <DataTable
-            title="Indoor Stock (Incubation)"
-            columns={indoorColumns}
-            records={indoorStock}
-            exportFileName="indoor_stock"
-          />
-          <DataTable
-            title="Outdoor Stock (Holding)"
-            columns={outdoorColumns}
-            records={outdoorStock}
-            exportFileName="outdoor_stock"
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', minWidth: 0 }}>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <DataTable
+              title="Indoor Stock (Incubation)"
+              columns={indoorColumns}
+              records={indoorStock}
+              exportFileName="indoor_stock"
+            />
+          </div>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <DataTable
+              title="Outdoor Stock (Holding)"
+              columns={outdoorColumns}
+              records={outdoorStock}
+              exportFileName="outdoor_stock"
+            />
+          </div>
         </div>
       </div>
 

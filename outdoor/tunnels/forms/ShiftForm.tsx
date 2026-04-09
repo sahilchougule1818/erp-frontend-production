@@ -51,20 +51,17 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
   return (
     <ModalLayout title="Make Shift (Tunnel Move)">
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
-        <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
-          <div className="bg-gray-50 p-3 rounded-md space-y-1">
-            <p className="text-sm text-gray-600">
-              Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
-            </p>
-            <p className="text-sm text-gray-600">
-              Current Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel || '—'}</span>
-            </p>
-          </div>
+        <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+          <p className="text-base text-gray-600">
+            Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
+          </p>
+          <p className="text-base text-gray-600">
+            Current Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel || '—'}</span>
+          </p>
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Shift Details</h3>
+          <h3 className="font-semibold text-base text-gray-700">Shift Details</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>New Tunnel *</Label>
@@ -103,12 +100,12 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Worker Assignment</h3>
+          <h3 className="font-semibold text-base text-gray-700">Worker Assignment</h3>
           <WorkerSelector workers={workers} selectedIds={selectedWorkers} onChange={setSelectedWorkers} />
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Tray Configuration</h3>
+          <h3 className="font-semibold text-base text-gray-700">Tray Configuration</h3>
           <TrayInput trays={trays} onChange={setTrays} />
         </div>
       </div>

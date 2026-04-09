@@ -6,12 +6,13 @@ import { format } from 'date-fns';
 import { DataTable } from '../../shared/components/DataTable';
 import { LedgerFilterBar } from '../../shared/components/LedgerFilterBar';
 import { cn } from '../../shared/ui/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
 
 const ENTRY_TYPE_LABELS: Record<string, { label: string; color: string }> = {
-  ADVANCE_IN:         { label: 'Advance In',   color: 'bg-blue-100 text-blue-700' },
-  PAYMENT_IN:         { label: 'Payment In',   color: 'bg-green-100 text-green-700' },
-  REFUND_OUT:         { label: 'Refund Out',   color: 'bg-red-100 text-red-700' },
-  STOCK_PURCHASE_OUT: { label: 'Purchase Out', color: 'bg-orange-100 text-orange-700' },
+  ADVANCE_IN:         { label: 'Advance In',   color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  PAYMENT_IN:         { label: 'Payment In',   color: 'bg-green-50 text-green-700 border-green-200' },
+  REFUND_OUT:         { label: 'Refund Out',   color: 'bg-red-50 text-red-700 border-red-200' },
+  STOCK_PURCHASE_OUT: { label: 'Purchase Out', color: 'bg-orange-50 text-orange-700 border-orange-200' },
 };
 
 const LedgerSection: React.FC = () => {
@@ -49,65 +50,65 @@ const LedgerSection: React.FC = () => {
     {
       key: 'entry_date',
       label: 'Date',
-      render: (val: string) => format(new Date(val), 'dd MMM yyyy')
+      render: (val: string) => <span className="text-base">{format(new Date(val), 'dd MMM yyyy')}</span>
     },
     {
       key: 'entry_type',
       label: 'Particular',
       render: (val: string) => {
-        const meta = ENTRY_TYPE_LABELS[val] ?? { label: val, color: 'bg-slate-100 text-slate-600' };
-        return <Badge className={meta.color}>{meta.label}</Badge>;
+        const meta = ENTRY_TYPE_LABELS[val] ?? { label: val, color: 'bg-slate-50 text-slate-600 border-slate-200' };
+        return <Badge className={cn(meta.color, 'border text-base')}>{meta.label}</Badge>;
       }
     },
     {
       key: 'customer_name',
       label: 'Customer',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'booking_id',
       label: 'Booking ID',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'transaction_number',
       label: 'System TXN No.',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'payment_reference',
       label: 'Payment Ref',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'payment_method',
       label: 'Method',
-      render: (val: string) => val || 'Cash'
+      render: (val: string) => <span className="text-base">{val || 'Cash'}</span>
     },
     {
       key: 'bank_account_name',
       label: 'Account',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'refund_id',
       label: 'Refund ID',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'stock_purchase_id',
       label: 'Purchase ID',
-      render: (val: string) => val || '—'
+      render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
       key: 'debit_amount',
       label: 'Outflow (−)',
-      render: (val: number) => Number(val) > 0 ? `₹${Number(val).toLocaleString()}` : '—'
+      render: (val: number) => <span className="text-base">{Number(val) > 0 ? `₹${Number(val).toLocaleString()}` : '—'}</span>
     },
     {
       key: 'credit_amount',
       label: 'Inflow (+)',
-      render: (val: number) => Number(val) > 0 ? `₹${Number(val).toLocaleString()}` : '—'
+      render: (val: number) => <span className="text-base">{Number(val) > 0 ? `₹${Number(val).toLocaleString()}` : '—'}</span>
     },
   ];
 
@@ -116,62 +117,70 @@ const LedgerSection: React.FC = () => {
 
       {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-        <div style={{ padding: '18px 20px', backgroundColor: '#f0fdf4', borderRadius: '12px', borderBottom: '4px solid #22c55e' }}>
+        <div style={{ padding: '20px', backgroundColor: '#EAF3DE', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Funds Inflow</span>
-            <TrendingUp style={{ color: '#16a34a', width: '18px', height: '18px' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#3B6D11', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Funds Inflow</span>
+            <TrendingUp style={{ color: '#3B6D11', width: '20px', height: '20px' }} />
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: '900', color: '#14532d', marginTop: '6px' }}>{fmt(netInflow)}</div>
-          <div style={{ fontSize: '0.65rem', color: '#86efac', fontWeight: '600', textTransform: 'uppercase', marginTop: '3px' }}>
+          <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#27500A', marginTop: '8px' }}>{fmt(netInflow)}</div>
+          <div style={{ fontSize: '0.7rem', color: '#3B6D11', fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>
             {filters.bank_account_id !== 'all' || filters.from_date || filters.to_date ? 'Filtered view' : 'All time'}
           </div>
         </div>
 
-        <div style={{ padding: '18px 20px', backgroundColor: '#fff1f2', borderRadius: '12px', borderBottom: '4px solid #f43f5e' }}>
+        <div style={{ padding: '20px', backgroundColor: '#FCEBEB', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#be123c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Funds Outflow</span>
-            <TrendingDown style={{ color: '#e11d48', width: '18px', height: '18px' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#A32D2D', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Funds Outflow</span>
+            <TrendingDown style={{ color: '#A32D2D', width: '20px', height: '20px' }} />
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: '900', color: '#881337', marginTop: '6px' }}>{fmt(netOutflow)}</div>
-          <div style={{ fontSize: '0.65rem', color: '#fda4af', fontWeight: '600', textTransform: 'uppercase', marginTop: '3px' }}>
+          <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#791F1F', marginTop: '8px' }}>{fmt(netOutflow)}</div>
+          <div style={{ fontSize: '0.7rem', color: '#A32D2D', fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>
             {filters.bank_account_id !== 'all' || filters.from_date || filters.to_date ? 'Filtered view' : 'All time'}
           </div>
         </div>
 
-        <div style={{ padding: '18px 20px', backgroundColor: '#fff7ed', borderRadius: '12px', borderBottom: '4px solid #f97316' }}>
+        <div style={{ padding: '20px', backgroundColor: '#FAEEDA', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#c2410c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Pending</span>
-            <Clock style={{ color: '#ea580c', width: '18px', height: '18px' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#854F0B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Pending</span>
+            <Clock style={{ color: '#854F0B', width: '20px', height: '20px' }} />
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: '900', color: '#7c2d12', marginTop: '6px' }}>{fmt(netPending)}</div>
-          <div style={{ fontSize: '0.65rem', color: '#fdba74', fontWeight: '600', textTransform: 'uppercase', marginTop: '3px' }}>
+          <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#633806', marginTop: '8px' }}>{fmt(netPending)}</div>
+          <div style={{ fontSize: '0.7rem', color: '#854F0B', fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>
             Outstanding from customers
           </div>
         </div>
       </div>
 
-      <DataTable
-        title="Financial Ledger"
-        columns={columns}
-        records={entries}
-        filterConfig={null}
-        addButton={
-          <LedgerFilterBar
-            filters={filters}
-            accounts={summary}
-            onChange={handleChange}
-            onReset={handleReset}
+      <Tabs defaultValue="ledger" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="ledger">Financial Ledger</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="ledger">
+          <DataTable
+            title=""
+            columns={columns}
+            records={entries}
+            filterConfig={null}
+            addButton={
+              <LedgerFilterBar
+                filters={filters}
+                accounts={summary}
+                onChange={handleChange}
+                onReset={handleReset}
+              />
+            }
+            exportFileName="financial_ledger"
+            pagination={{
+              currentPage: pagination.page,
+              totalPages: pagination.totalPages,
+              total: pagination.total,
+              limit: pagination.limit,
+              onPageChange: handlePageChange
+            }}
           />
-        }
-        exportFileName="financial_ledger"
-        pagination={{
-          currentPage: pagination.page,
-          totalPages: pagination.totalPages,
-          total: pagination.total,
-          limit: pagination.limit,
-          onPageChange: handlePageChange
-        }}
-      />
+        </TabsContent>
+      </Tabs>
 
     </div>
   );

@@ -45,7 +45,7 @@ export function OutdoorMortality() {
 
         <TabsContent value="summary">
           <DataTable
-            title="Mortality Summary by Batch"
+            title=""
             columns={summaryColumns}
             records={summary}
             exportFileName="mortality-summary"
@@ -56,7 +56,7 @@ export function OutdoorMortality() {
 
         <TabsContent value="history">
           <DataTable
-            title="Mortality Records"
+            title=""
             columns={logColumns}
             records={log}
             filterConfig={{
