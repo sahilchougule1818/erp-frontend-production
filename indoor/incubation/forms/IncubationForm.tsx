@@ -146,19 +146,19 @@ const fetchOperatorIds = async (recordId: number) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Incubation Period (days)</Label>
-              <Input type="number" placeholder="7" value={form.incubationPeriod} onChange={(e) => updateForm('incubationPeriod', e.target.value)} />
+              <Input type="number" value={form.incubationPeriod} onChange={(e) => updateForm('incubationPeriod', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>Temperature</Label>
-              <Input placeholder="25°C" value={form.temperature} onChange={(e) => updateForm('temperature', e.target.value)} />
+              <Input value={form.temperature} onChange={(e) => updateForm('temperature', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>Humidity</Label>
-              <Input placeholder="70%" value={form.humidity} onChange={(e) => updateForm('humidity', e.target.value)} />
+              <Input value={form.humidity} onChange={(e) => updateForm('humidity', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>Light Intensity</Label>
-              <Input placeholder="3000 lux" value={form.lightIntensity} onChange={(e) => updateForm('lightIntensity', e.target.value)} />
+              <Input value={form.lightIntensity} onChange={(e) => updateForm('lightIntensity', e.target.value)} />
             </div>
           </div>
         </div>
