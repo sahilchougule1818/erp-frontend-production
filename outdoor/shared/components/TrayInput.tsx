@@ -35,23 +35,23 @@ export function TrayInput({ trays, onChange }: TrayInputProps) {
         {/* Add new tray */}
         <div className="grid grid-cols-5 gap-2 items-end">
           <div className="col-span-2">
-            <Label className="text-xs">Cavity Count</Label>
+            <Label className="text-base">Cavity Count</Label>
             <Input
               type="number"
               placeholder="Cavity"
               value={newTray.cavityCount}
               onChange={(e) => setNewTray({ ...newTray, cavityCount: e.target.value })}
-              className="h-8 text-sm"
+              className="h-8 text-base"
             />
           </div>
           <div className="col-span-2">
-            <Label className="text-xs">Count</Label>
+            <Label className="text-base">Count</Label>
             <Input
               type="number"
               placeholder="Count"
               value={newTray.count}
               onChange={(e) => setNewTray({ ...newTray, count: e.target.value })}
-              className="h-8 text-sm"
+              className="h-8 text-base"
             />
           </div>
           <Button 
@@ -67,8 +67,8 @@ export function TrayInput({ trays, onChange }: TrayInputProps) {
         {trays.length > 0 && (
           <div className="space-y-1 max-h-24 overflow-y-auto">
             {trays.map((t, i) => (
-              <div key={i} className="flex justify-between items-center py-1 px-2 bg-gray-50 rounded text-sm">
-                <span className="text-xs">
+              <div key={i} className="flex justify-between items-center py-1 px-2 bg-gray-50 rounded text-base">
+                <span className="text-base">
                   Cavity: <span className="font-medium">{t.cavityCount}</span>, 
                   Count: <span className="font-medium">{t.count}</span>
                 </span>
@@ -86,7 +86,7 @@ export function TrayInput({ trays, onChange }: TrayInputProps) {
         )}
         
         {trays.length === 0 && (
-          <p className="text-xs text-gray-500 text-center py-2">No trays added yet</p>
+          <p className="text-base text-gray-500 text-center py-2">No trays added yet</p>
         )}
       </div>
     </div>

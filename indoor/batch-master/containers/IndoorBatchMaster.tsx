@@ -540,7 +540,7 @@ const IndoorBatchMaster: React.FC = () => {
       {activeModal === 'TIMELINE' && selectedBatch && (
         <ModalLayout title={`Indoor Batch Timeline — ${selectedBatch.batch_code}`} width="850px">
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-3 text-sm">
+            <div className="grid grid-cols-3 gap-3 text-base">
               <div><span className="text-gray-600">Plant: </span><span className="font-semibold">{selectedBatch.plant_name}</span></div>
               <div><span className="text-gray-600">Stage: </span><span className="font-semibold">{selectedBatch.stage}</span></div>
               <div><span className="text-gray-600">Phase: </span><span className="font-semibold">{selectedBatch.phase_display}</span></div>
@@ -591,9 +591,9 @@ const IndoorBatchMaster: React.FC = () => {
                                 {event.event_type === 'INCUBATE' && `Incubation at ${eventData.stage || eventData.current_stage || 'Current Stage'}`}
                                 {event.event_type === 'EXPORT' && 'Exported to Outdoor'}
                               </h3>
-                              <div className="text-xs text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
+                              <div className="text-base text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
                             </div>
-                            <div className="bg-gray-50 rounded p-2 space-y-1.5 text-sm text-gray-600">
+                            <div className="bg-gray-50 rounded p-2 space-y-1.5 text-base text-gray-600">
                               {event.age_at_arrival !== null && (
                                 <div className="flex items-center gap-2">
                                   <span className="text-gray-400 min-w-[120px]">Arrival Age</span>

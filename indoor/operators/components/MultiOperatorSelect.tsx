@@ -46,7 +46,7 @@ export function MultiOperatorSelect({ operators, selectedIds, onChange }: MultiO
                   toggleOperator(String(op.id));
                   setSearch('');
                 }}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 flex items-center justify-between"
+                className="w-full text-left px-3 py-2 text-base hover:bg-blue-50 flex items-center justify-between"
               >
                 <span>{op.short_name} ({op.first_name} {op.last_name})</span>
                 {isSelected && <span className="text-blue-600">✓</span>}
@@ -57,13 +57,13 @@ export function MultiOperatorSelect({ operators, selectedIds, onChange }: MultiO
       )}
       <div className="flex flex-wrap gap-2 min-h-[32px] p-2 border rounded-md bg-gray-50">
         {selectedIds.length === 0 ? (
-          <span className="text-sm text-gray-400">No operators selected</span>
+          <span className="text-base text-gray-400">No operators selected</span>
         ) : (
           selectedIds.map((id: string) => {
             const op = operators.find((o: any) => String(o.id) === id);
             if (!op) return null;
             return (
-              <span key={id} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm">
+              <span key={id} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded text-base">
                 {op.short_name}
                 <button type="button" onClick={() => toggleOperator(id)} className="hover:text-blue-900">×</button>
               </span>

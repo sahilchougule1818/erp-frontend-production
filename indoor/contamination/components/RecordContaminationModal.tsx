@@ -94,14 +94,14 @@ export function RecordContaminationModal({ batch, preloaded, onClose, onSuccess 
       maxWidth="600px"
     >
       {loading ? (
-        <div className="py-10 text-center text-sm text-muted-foreground flex flex-col items-center gap-2">
+        <div className="py-10 text-center text-base text-muted-foreground flex flex-col items-center gap-2">
           <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
           Loading record...
         </div>
       ) : record ? (
         <>
           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-            <div className="bg-red-50 border border-red-100 rounded-lg p-4 space-y-1 text-sm">
+            <div className="bg-red-50 border border-red-100 rounded-lg p-4 space-y-1 text-base">
               <div className="flex justify-between">
                 <span className="text-gray-500">Batch</span>
                 <span className="font-semibold">{record.batch_code}</span>
@@ -134,7 +134,7 @@ export function RecordContaminationModal({ batch, preloaded, onClose, onSuccess 
                 className="text-red-800 font-bold border-red-200 focus:border-red-400"
                 disabled={saving}
               />
-              <div className="flex justify-between text-sm px-1">
+              <div className="flex justify-between text-base px-1">
                 <span className="text-gray-500">Remaining after contamination</span>
                 <span className="font-bold text-green-700">
                   {Math.max(0, record.current_bottles_count - contaminationCount)}

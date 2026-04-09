@@ -20,7 +20,7 @@ function StatCard({ label, value, sub, bg, border, labelColor, valueColor, subCo
   return (
     <div style={{ padding: '20px', backgroundColor: bg, borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.75rem', fontWeight: '600', color: labelColor, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
+        <span style={{ fontSize: '1rem', fontWeight: '600', color: labelColor, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
         {icon}
       </div>
       <div style={{ fontSize: '1.875rem', fontWeight: '700', color: valueColor, marginTop: '8px' }}>{value}</div>
@@ -82,7 +82,7 @@ export function SalesDashboard() {
         <StatCard
           label="Outdoor Stock"
           value={totalOutdoorPlants.toLocaleString()}
-          sub="Available Plants (Holding Area)"
+          sub="Available Plants (Outdoor)"
           bg="#EAF3DE" border="" labelColor="#3B6D11" valueColor="#27500A" subColor="#3B6D11"
           icon={<Package style={{ color: '#3B6D11', width: '20px', height: '20px' }} />}
         />

@@ -43,7 +43,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
 
       <div className="overflow-y-auto" style={{ maxHeight: '440px' }}>
         {visibleDeliveries.length === 0 ? (
-          <div className="p-8 text-center text-gray-500 text-sm">
+          <div className="p-8 text-center text-gray-500 text-base">
             No upcoming deliveries in the next 10 days
           </div>
         ) : (
@@ -70,7 +70,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
 
                   <div className="pr-6 space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <span className={`text-xs font-bold px-2 py-0.5 ${
+                      <span className={`text-base font-bold px-2 py-0.5 ${
                         isUrgent 
                           ? 'text-red-700' 
                           : 'text-blue-700'
@@ -79,11 +79,11 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
                       </span>
                     </div>
 
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2 text-base">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-gray-500 flex-shrink-0" />
                         <span className="font-semibold text-gray-900">{delivery.customer_name}</span>
-                        <span className="text-gray-500 text-xs">({delivery.customer_id})</span>
+                        <span className="text-gray-500 text-base">({delivery.customer_id})</span>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
                         </span>
                       </div>
 
-                      <div className="text-xs text-gray-600 mt-2 pt-2 border-t border-gray-300 font-mono">
+                      <div className="text-base text-gray-600 mt-2 pt-2 border-t border-gray-300 font-mono">
                         {delivery.booking_id}
                       </div>
                     </div>

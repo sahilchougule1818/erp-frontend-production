@@ -73,7 +73,7 @@ export function Reports() {
                   onChange={(e) => setStartDate(e.target.value)}
                   className="w-[150px]"
                 />
-                <span className="text-sm font-medium">to</span>
+                <span className="text-base font-medium">to</span>
                 <Input 
                   type="date" 
                   value={endDate} 
@@ -93,8 +93,8 @@ export function Reports() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="w-full">
               <TabsTrigger value="indoor">Indoor Sales</TabsTrigger>
               <TabsTrigger value="outdoor">Outdoor Sales</TabsTrigger>
               <TabsTrigger value="sales">Finance</TabsTrigger>

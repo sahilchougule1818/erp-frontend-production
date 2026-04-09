@@ -163,13 +163,13 @@ export function UnifiedEditModal({
             <FileEdit className="w-5 h-5 text-green-600" />
             Manage Record
           </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground mt-1 text-left">
+          <DialogDescription className="text-base text-muted-foreground mt-1 text-left">
             Batch: {batchCode} · {activityType === 'fertilization' ? 'Activity: Fertilization' : `Phase: ${phase.replace(/_/g, ' ')}`} {tunnel ? `· Tunnel: ${tunnel}` : ''}
           </DialogDescription>
         </DialogHeader>
 
         {loading ? (
-          <div className="py-12 text-center text-sm text-muted-foreground flex flex-col items-center gap-2">
+          <div className="py-12 text-center text-base text-muted-foreground flex flex-col items-center gap-2">
             <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
             Loading workers...
           </div>
@@ -177,10 +177,10 @@ export function UnifiedEditModal({
           <div className="space-y-4 py-4">
             {/* Assigned Workers */}
             <div className="space-y-2">
-              <Label className="text-xs font-semibold">Assigned Workers ({stagedWorkers.length})</Label>
+              <Label className="text-base font-semibold">Assigned Workers ({stagedWorkers.length})</Label>
               <div className="border rounded-md p-3 min-h-[60px]">
                 {stagedWorkers.length === 0 ? (
-                  <span className="text-gray-500 text-sm">No workers assigned</span>
+                  <span className="text-gray-500 text-base">No workers assigned</span>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {stagedWorkers.map((worker) => (
@@ -195,13 +195,13 @@ export function UnifiedEditModal({
 
             {/* Worker Directory */}
             <div className="space-y-2">
-              <Label className="text-xs font-semibold">Directory</Label>
+              <Label className="text-base font-semibold">Directory</Label>
               <div className="border rounded-md overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setIsExpanded(!isExpanded)}
                   disabled={saving}
-                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm bg-transparent transition-colors hover:bg-muted/30"
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-base bg-transparent transition-colors hover:bg-muted/30"
                 >
                   <span className="text-muted-foreground">
                     Click to browse worker directory...
@@ -223,7 +223,7 @@ export function UnifiedEditModal({
                             disabled={saving}
                             className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                           />
-                          <Label htmlFor={`worker-${w.id}`} className="text-sm cursor-pointer">
+                          <Label htmlFor={`worker-${w.id}`} className="text-base cursor-pointer">
                             {getWorkerDisplayName(w)}
                           </Label>
                         </div>

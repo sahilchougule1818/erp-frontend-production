@@ -153,7 +153,7 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
             >
               <Bell className="w-5 h-5 text-slate-600" />
               {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-base font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {notificationCount > 9 ? '9+' : notificationCount}
                 </span>
               )}
@@ -169,8 +169,8 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 pl-4 border-l border-green-200 hover:bg-white/60 px-2 py-1 rounded-lg transition-colors">
                   <div className="text-right">
-                    <div className="text-sm font-medium text-slate-900">{user.firstName} {user.lastName}</div>
-                    <div className="text-xs text-green-600">{user.role || 'User'}</div>
+                    <div className="text-base font-medium text-slate-900">{user.firstName} {user.lastName}</div>
+                    <div className="text-base text-green-600">{user.role || 'User'}</div>
                   </div>
                   <Avatar>
                     <AvatarImage src="" />
@@ -183,9 +183,9 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.firstName} {user.lastName}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    <p className="text-xs leading-none text-muted-foreground mt-1">
+                    <p className="text-base font-medium leading-none">{user.firstName} {user.lastName}</p>
+                    <p className="text-base leading-none text-muted-foreground">{user.email}</p>
+                    <p className="text-base leading-none text-muted-foreground mt-1">
                       {user.role || 'User'}
                     </p>
                   </div>

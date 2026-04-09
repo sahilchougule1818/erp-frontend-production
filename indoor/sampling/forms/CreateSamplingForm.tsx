@@ -44,7 +44,7 @@ export function CreateSamplingForm({ initialData, batches, onSubmit, onDelete, o
     <ModalLayout title={initialData ? 'Edit Sampling Record' : 'Create Sampling Record'}>
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Sampling Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Sampling Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Sample Date *</Label>
@@ -65,7 +65,7 @@ export function CreateSamplingForm({ initialData, batches, onSubmit, onDelete, o
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Batch Information</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Plant Name</Label>

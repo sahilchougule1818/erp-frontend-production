@@ -32,7 +32,7 @@ export function IndoorContamination() {
       label: 'Contamination',
       render: (val: number) => <span className="font-semibold text-red-600">{val || 0}</span>
     },
-    { key: 'notes', label: 'Notes', render: (val: string) => <span className="text-gray-500 text-xs">{val || '—'}</span> },
+    { key: 'notes', label: 'Notes', render: (val: string) => <span className="text-gray-500 text-base">{val || '—'}</span> },
     {
       key: 'is_active',
       label: 'State',

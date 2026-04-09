@@ -92,7 +92,7 @@ export function UserManagement() {
           </Button>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">Manage system users and their roles</p>
+          <p className="text-base text-gray-500">Manage system users and their roles</p>
         </CardContent>
       </Card>
 

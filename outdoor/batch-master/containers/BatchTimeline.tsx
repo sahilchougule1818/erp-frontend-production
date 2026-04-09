@@ -126,7 +126,7 @@ export function BatchTimeline() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="min-w-[200px]">
-              <label className="block text-sm text-gray-600 mb-2">Select Batch</label>
+              <label className="block text-base text-gray-600 mb-2">Select Batch</label>
               <Select value={selectedBatch} onValueChange={setSelectedBatch}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select batch" />
@@ -142,7 +142,7 @@ export function BatchTimeline() {
             {stats && (
               <>
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-sm text-gray-600 mb-1">Current Phase</div>
+                  <div className="text-base text-gray-600 mb-1">Current Phase</div>
                   <div className="text-lg font-semibold">
                     {stats.current_phase
                       ?.replace(/_/g, ' ')
@@ -152,12 +152,12 @@ export function BatchTimeline() {
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-sm text-gray-600 mb-1">Current Tunnel</div>
+                  <div className="text-base text-gray-600 mb-1">Current Tunnel</div>
                   <div className="text-lg font-semibold">{stats.current_tunnel || 'N/A'}</div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-base text-gray-600 mb-1">
                     Current Age
                   </div>
                   <div className="text-lg font-semibold text-green-600">
@@ -166,19 +166,19 @@ export function BatchTimeline() {
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-sm text-gray-600 mb-1">Total Plants</div>
+                  <div className="text-base text-gray-600 mb-1">Total Plants</div>
                   <div className="text-xl font-semibold">{stats.plants?.toLocaleString() || 0}</div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-sm text-gray-600 mb-1">Total Mortality</div>
+                  <div className="text-base text-gray-600 mb-1">Total Mortality</div>
                   <div className="text-xl font-semibold text-red-600">
                     {stats.total_mortality?.toLocaleString() || 0}
                   </div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-sm text-gray-600 mb-1">Net Plants</div>
+                  <div className="text-base text-gray-600 mb-1">Net Plants</div>
                   <div className="text-xl font-semibold text-green-600">{stats.total_plants?.toLocaleString() || 0}</div>
                 </div>
               </>
@@ -237,13 +237,13 @@ export function BatchTimeline() {
                           {/* Row 1: Title + Date */}
                           <div className="flex items-start justify-between mb-3">
                             <h3 className="font-medium">{eventLabel}</h3>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-base text-gray-500">
                               {new Date(event.created_at).toLocaleDateString()}
                             </div>
                           </div>
 
                           {/* Row 2: Main details — left: tunnel/plants/activities, right: age metrics */}
-                          <div className="bg-gray-50 rounded-md p-3 flex gap-6 text-sm text-gray-600 mb-3">
+                          <div className="bg-gray-50 rounded-md p-3 flex gap-6 text-base text-gray-600 mb-3">
 
                             {/* Left column — tunnel, plants, mortality, fertilization */}
                             <div className="flex flex-col gap-2 flex-1">
@@ -267,13 +267,13 @@ export function BatchTimeline() {
                               )}
                               {event.fertilizations && event.fertilizations.length > 0 && (
                                 <div className="mt-1 pt-2 border-t border-gray-200">
-                                  <div className="text-gray-400 text-xs mb-1.5">Fertilization:</div>
+                                  <div className="text-gray-400 text-base mb-1.5">Fertilization:</div>
                                   {event.fertilizations.map((fert: any, fertIdx: number) => (
-                                    <div key={fertIdx} className="flex items-center gap-1.5 text-xs mb-1">
+                                    <div key={fertIdx} className="flex items-center gap-1.5 text-base mb-1">
                                       <Droplet className="w-3 h-3 text-amber-600 flex-shrink-0" />
                                       <span className="font-medium text-gray-800">{fert.fertilizer_name}</span>
                                       <span className="text-gray-500">({fert.quantity})</span>
-                                      <span className="text-gray-400 text-xs ml-auto">
+                                      <span className="text-gray-400 text-base ml-auto">
                                         {new Date(fert.created_at).toLocaleDateString()}
                                       </span>
                                     </div>
@@ -286,16 +286,16 @@ export function BatchTimeline() {
                             <div className="flex flex-col gap-1.5 items-end min-w-[180px]">
                               {event.age_at_arrival !== null && event.age_at_arrival !== undefined && (
                                 <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 text-xs">Age at Arrival</span>
-                                  <span className="px-2 py-0.5 bg-green-50 border border-green-200 rounded-full text-xs font-semibold text-green-700">
+                                  <span className="text-gray-400 text-base">Age at Arrival</span>
+                                  <span className="px-2 py-0.5 bg-green-50 border border-green-200 rounded-full text-base font-semibold text-green-700">
                                     {event.age_at_arrival} days
                                   </span>
                                 </div>
                               )}
                               {event.age_at_departure !== null && event.age_at_departure !== undefined && (
                                 <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 text-xs">Age at Departure</span>
-                                  <span className="px-2 py-0.5 bg-orange-50 border border-orange-200 rounded-full text-xs font-semibold text-orange-600">
+                                  <span className="text-gray-400 text-base">Age at Departure</span>
+                                  <span className="px-2 py-0.5 bg-orange-50 border border-orange-200 rounded-full text-base font-semibold text-orange-600">
                                     {event.age_at_departure} days
                                   </span>
                                 </div>
@@ -303,8 +303,8 @@ export function BatchTimeline() {
                               {event.age_at_arrival !== null && event.age_at_departure !== null &&
                                event.age_at_arrival !== undefined && event.age_at_departure !== undefined && (
                                 <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 text-xs">Time in Tunnel</span>
-                                  <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-xs font-semibold text-blue-700">
+                                  <span className="text-gray-400 text-base">Time in Tunnel</span>
+                                  <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-base font-semibold text-blue-700">
                                     {event.age_at_departure - event.age_at_arrival} days
                                   </span>
                                 </div>

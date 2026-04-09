@@ -84,7 +84,7 @@ export const createPhaseColumns = (config: PhaseColumnConfig = {}) => {
       };
       const colorClass = stateColors[val] ?? 'bg-slate-100 text-slate-500';
       return (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-base font-medium ${colorClass}`}>
           {val}
         </span>
       );

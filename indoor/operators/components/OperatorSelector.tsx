@@ -37,7 +37,7 @@ export function OperatorSelector({ operators, selectedIds, onChange }: OperatorS
           type="button"
           variant="outline"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full justify-between h-8 text-sm"
+          className="w-full justify-between h-8 text-base"
         >
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
@@ -58,7 +58,7 @@ export function OperatorSelector({ operators, selectedIds, onChange }: OperatorS
               <Badge 
                 key={operator.id} 
                 variant="secondary" 
-                className="text-xs px-2 py-1 flex items-center gap-1"
+                className="text-base px-2 py-1 flex items-center gap-1"
               >
                 {operator.short_name}
                 <button
@@ -84,7 +84,7 @@ export function OperatorSelector({ operators, selectedIds, onChange }: OperatorS
                   onChange={() => toggleOperator(operator.id)}
                   className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                 />
-                <span className="text-sm flex-1">
+                <span className="text-base flex-1">
                   {operator.short_name} ({operator.first_name} {operator.last_name})
                 </span>
               </label>

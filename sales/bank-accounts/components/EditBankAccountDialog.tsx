@@ -59,7 +59,7 @@ const EditBankAccountDialog: React.FC<Props> = ({ account, open, onOpenChange, o
     <ModalLayout title="Edit Bank Account">
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Account Identity</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Account Identity</p>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Display Name *</Label>
@@ -79,7 +79,7 @@ const EditBankAccountDialog: React.FC<Props> = ({ account, open, onOpenChange, o
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Bank Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Bank Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2 space-y-2">
               <Label>Bank Name *</Label>
@@ -106,7 +106,7 @@ const EditBankAccountDialog: React.FC<Props> = ({ account, open, onOpenChange, o
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Status</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Status</p>
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"

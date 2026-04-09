@@ -40,19 +40,19 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
         <div className="px-6 py-4">
           <div className="space-y-4">
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Batch Information</p>
               <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
                 </p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Result Details</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Result Details</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-sm">Result Date *</Label>
+                  <Label className="text-base">Result Date *</Label>
                   <Input 
                     type="date" 
                     value={resultDate} 
@@ -60,7 +60,7 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm">Status *</Label>
+                  <Label className="text-base">Status *</Label>
                   <Select value={status} onValueChange={setStatus}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
@@ -75,10 +75,10 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Certificate Information</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Certificate Information</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-sm">Certificate Number {status === 'Yes' && '*'}</Label>
+                  <Label className="text-base">Certificate Number {status === 'Yes' && '*'}</Label>
                   <Input 
                     value={certificateNo} 
                     onChange={(e) => setCertificateNo(e.target.value)}
@@ -87,7 +87,7 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm">Govt Code</Label>
+                  <Label className="text-base">Govt Code</Label>
                   <Input 
                     value={govtCode} 
                     onChange={(e) => setGovtCode(e.target.value)}
@@ -99,9 +99,9 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Additional Information</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Additional Information</p>
               <div className="space-y-2">
-                <Label className="text-sm">Notes</Label>
+                <Label className="text-base">Notes</Label>
                 <Textarea 
                   value={notes} 
                   onChange={(e) => setNotes(e.target.value)}

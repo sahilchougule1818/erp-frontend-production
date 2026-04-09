@@ -28,25 +28,25 @@ export const SampleForm: React.FC<SampleFormProps> = ({ batch, onClose, onSubmit
         <div className="px-6 py-4">
           <div className="space-y-4">
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Batch Information</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Batch Information</p>
               <div className="bg-gray-50 p-3 rounded-md space-y-1">
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Plant: <span className="font-semibold text-gray-900">{batch.plant_name}</span>
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-base text-gray-600">
                   Phase: <span className="font-semibold text-gray-900">{batch.phase}</span>
                 </p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-gray-700">Sample Details</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Sample Details</p>
               <div className="space-y-2">
                 <div className="space-y-2">
-                  <Label className="text-sm">Sample Date *</Label>
+                  <Label className="text-base">Sample Date *</Label>
                   <Input 
                     type="date" 
                     value={sampleDate} 
@@ -54,7 +54,7 @@ export const SampleForm: React.FC<SampleFormProps> = ({ batch, onClose, onSubmit
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm">Notes</Label>
+                  <Label className="text-base">Notes</Label>
                   <Textarea 
                     value={sampleNotes} 
                     onChange={(e) => setSampleNotes(e.target.value)}

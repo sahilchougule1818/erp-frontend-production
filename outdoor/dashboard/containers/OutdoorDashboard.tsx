@@ -227,32 +227,44 @@ export const OutdoorDashboard = () => {
       {!loading && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
           <div style={{ padding: '20px', backgroundColor: '#EAF3DE', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#3B6D11', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Primary Hardening</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#3B6D11', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Primary</span>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#3B6D11', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Hardening</span>
+              </div>
               <Leaf style={{ color: '#3B6D11', width: '20px', height: '20px' }} />
             </div>
             <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#27500A', marginTop: '8px' }}>{stats?.primary_count || 0}</div>
           </div>
 
           <div style={{ padding: '20px', backgroundColor: '#E6F1FB', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#185FA5', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Secondary Hardening</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#185FA5', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Secondary</span>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#185FA5', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Hardening</span>
+              </div>
               <TreePine style={{ color: '#185FA5', width: '20px', height: '20px' }} />
             </div>
             <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#0C447C', marginTop: '8px' }}>{stats?.secondary_count || 0}</div>
           </div>
 
           <div style={{ padding: '20px', backgroundColor: '#FAEEDA', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#854F0B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Holding Area</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#854F0B', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Holding</span>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#854F0B', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Area</span>
+              </div>
               <Warehouse style={{ color: '#854F0B', width: '20px', height: '20px' }} />
             </div>
             <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#633806', marginTop: '8px' }}>{holdingBatches.length}</div>
           </div>
 
           <div style={{ padding: '20px', backgroundColor: '#FCEBEB', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#A32D2D', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Mortality</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#A32D2D', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Total</span>
+                <span style={{ fontSize: '1rem', fontWeight: '600', color: '#A32D2D', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.2' }}>Mortality</span>
+              </div>
               <Skull style={{ color: '#A32D2D', width: '20px', height: '20px' }} />
             </div>
             <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#791F1F', marginTop: '8px' }}>{stats?.total_mortality || 0}</div>

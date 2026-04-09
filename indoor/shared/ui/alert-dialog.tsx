@@ -112,7 +112,7 @@ const AlertDialogDescription = React.forwardRef<
   <AlertDialogPrimitive.Description
     ref={ref}
     data-slot="alert-dialog-description"
-    className={cn("text-muted-foreground text-sm", className)}
+    className={cn("text-muted-foreground text-base", className)}
     {...props}
   />
 ));

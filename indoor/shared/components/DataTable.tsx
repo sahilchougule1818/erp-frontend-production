@@ -141,7 +141,7 @@ export function DataTable({
             <tbody>
               {displayRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-4 py-8 text-center text-sm font-normal text-gray-500">
+                  <td colSpan={columns.length + 1} className="px-4 py-8 text-center text-base font-normal text-gray-500">
                     No records found
                   </td>
                 </tr>
@@ -156,7 +156,7 @@ export function DataTable({
                         </td>
                       ))}
                       {(onEdit || onEditWorkers || onDelete) && (
-                        <td className="px-4 py-3 text-sm font-normal sticky right-0 bg-white z-10">
+                        <td className="px-4 py-3 text-base font-normal sticky right-0 bg-white z-10">
                           <div className="flex gap-1">
                             {onEdit && (
                               <Button
@@ -204,7 +204,7 @@ export function DataTable({
         </div>
         {pagination && (
           <div className="flex flex-col items-center justify-center gap-3 px-4 py-3 border-t border-gray-200 bg-white">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-base text-gray-600">
               <span>
                 Showing <span className="font-medium">{(pagination.currentPage - 1) * pagination.limit + 1}</span> to{' '}
                 <span className="font-medium">{Math.min(pagination.currentPage * pagination.limit, pagination.total)}</span> of{' '}

@@ -35,7 +35,7 @@ export function ModalLayout({
             {icon}
             <h4 className="text-lg font-semibold">{title}</h4>
           </div>
-          {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-base text-gray-500 mt-1">{subtitle}</p>}
         </div>
         <div className="flex-1 overflow-y-auto">
           {children}

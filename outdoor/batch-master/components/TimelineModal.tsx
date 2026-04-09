@@ -34,7 +34,7 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
             <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
           </div>
           {timelineStats && (
-            <div className="grid grid-cols-4 gap-3 text-sm">
+            <div className="grid grid-cols-4 gap-3 text-base">
               <div><span className="text-gray-600">Plant: </span><span className="font-semibold">{batch.plant_name}</span></div>
               <div><span className="text-gray-600">Phase: </span><span className="font-semibold">{phaseLabel(timelineStats.current_phase || batch.current_phase)}</span></div>
               <div><span className="text-gray-600">Tunnel: </span><span className="font-semibold">{timelineStats.current_tunnel || batch.current_tunnel || 'N/A'}</span></div>
@@ -81,16 +81,16 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                               <h3 className="font-medium">
                                 {event.event_type === 'IMPORT' && `Import to ${phaseLabel(event.event_data?.phase || event.phase)}`}
                                 {event.event_type === 'TRANSITION' && `Transition to ${phaseLabel(event.event_data?.to_phase || event.phase)}`}
-                              </h3>
+                              </p>
                               {event.age_at_arrival !== null && event.age_at_arrival !== undefined && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-base text-gray-500">
                                   Age at Arrival: <span className="font-semibold text-green-600">{event.age_at_arrival} days</span>
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
+                            <div className="text-base text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
                           </div>
-                          <div className="bg-gray-50 rounded p-3 space-y-2.5 text-sm">
+                          <div className="bg-gray-50 rounded p-3 space-y-2.5 text-base">
                             {event.tunnel && (
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 min-w-[80px]">Tunnel</span>
@@ -101,25 +101,25 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                             <div className="grid grid-cols-4 gap-3 py-2">
                               {event.plants_entered && (
                                 <div className="text-center">
-                                  <div className="text-xs text-gray-400 mb-1">Plants Entered</div>
+                                  <div className="text-base text-gray-400 mb-1">Plants Entered</div>
                                   <div className="font-semibold text-blue-600 text-base">{event.plants_entered}</div>
                                 </div>
                               )}
                               {event.mortality_count !== null && event.mortality_count !== undefined && (
                                 <div className="text-center">
-                                  <div className="text-xs text-gray-400 mb-1">Mortality</div>
+                                  <div className="text-base text-gray-400 mb-1">Mortality</div>
                                   <div className="font-semibold text-red-600 text-base">{event.mortality_count}</div>
                                 </div>
                               )}
                               {event.plants_sold !== null && event.plants_sold !== undefined && (
                                 <div className="text-center">
-                                  <div className="text-xs text-gray-400 mb-1">Plants Sold</div>
+                                  <div className="text-base text-gray-400 mb-1">Plants Sold</div>
                                   <div className="font-semibold text-purple-600 text-base">{event.plants_sold}</div>
                                 </div>
                               )}
                               {event.alive_plants !== null && event.alive_plants !== undefined && (
                                 <div className="text-center">
-                                  <div className="text-xs text-gray-400 mb-1">Available Plants</div>
+                                  <div className="text-base text-gray-400 mb-1">Available Plants</div>
                                   <div className="font-semibold text-green-600 text-base">{event.alive_plants}</div>
                                 </div>
                               )}
@@ -128,9 +128,9 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                             {/* Tunnel shifts section */}
                             {event.shifts && event.shifts.length > 0 && (
                               <div className="mt-2 pt-2 border-t border-gray-200">
-                                <div className="text-gray-400 text-xs mb-1.5 font-semibold">Tunnel Shifts:</div>
+                                <div className="text-gray-400 text-base mb-1.5 font-semibold">Tunnel Shifts:</div>
                                 {event.shifts.map((shift: any, shiftIdx: number) => (
-                                  <div key={shiftIdx} className="flex items-center justify-between text-xs mb-1.5 pl-2">
+                                  <div key={shiftIdx} className="flex items-center justify-between text-base mb-1.5 pl-2">
                                     <div className="flex items-center gap-1.5">
                                       <ArrowRightLeft className="w-3 h-3 text-purple-600 flex-shrink-0" />
                                       {shift.movement_type === 'IMPORT' ? (
@@ -143,14 +143,14 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                                         </span>
                                       )}
                                       <span className="text-gray-500">({shift.plants} plants)</span>
-                                      <span className="text-gray-400 text-xs">
+                                      <span className="text-gray-400 text-base">
                                         {new Date(shift.moved_at).toLocaleDateString()}
                                       </span>
                                     </div>
                                     {shift.fertilizations && shift.fertilizations.length > 0 ? (
                                       <div className="flex items-center gap-2">
                                         {shift.fertilizations.map((fert: any, fertIdx: number) => (
-                                          <span key={fertIdx} className="text-xs text-gray-700">
+                                          <span key={fertIdx} className="text-base text-gray-700">
                                             <span className="font-medium">{fert.fertilizer_name}</span>
                                             <span className="text-gray-500"> ({fert.quantity})</span>
                                             {fert.application_date && (

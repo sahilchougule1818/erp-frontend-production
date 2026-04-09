@@ -37,7 +37,7 @@ export function WorkerSelector({ workers, selectedIds, onChange }: WorkerSelecto
           type="button"
           variant="outline"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full justify-between h-8 text-sm"
+          className="w-full justify-between h-8 text-base"
         >
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
@@ -58,7 +58,7 @@ export function WorkerSelector({ workers, selectedIds, onChange }: WorkerSelecto
               <Badge 
                 key={worker.id} 
                 variant="secondary" 
-                className="text-xs px-2 py-1 flex items-center gap-1"
+                className="text-base px-2 py-1 flex items-center gap-1"
               >
                 {worker.name || worker.short_name}
                 <button
@@ -84,7 +84,7 @@ export function WorkerSelector({ workers, selectedIds, onChange }: WorkerSelecto
                   onChange={() => toggleWorker(worker.id)}
                   className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                 />
-                <span className="text-sm flex-1">
+                <span className="text-base flex-1">
                   {worker.name || worker.short_name}
                 </span>
               </label>

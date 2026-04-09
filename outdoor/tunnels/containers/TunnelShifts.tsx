@@ -53,7 +53,7 @@ export function TunnelShifts() {
         <span className="flex items-center gap-1">
           <span>{val ?? '—'}</span>
           {row.is_overcrowded && (
-            <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200"
+            <span className="px-1.5 py-0.5 rounded text-base font-semibold bg-orange-100 text-orange-700 border border-orange-200"
                   title="Tunnel is currently over capacity">
               Over Capacity
             </span>

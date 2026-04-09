@@ -25,7 +25,7 @@ export const QuickMortalityForm: React.FC<QuickMortalityFormProps> = ({ batch, o
     <ModalLayout title="Record Mortality">
       <div className="space-y-3 py-2">
         <div className="space-y-2">
-          <h3 className="font-semibold text-base text-gray-700">Batch Information</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Batch Information</p>
           <div className="bg-gray-50 p-2 rounded-md">
             <p className="text-base text-gray-600">
               Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
@@ -34,9 +34,9 @@ export const QuickMortalityForm: React.FC<QuickMortalityFormProps> = ({ batch, o
         </div>
 
         <div className="space-y-2">
-          <h3 className="font-semibold text-base text-gray-700">Mortality Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Mortality Details</p>
           <div className="space-y-1">
-            <Label className="text-xs">Mortality Count *</Label>
+            <Label className="text-base">Mortality Count *</Label>
             <Input 
               type="number" 
               autoFocus

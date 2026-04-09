@@ -65,7 +65,7 @@ export function MortalityForm({ batch, onClose, onSuccess }: MortalityFormProps)
           {!loading && currentMortality > 0 && (
             <p>Current Mortality: <span className="font-semibold text-red-600">{currentMortality}</span></p>
           )}
-          {loading && <p className="text-xs text-indigo-500 animate-pulse italic">Fetching current mortality...</p>}
+          {loading && <p className="text-base text-indigo-500 animate-pulse italic">Fetching current mortality...</p>}
         </div>
 
         <div className="space-y-2">
@@ -79,7 +79,7 @@ export function MortalityForm({ batch, onClose, onSuccess }: MortalityFormProps)
             disabled={loading}
             placeholder="Enter total mortality for this tunnel stay"
           />
-          <p className="text-xs text-gray-400">Sets total mortality for this tunnel stay (max {maxAllowed})</p>
+          <p className="text-base text-gray-400">Sets total mortality for this tunnel stay (max {maxAllowed})</p>
         </div>
 
         <div className="space-y-2">

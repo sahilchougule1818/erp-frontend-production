@@ -72,7 +72,7 @@ const BankAccountSection: React.FC = () => {
         return (
           <div className="flex items-center gap-1">
             {locked ? (
-              <span className="flex items-center gap-1 text-xs text-gray-400">
+              <span className="flex items-center gap-1 text-base text-gray-400">
                 <Lock className="h-3 w-3" /> Locked
               </span>
             ) : (

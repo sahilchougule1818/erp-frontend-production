@@ -145,11 +145,11 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
               <h3 className="font-semibold text-base text-red-700">Cancel Booking {selectedBooking.booking_id}?</h3>
             </div>
             <div className="space-y-2">
-              <Badge variant="outline" className="text-xs font-medium border-slate-300 text-slate-600">{selectedBooking.booking_id}</Badge>
-              <span className="text-sm text-slate-600 font-medium ml-2">{selectedBooking.customer_name}</span>
+              <Badge variant="outline" className="text-base font-medium border-slate-300 text-slate-600">{selectedBooking.booking_id}</Badge>
+              <span className="text-base text-slate-600 font-medium ml-2">{selectedBooking.customer_name}</span>
             </div>
             {Number(selectedBooking.paid_amount) > 0 && (
-              <p className="text-sm text-red-600">
+              <p className="text-base text-red-600">
                 A refund of <span className="font-bold">₹{Number(selectedBooking.paid_amount).toLocaleString()}</span> will be created automatically.
               </p>
             )}
@@ -159,11 +159,11 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                 placeholder="Why is this booking being cancelled?"
                 value={cancellationReason}
                 onChange={(e) => setCancellationReason(e.target.value)}
-                className="text-sm border-red-200 focus:border-red-400 min-h-[80px]"
+                className="text-base border-red-200 focus:border-red-400 min-h-[80px]"
               />
             </div>
             {errorMessage && (
-              <div className="bg-red-100 border border-red-300 rounded p-2 text-xs text-red-700 flex items-start gap-1">
+              <div className="bg-red-100 border border-red-300 rounded p-2 text-base text-red-700 flex items-start gap-1">
                 <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
                 <span className="flex-1">{errorMessage}</span>
                 <button type="button" onClick={() => setErrorMessage(null)} className="text-red-400 hover:text-red-700 ml-1 shrink-0">
@@ -188,12 +188,12 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
         {/* Header: Booking ID + Customer */}
         <div className="flex items-center gap-2 -mt-2">
-          <Badge variant="outline" className="text-xs font-medium border-slate-300 text-slate-600">{selectedBooking.booking_id}</Badge>
-          <span className="text-sm text-slate-600 font-medium">{selectedBooking.customer_name}</span>
+          <Badge variant="outline" className="text-base font-medium border-slate-300 text-slate-600">{selectedBooking.booking_id}</Badge>
+          <span className="text-base text-slate-600 font-medium">{selectedBooking.customer_name}</span>
         </div>
 
         {errorMessage && (
-          <div className="bg-red-50 border border-red-200 rounded p-3 text-sm text-red-700 flex items-start gap-2">
+          <div className="bg-red-50 border border-red-200 rounded p-3 text-base text-red-700 flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
             <span className="flex-1">{errorMessage}</span>
             <button type="button" onClick={() => setErrorMessage(null)} className="text-red-400 hover:text-red-700 shrink-0">
@@ -213,7 +213,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
               { label: 'Balance Due', val: selectedBooking.remaining_amount, cls: 'text-red-600' },
             ].map(({ label, val, cls }, i) => (
               <div key={label} className={i > 0 ? 'border-l pl-4' : ''}>
-                <p className="text-xs text-gray-600 mb-1">{label}</p>
+                <p className="text-base text-gray-600 mb-1">{label}</p>
                 <p className={`text-xl font-bold ${cls}`}>₹{Number(val).toLocaleString()}</p>
               </div>
             ))}
@@ -227,11 +227,11 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
         <div className="border rounded-md p-4 shadow-sm bg-white">
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-gray-500 mb-1 font-medium">Plant Name</p>
-              <p className="text-sm font-semibold text-gray-900">{selectedBooking.plant_name || '—'}</p>
+              <p className="text-base text-gray-500 mb-1 font-medium">Plant Name</p>
+              <p className="text-base font-semibold text-gray-900">{selectedBooking.plant_name || '—'}</p>
             </div>
             <div className="border-l pl-4">
-              <p className="text-xs text-gray-500 mb-1 font-medium">Quantity</p>
+              <p className="text-base text-gray-500 mb-1 font-medium">Quantity</p>
               <div className="flex items-center gap-2 mt-0.5">
                 {isEditingQuantity ? (
                   <>
@@ -240,7 +240,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                       min="1"
                       value={newQuantity}
                       onChange={(e) => setNewQuantity(e.target.value)}
-                      className="h-7 w-20 text-xs border-gray-300"
+                      className="h-7 w-20 text-base border-gray-300"
                       autoFocus
                     />
                     <button
@@ -252,7 +252,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                       <X className="h-4 w-4" />
                     </button>
                     {hasQuantityChange && (
-                      <span className="text-xs font-medium text-blue-600">
+                      <span className="text-base font-medium text-blue-600">
                         {Number(newQuantity) > Number(selectedBooking.quantity)
                           ? `+${Number(newQuantity) - Number(selectedBooking.quantity)}`
                           : `−${Number(selectedBooking.quantity) - Number(newQuantity)}`}
@@ -261,7 +261,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                   </>
                 ) : (
                   <>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-base font-semibold text-gray-900">
                       {selectedBooking.quantity} <span className="text-gray-600 font-normal">{selectedBooking.fulfillment_type === 'STOCK_FROM_INDOOR' ? 'bottles' : 'plants'}</span>
                     </p>
                     {canEditQuantity && (
@@ -281,15 +281,15 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
               </div>
             </div>
             <div className="border-l pl-4">
-              <p className="text-xs text-gray-500 mb-1 font-medium">Batch</p>
-              <p className="text-sm font-semibold text-gray-900">
+              <p className="text-base text-gray-500 mb-1 font-medium">Batch</p>
+              <p className="text-base font-semibold text-gray-900">
                 {selectedBooking.delivery_status === 'Delivered' ? (selectedBooking.batch_code || '—') : '—'}
               </p>
             </div>
           </div>
         </div>
         {selectedBooking.delivery_status === 'Delivered' && !canEditQuantity && (
-          <p className="text-xs text-amber-600">Quantity cannot be edited after delivery.</p>
+          <p className="text-base text-amber-600">Quantity cannot be edited after delivery.</p>
         )}
       </div>
 
@@ -297,11 +297,11 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
       <div className="space-y-2">
         <Label>Payment History</Label>
         <div className="border rounded-md p-3 space-y-2">
-          <Button type="button" variant="outline" onClick={() => setIsPaymentHistoryExpanded(!isPaymentHistoryExpanded)} className="w-full justify-between h-8 text-sm">
+          <Button type="button" variant="outline" onClick={() => setIsPaymentHistoryExpanded(!isPaymentHistoryExpanded)} className="w-full justify-between h-8 text-base">
             <div className="flex items-center gap-2">
               <HistoryIcon className="w-4 h-4" />
               <span>{payments.length === 0 ? 'No transactions yet' : `${payments.length} transaction${payments.length > 1 ? 's' : ''}`}</span>
-              {payments.length > 0 && <span className="text-xs text-slate-500">· ₹{Number(selectedBooking.paid_amount).toLocaleString()} paid</span>}
+              {payments.length > 0 && <span className="text-base text-slate-500">· ₹{Number(selectedBooking.paid_amount).toLocaleString()} paid</span>}
             </div>
             {isPaymentHistoryExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </Button>
@@ -312,22 +312,22 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                 <div key={payment.transaction_number} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">₹{Number(payment.amount).toLocaleString()}</span>
-                      <Badge variant="secondary" className="text-xs">{payment.payment_method}</Badge>
+                      <span className="font-semibold text-base">₹{Number(payment.amount).toLocaleString()}</span>
+                      <Badge variant="secondary" className="text-base">{payment.payment_method}</Badge>
                       {payment.entry_type === 'ADVANCE_RECEIVED' && (
-                        <Badge variant="outline" className="text-xs text-purple-700 border-purple-200">Advance</Badge>
+                        <Badge variant="outline" className="text-base text-purple-700 border-purple-200">Advance</Badge>
                       )}
                       {idx === 0 && payment.entry_type !== 'ADVANCE_RECEIVED' && (
-                        <Badge variant="outline" className="text-xs text-emerald-700 border-emerald-200">Latest</Badge>
+                        <Badge variant="outline" className="text-base text-emerald-700 border-emerald-200">Latest</Badge>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-base text-slate-500 mt-1">
                       {format(new Date(payment.payment_date), 'do MMM yyyy')}
                       {payment.transaction_number && <span className="text-slate-400"> • {payment.transaction_number}</span>}
                     </p>
                   </div>
                   {idx === 0 && !isCancelled && (
-                    <Button variant="ghost" size="sm" className="h-7 px-2 text-red-600 hover:bg-red-50 text-xs"
+                    <Button variant="ghost" size="sm" className="h-7 px-2 text-red-600 hover:bg-red-50 text-base"
                       onClick={handleUndoPayment}>
                       <Trash2 className="h-3 w-3 mr-1" /> Undo
                     </Button>
@@ -352,7 +352,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                 const activeStyles = status === 'Delivered' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800';
                 return (
                   <button key={status} type="button" onClick={() => setLocalDeliveryStatus(status)}
-                    className={cn('flex-1 py-2 text-sm font-medium transition-colors', i > 0 && 'border-l', isActive ? activeStyles : 'bg-white text-gray-500 hover:bg-gray-50')}>
+                    className={cn('flex-1 py-2 text-base font-medium transition-colors', i > 0 && 'border-l', isActive ? activeStyles : 'bg-white text-gray-500 hover:bg-gray-50')}>
                     {status}
                   </button>
                 );
@@ -360,7 +360,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
             </div>
             {localDeliveryStatus === 'Delivered' && selectedBooking.delivery_status === 'Pending' && !selectedBooking.batch_code && (
               <div className="space-y-2 bg-blue-50 border border-blue-200 rounded-md p-3">
-                <Label className="text-xs text-blue-700 font-semibold">Select Batch for Delivery *</Label>
+                <Label className="text-base text-blue-700 font-semibold">Select Batch for Delivery *</Label>
                 <Select value={selectedBatchCode} onValueChange={setSelectedBatchCode}>
                   <SelectTrigger className="bg-white"><SelectValue placeholder="Choose batch to fulfill this order" /></SelectTrigger>
                   <SelectContent>
@@ -375,7 +375,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
                       })}
                   </SelectContent>
                 </Select>
-                {!selectedBatchCode && <p className="text-xs text-blue-600">⚠️ Batch selection required to mark as delivered</p>}
+                {!selectedBatchCode && <p className="text-base text-blue-600">⚠️ Batch selection required to mark as delivered</p>}
               </div>
             )}
           </>
@@ -386,14 +386,14 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
       {isCancelled ? (
         <div className="bg-red-50 border border-red-200 rounded-md p-4 text-center space-y-1">
           <XCircle className="h-6 w-6 text-red-400 mx-auto" />
-          <p className="font-semibold text-sm text-red-700">Booking Cancelled</p>
-          {selectedBooking.cancellation_reason && <p className="text-xs text-red-500">Reason: {selectedBooking.cancellation_reason}</p>}
+          <p className="font-semibold text-base text-red-700">Booking Cancelled</p>
+          {selectedBooking.cancellation_reason && <p className="text-base text-red-500">Reason: {selectedBooking.cancellation_reason}</p>}
         </div>
       ) : Number(selectedBooking.remaining_amount) <= 0 ? (
         <div className="bg-green-50 border border-green-200 rounded-md p-5 text-center space-y-2">
           <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto" />
-          <p className="font-semibold text-sm text-green-800">Payment Complete</p>
-          <p className="text-xs text-green-600">This bill has been fully paid.</p>
+          <p className="font-semibold text-base text-green-800">Payment Complete</p>
+          <p className="text-base text-green-600">This bill has been fully paid.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -404,7 +404,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
               <div className="flex rounded-md overflow-hidden border">
                 {[{ val: 'ADVANCE', label: 'Advance Payment', color: 'bg-green-600' }, { val: 'REGULAR', label: 'Regular Payment', color: 'bg-green-600' }].map(({ val, label, color }, i) => (
                   <button key={val} type="button" onClick={() => setFormData({ ...formData, payment_type: val })}
-                    className={cn('flex-1 px-4 py-2 text-sm font-medium transition-colors', i > 0 && 'border-l', formData.payment_type === val ? `${color} text-white` : 'bg-white text-gray-600 hover:bg-gray-50')}>
+                    className={cn('flex-1 px-4 py-2 text-base font-medium transition-colors', i > 0 && 'border-l', formData.payment_type === val ? `${color} text-white` : 'bg-white text-gray-600 hover:bg-gray-50')}>
                     {label}
                   </button>
                 ))}
@@ -454,7 +454,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
             {!isCancelled && (
               <Button
                 variant="outline" size="sm"
-                className="text-slate-600 border-slate-300 hover:bg-slate-50 text-xs"
+                className="text-slate-600 border-slate-300 hover:bg-slate-50 text-base"
                 onClick={handleDeleteBooking}
               >
                 <Trash2 className="h-3 w-3 mr-1" /> Delete
@@ -463,7 +463,7 @@ export const ManagePreBookingDialog: React.FC<ManagePreBookingDialogProps> = ({
             {!isCancelled && (
               <Button
                 variant="outline" size="sm"
-                className="text-red-600 border-red-200 hover:bg-red-50 text-xs"
+                className="text-red-600 border-red-200 hover:bg-red-50 text-base"
                 onClick={() => { setErrorMessage(null); setShowCancelConfirm(true); }}
               >
                 <XCircle className="h-3 w-3 mr-1" /> Cancel

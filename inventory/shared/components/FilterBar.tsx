@@ -74,7 +74,7 @@ export function FilterBar({
       <div className="flex flex-wrap gap-3 items-end">
         {firstField && (
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5 font-medium text-gray-700">{firstField.label}</label>
+            <label className="block text-base mb-1.5 font-medium text-gray-700">{firstField.label}</label>
             {firstField.label.toLowerCase().includes('date') ? (
               <Input 
                 type="date" 
@@ -101,7 +101,7 @@ export function FilterBar({
 
         {secondField && (
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5 font-medium text-gray-700">{secondField.label}</label>
+            <label className="block text-base mb-1.5 font-medium text-gray-700">{secondField.label}</label>
             <Select value={secondField.value} onValueChange={secondField.onChange}>
               <SelectTrigger>
                 <SelectValue placeholder={secondField.placeholder || `Select ${secondField.label.toLowerCase()}`} />
@@ -119,7 +119,7 @@ export function FilterBar({
 
         {field3 && (
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5 font-medium text-gray-700">{field3.label}</label>
+            <label className="block text-base mb-1.5 font-medium text-gray-700">{field3.label}</label>
             <Select value={field3.value} onValueChange={field3.onChange}>
               <SelectTrigger>
                 <SelectValue placeholder={field3.placeholder || `Select ${field3.label.toLowerCase()}`} />
@@ -139,7 +139,7 @@ export function FilterBar({
           <Button 
             variant={null as any}
             style={{ backgroundColor: '#4CAF50', color: 'white' }}
-            className="hover:bg-[#66BB6A] font-medium shadow-sm h-10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all px-4"
+            className="hover:bg-[#66BB6A] font-medium shadow-sm h-10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-base transition-all px-4"
             onClick={onSearch}
           >
             <Search className="w-4 h-4 mr-2" />

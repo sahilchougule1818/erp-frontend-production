@@ -58,12 +58,12 @@ export const CreateWithdrawDialog: React.FC<Props> = ({
   return (
     <ModalLayout title="Record Expenditure">
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
-        <p className="text-sm text-gray-500 -mt-2">
+        <p className="text-base text-gray-500 -mt-2">
           Debit entries will be automatically synced with the ledger.
         </p>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Expense Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Expense Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Category / Item *</Label>
@@ -120,7 +120,7 @@ export const CreateWithdrawDialog: React.FC<Props> = ({
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Payment Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Payment Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Amount Paid (₹) *</Label>

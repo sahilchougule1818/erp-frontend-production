@@ -270,11 +270,11 @@ export function AutoclaveCycleForm({
             <TabsContent value="operators" className="space-y-4">
               {/* Operator management section */}
               <div className="space-y-4">
-                <div className="text-sm text-gray-600">
+                <div className="text-base text-gray-600">
                   Manage operators assigned to this autoclave cycle
                 </div>
                 <div className="border rounded-md p-3 min-h-[60px]">
-                  <Label className="text-xs font-semibold mb-2 block">Currently Assigned</Label>
+                  <Label className="text-base font-semibold mb-2 block">Currently Assigned</Label>
                   {form.operator_ids?.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {form.operator_ids.map(operatorId => {
@@ -287,12 +287,12 @@ export function AutoclaveCycleForm({
                       })}
                     </div>
                   ) : (
-                    <span className="text-gray-500 text-sm">No operators assigned</span>
+                    <span className="text-gray-500 text-base">No operators assigned</span>
                   )}
                 </div>
                 
                 <div>
-                  <Label className="text-xs font-semibold mb-2 block">Available Operators</Label>
+                  <Label className="text-base font-semibold mb-2 block">Available Operators</Label>
                   <div className="space-y-2 max-h-48 overflow-y-auto border rounded-md p-3">
                     {operators.map((op: any) => (
                       <div key={op.id} className="flex items-center space-x-2">
@@ -315,7 +315,7 @@ export function AutoclaveCycleForm({
                           }}
                           className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                         />
-                        <Label htmlFor={`edit-operator-${op.id}`} className="text-sm cursor-pointer">
+                        <Label htmlFor={`edit-operator-${op.id}`} className="text-base cursor-pointer">
                           {op.short_name} ({op.first_name} {op.last_name})
                         </Label>
                       </div>
@@ -381,7 +381,7 @@ export function AutoclaveCycleForm({
                     })}
                   </div>
                 ) : (
-                  <span className="text-gray-500 text-sm">No operators selected</span>
+                  <span className="text-gray-500 text-base">No operators selected</span>
                 )}
               </div>
               
@@ -407,7 +407,7 @@ export function AutoclaveCycleForm({
                       }}
                       className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <Label htmlFor={`operator-${op.id}`} className="text-sm cursor-pointer">
+                    <Label htmlFor={`operator-${op.id}`} className="text-base cursor-pointer">
                       {op.short_name} ({op.first_name} {op.last_name})
                     </Label>
                   </div>

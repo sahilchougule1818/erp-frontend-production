@@ -171,7 +171,7 @@ const BatchMaster: React.FC = () => {
         'HOLDING': { label: 'Holding', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
         'ACTIVE': { label: 'Active', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
       }[v] || { label: v, cls: 'bg-slate-50 text-slate-600 border-slate-200' };
-      return <Badge className={cn(config.cls, "border shadow-none text-base uppercase tracking-tighter")}>{config.label}</Badge>;
+      return <Badge className={cn(config.cls, "border shadow-none text-sm uppercase tracking-tighter")}>{config.label}</Badge>;
     }},
     {
       key: '_actions',
@@ -301,7 +301,7 @@ const BatchMaster: React.FC = () => {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border animate-pulse">
               <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-4" />
-              <p className="text-sm text-slate-500 font-medium tracking-tight">Accessing encrypted registry...</p>
+              <p className="text-base text-slate-500 font-medium tracking-tight">Accessing encrypted registry...</p>
             </div>
           ) : (
             <DataTable
@@ -357,7 +357,7 @@ const BatchMaster: React.FC = () => {
               <AlertDialogDescription asChild>
                 <div className="space-y-4 pt-2">
                   <p className="font-medium text-slate-600 leading-relaxed">{undoPreview.undo_description}</p>
-                  <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 space-y-2 text-sm shadow-inner">
+                  <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 space-y-2 text-base shadow-inner">
                     <p className="text-indigo-900 font-bold flex justify-between">
                       Target Tunnel: <span>{undoPreview.previousState?.tunnel ?? 'N/A'}</span>
                     </p>
@@ -372,8 +372,8 @@ const BatchMaster: React.FC = () => {
                     <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-start gap-3">
                       <span className="text-orange-500 text-base mt-0.5">⚠</span>
                       <div>
-                        <p className="text-sm font-bold text-orange-800">Tunnel may be over capacity</p>
-                        <p className="text-xs text-orange-700 mt-0.5 leading-relaxed">
+                        <p className="text-base font-bold text-orange-800">Tunnel may be over capacity</p>
+                        <p className="text-base text-orange-700 mt-0.5 leading-relaxed">
                           The log will be restored to tunnel {undoPreview.previousState?.tunnel}.
                           If the batch was physically moved, record a new shift after undoing.
                         </p>
@@ -404,7 +404,7 @@ const BatchMaster: React.FC = () => {
               <AlertDialogDescription asChild>
                 <div className="space-y-4 pt-2">
                   <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-center shadow-inner">
-                    <p className="text-sm font-bold text-rose-800 leading-relaxed">
+                    <p className="text-base font-bold text-rose-800 leading-relaxed">
                       You are attempting to purge batch{' '}
                       <span className="font-black underline decoration-2">{selectedBatch.batch_code}</span> from the master records. 
                       This will erase all historical data associated with this entry.
@@ -486,19 +486,19 @@ const BatchMaster: React.FC = () => {
           <ModalLayout title="Transition Indoor Assets">
             <div className="p-8 space-y-6">
               <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl">
-                <p className="text-sm font-bold text-emerald-800 leading-relaxed text-center">
+                <p className="text-base font-bold text-emerald-800 leading-relaxed text-center">
                     Select a high-quality batch from indoor cultivation ready for outdoor hardening.
                 </p>
               </div>
               
               {loading ? (
-                <div className="py-20 text-center text-sm text-slate-400 font-black uppercase tracking-widest bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                <div className="py-20 text-center text-base text-slate-400 font-black uppercase tracking-widest bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                   Scanning Lab Inventories...
                 </div>
               ) : indoorBatches.length === 0 ? (
                 <div className="py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
-                  <p className="text-sm text-slate-500 font-bold">No assets currently ready for transition.</p>
-                  <p className="text-xs text-slate-400 mt-1 font-medium italic">Verification required in lab module.</p>
+                  <p className="text-base text-slate-500 font-bold">No assets currently ready for transition.</p>
+                  <p className="text-base text-slate-400 mt-1 font-medium italic">Verification required in lab module.</p>
                 </div>
               ) : (
                 <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50 bg-white shadow-xl max-h-[400px] overflow-y-auto custom-scrollbar">
@@ -509,7 +509,7 @@ const BatchMaster: React.FC = () => {
                       onClick={() => setSelectedIndoorBatch(b)}
                     >
                       <div className="space-y-1">
-                        <div className="font-black text-sm text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight">
+                        <div className="font-black text-base text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight">
                           {b.batch_code}
                         </div>
                         <div className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{b.plant_name}</div>

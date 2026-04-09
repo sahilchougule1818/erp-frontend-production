@@ -13,7 +13,7 @@ export function Toaster() {
         <div
           key={t.id}
           className={cn(
-            'flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium pointer-events-auto',
+            'flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg border text-base font-medium pointer-events-auto',
             'animate-in slide-in-from-bottom-2 fade-in duration-200',
             t.variant === 'destructive'
               ? 'bg-red-600 text-white border-red-700'

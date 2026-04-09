@@ -61,7 +61,7 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Shift Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Shift Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>New Tunnel *</Label>
@@ -100,12 +100,12 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Worker Assignment</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Worker Assignment</p>
           <WorkerSelector workers={workers} selectedIds={selectedWorkers} onChange={setSelectedWorkers} />
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Tray Configuration</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Tray Configuration</p>
           <TrayInput trays={trays} onChange={setTrays} />
         </div>
       </div>

@@ -199,7 +199,7 @@ const RefundDisbursementSection: React.FC = () => {
               </DialogTitle>
               {refund && (
                 <div className="text-right">
-                  <p className="text-xs text-gray-500">Remaining</p>
+                  <p className="text-base text-gray-500">Remaining</p>
                   <p className={`text-xl font-bold ${Number(refund.remaining_amount) > 0 ? 'text-amber-600' : 'text-green-600'}`}>
                     ₹{Number(refund.remaining_amount).toLocaleString()}
                   </p>
@@ -208,13 +208,13 @@ const RefundDisbursementSection: React.FC = () => {
             </div>
             {refund && (
               <div className="flex items-center gap-2 pt-1">
-                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">
+                <span className="text-base bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">
                   {refund.refund_id}
                 </span>
-                <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded font-medium">
+                <span className="text-base bg-red-50 text-red-600 px-2 py-0.5 rounded font-medium">
                   Booking {refund.booking_id}
                 </span>
-                <span className="text-sm text-gray-500">{refund.customer_name}</span>
+                <span className="text-base text-gray-500">{refund.customer_name}</span>
               </div>
             )}
           </DialogHeader>
@@ -226,20 +226,20 @@ const RefundDisbursementSection: React.FC = () => {
               <div className="bg-red-50 border border-red-100 rounded-lg p-3 grid grid-cols-3 gap-3 text-center">
                 <div>
                   <p className="text-[10px] text-red-400 uppercase font-bold">Total Refund</p>
-                  <p className="text-sm font-bold text-red-700">₹{Number(refund.refund_amount).toLocaleString()}</p>
+                  <p className="text-base font-bold text-red-700">₹{Number(refund.refund_amount).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-green-400 uppercase font-bold">Disbursed</p>
-                  <p className="text-sm font-bold text-green-700">₹{Number(refund.paid_amount).toLocaleString()}</p>
+                  <p className="text-base font-bold text-green-700">₹{Number(refund.paid_amount).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-amber-400 uppercase font-bold">Remaining</p>
-                  <p className="text-sm font-bold text-amber-700">₹{Number(refund.remaining_amount).toLocaleString()}</p>
+                  <p className="text-base font-bold text-amber-700">₹{Number(refund.remaining_amount).toLocaleString()}</p>
                 </div>
               </div>
 
               {refund.refund_reason && (
-                <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
+                <div className="text-base text-gray-500 bg-gray-50 rounded-lg p-3">
                   <span className="font-semibold">Reason:</span> {refund.refund_reason}
                 </div>
               )}
@@ -247,18 +247,18 @@ const RefundDisbursementSection: React.FC = () => {
               {/* Payment Terms History */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-sm text-gray-700 flex items-center gap-1.5">
+                  <h3 className="font-semibold text-base text-gray-700 flex items-center gap-1.5">
                     <HistoryIcon className="h-4 w-4" /> Disbursement Terms
                   </h3>
                   {refund.payments.length > 0 && (
-                    <span className="text-xs text-gray-400">
+                    <span className="text-base text-gray-400">
                       {refund.payments.length} term{refund.payments.length > 1 ? 's' : ''} · ₹{Number(refund.paid_amount).toLocaleString()} disbursed
                     </span>
                   )}
                 </div>
 
                 {refund.payments.length === 0 ? (
-                  <div className="text-center py-4 text-sm text-gray-400 bg-gray-50 rounded-lg border border-dashed">
+                  <div className="text-center py-4 text-base text-gray-400 bg-gray-50 rounded-lg border border-dashed">
                     No disbursements recorded yet
                   </div>
                 ) : (
@@ -266,18 +266,18 @@ const RefundDisbursementSection: React.FC = () => {
                     {[...refund.payments].reverse().map((payment, idx) => (
                       <div key={payment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 flex items-center justify-center bg-white rounded-md border border-gray-200 text-gray-500 shrink-0 text-xs font-bold">
+                          <div className="h-8 w-8 flex items-center justify-center bg-white rounded-md border border-gray-200 text-gray-500 shrink-0 text-base font-bold">
                             #{payment.term_number}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-sm text-gray-800">₹{Number(payment.amount).toLocaleString()}</span>
+                              <span className="font-semibold text-base text-gray-800">₹{Number(payment.amount).toLocaleString()}</span>
                               <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4 font-medium">{payment.payment_method}</Badge>
                               {idx === 0 && (
                                 <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">Latest</span>
                               )}
                             </div>
-                            <p className="text-xs text-gray-400 mt-0.5">
+                            <p className="text-base text-gray-400 mt-0.5">
                               {format(new Date(payment.payment_date), 'do MMM yyyy')}
                               {payment.transaction_number && <span className="ml-2">TXN: {payment.transaction_number}</span>}
                             </p>
@@ -287,7 +287,7 @@ const RefundDisbursementSection: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2.5 text-red-600 border-red-200 hover:bg-red-50 text-xs font-medium"
+                            className="h-7 px-2.5 text-red-600 border-red-200 hover:bg-red-50 text-base font-medium"
                             onClick={() => handleDeleteTerm(payment.term_number)}
                           >
                             <Trash2 className="h-3 w-3 mr-1" /> Undo
@@ -303,17 +303,17 @@ const RefundDisbursementSection: React.FC = () => {
               {Number(refund.remaining_amount) <= 0 ? (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-5 text-center space-y-2">
                   <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto" />
-                  <p className="font-semibold text-sm text-green-800">Refund Complete</p>
-                  <p className="text-xs text-green-600">All refund terms have been disbursed.</p>
+                  <p className="font-semibold text-base text-green-800">Refund Complete</p>
+                  <p className="text-base text-green-600">All refund terms have been disbursed.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-sm text-gray-700 flex items-center gap-1.5">
+                  <h3 className="font-semibold text-base text-gray-700 flex items-center gap-1.5">
                     <Banknote className="h-4 w-4" /> Record Disbursement Term
                   </h3>
 
                   {termError && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 flex items-start gap-2">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-base text-red-700 flex items-start gap-2">
                       <XCircle className="h-4 w-4 mt-0.5 shrink-0" />
                       <span>{termError}</span>
                     </div>

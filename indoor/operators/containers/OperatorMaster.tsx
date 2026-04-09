@@ -132,7 +132,7 @@ export function OperatorMaster() {
                 key: 'category', 
                 label: 'Category',
                 render: (val) => (
-                  <Badge variant="outline" className={`px-2 py-0.5 text-base uppercase tracking-wider ${
+                  <Badge variant="outline" className={`px-2 py-0.5 text-sm uppercase tracking-wider ${
                     val === 'Production' 
                       ? "bg-purple-50 text-purple-700 border-purple-100" 
                       : val === 'Cleaning'

@@ -49,7 +49,7 @@ export function IndoorBatchTimeline() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="min-w-[200px]">
-              <label className="block text-sm text-gray-600 mb-2">Select Batch</label>
+              <label className="block text-base text-gray-600 mb-2">Select Batch</label>
               <Select value={selectedBatch} onValueChange={setSelectedBatch}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select batch" />
@@ -63,9 +63,9 @@ export function IndoorBatchTimeline() {
             </div>
 
             <div className="border-l border-gray-200 pl-4">
-              <div className="text-sm text-gray-600 mb-1">Current Status</div>
+              <div className="text-base text-gray-600 mb-1">Current Status</div>
               <div 
-                className={`inline-block px-3 py-1 rounded-md text-sm font-medium text-white ${
+                className={`inline-block px-3 py-1 rounded-md text-base font-medium text-white ${
                   stats.readyForOutdoor ? 'bg-green-600' : 'bg-blue-600'
                 }`}
               >
@@ -74,12 +74,12 @@ export function IndoorBatchTimeline() {
             </div>
 
             <div className="border-l border-gray-200 pl-4">
-              <div className="text-sm text-gray-600 mb-1">Current Stage</div>
+              <div className="text-base text-gray-600 mb-1">Current Stage</div>
               <div className="text-2xl font-semibold">{stats.stage}</div>
             </div>
 
             <div className="border-l border-gray-200 pl-4">
-              <div className="text-sm text-gray-600 mb-1">Total Bottles</div>
+              <div className="text-base text-gray-600 mb-1">Total Bottles</div>
               <div className="text-2xl font-semibold">{stats.shoots.toLocaleString()}</div>
             </div>
 
@@ -146,10 +146,10 @@ export function IndoorBatchTimeline() {
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <h3 className="font-medium">{event.title}</h3>
-                              <div className="text-sm text-gray-600 mt-1">{event.details}</div>
+                              <div className="text-base text-gray-600 mt-1">{event.details}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-sm text-gray-500">{event.date}</div>
+                              <div className="text-base text-gray-500">{event.date}</div>
                             </div>
                           </div>
                           <div className="flex items-center justify-between mt-3 pt-3 border-t">

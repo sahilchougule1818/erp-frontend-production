@@ -140,7 +140,7 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Subculture Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Subculture Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Media Code *</Label>
@@ -177,12 +177,12 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Operator Assignment</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Operator Assignment</p>
           <OperatorSelector operators={operators} selectedIds={form.operatorIds} onChange={(ids) => updateForm('operatorIds', ids)} />
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Additional Information</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Additional Information</p>
           <div className="space-y-2">
             <Label>Notes</Label>
             <Textarea value={form.notes} onChange={(e) => updateForm('notes', e.target.value)} />

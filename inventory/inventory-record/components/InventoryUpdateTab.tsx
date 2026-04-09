@@ -182,7 +182,7 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
             addButton={
               <Button
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                className="bg-green-600 hover:bg-green-700 text-white text-base"
                 onClick={() => { setItemForm({ name: '', unit: '', min_stock: '' }); setAddItemOpen(true); }}
               >
                 <Plus className="h-3.5 w-3.5 mr-1.5" />Add Item
@@ -199,7 +199,7 @@ export function InventoryUpdateTab({ items, onStockAdded, onItemAdded, paginatio
           subtitle={
             <div className="flex items-center gap-2">
               <Badge className="bg-red-50 text-red-700 border-red-200 font-semibold">{withdrawItem.name}</Badge>
-              <span className="text-xs text-slate-400">Unit: {withdrawItem.unit}</span>
+              <span className="text-base text-slate-400">Unit: {withdrawItem.unit}</span>
             </div>
           }
           onClose={() => setWithdrawItem(null)}

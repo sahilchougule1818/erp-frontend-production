@@ -83,12 +83,12 @@ export function TwoFactorSetup({ onClose }: { onClose: () => void }) {
           ) : step === 'enable' ? (
             <div className="space-y-4">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-base">
                   <AlertCircle className="w-4 h-4" />
                   <span>{error}</span>
                 </div>
               )}
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Enable two-factor authentication to add an extra layer of security to your account.
               </p>
               <div className="flex gap-2">
@@ -99,16 +99,16 @@ export function TwoFactorSetup({ onClose }: { onClose: () => void }) {
           ) : (
             <form onSubmit={handleVerify} className="space-y-4">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-base">
                   <AlertCircle className="w-4 h-4" />
                   <span>{error}</span>
                 </div>
               )}
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-3">Scan this QR code with your authenticator app:</p>
+                <p className="text-base text-gray-600 mb-3">Scan this QR code with your authenticator app:</p>
                 <img src={qrCode} alt="QR Code" className="mx-auto border rounded-lg p-2" />
-                <p className="text-xs text-gray-500 mt-2">Or enter this secret manually:</p>
-                <code className="text-xs bg-gray-100 px-2 py-1 rounded">{secret}</code>
+                <p className="text-base text-gray-500 mt-2">Or enter this secret manually:</p>
+                <code className="text-base bg-gray-100 px-2 py-1 rounded block break-all">{secret}</code>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="token">Verification Code</Label>

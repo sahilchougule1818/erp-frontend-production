@@ -30,10 +30,10 @@ export const MakeAvailableConfirm: React.FC<MakeAvailableConfirmProps> = ({
 
   return (
     <div className="p-4" style={{ width: '450px' }}>
-      <p className="text-sm text-gray-700 mb-4">
+      <p className="text-base text-gray-700 mb-4">
         Make batch <span className="font-semibold">{batchCode}</span> available for outdoor module?
       </p>
-      <p className="text-xs text-gray-500 mb-6">
+      <p className="text-base text-gray-500 mb-6">
         This will lock subculture and incubation operations for this batch.
       </p>
       
@@ -41,7 +41,7 @@ export const MakeAvailableConfirm: React.FC<MakeAvailableConfirmProps> = ({
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-red-700 break-words">{error}</p>
+            <p className="text-base text-red-700 break-words">{error}</p>
           </div>
         </div>
       )}

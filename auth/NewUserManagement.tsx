@@ -324,7 +324,7 @@ export function UserManagement() {
           </DialogHeader>
           <form onSubmit={handleCreateManager} className="space-y-4">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-base">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <span>{error}</span>
               </div>
@@ -399,7 +399,7 @@ export function UserManagement() {
               </Button>
             ) : (
               <>
-                <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-md text-sm">
+                <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-md text-base">
                   <p>Verification OTP sent to: <strong>{email}</strong></p>
                 </div>
                 
@@ -454,7 +454,7 @@ export function UserManagement() {
           </AlertDialogHeader>
           
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-base">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -474,7 +474,7 @@ export function UserManagement() {
             </AlertDialogFooter>
           ) : (
             <>
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-md text-sm">
+              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-md text-base">
                 <p>Authorization OTP sent to master email</p>
               </div>
               

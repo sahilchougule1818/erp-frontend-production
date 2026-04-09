@@ -55,7 +55,7 @@ export function ImportForm({ indoorBatch, tunnels, workers, onSubmit, onClose }:
           Plant: <span className="font-semibold">{indoorBatch.plant_name}</span>
         </p>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Tunnel *</label>
+          <label className="block text-base font-medium mb-2">Tunnel *</label>
           <select value={newTunnel} onChange={(e) => setNewTunnel(e.target.value)} className="w-full border rounded px-3 py-2">
             <option value="">Select tunnel</option>
             {tunnels.map(t => {
@@ -70,7 +70,7 @@ export function ImportForm({ indoorBatch, tunnels, workers, onSubmit, onClose }:
           </select>
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Plants Count *</label>
+          <label className="block text-base font-medium mb-2">Plants Count *</label>
           <input
             type="number"
             value={plants}

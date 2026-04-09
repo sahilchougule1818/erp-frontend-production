@@ -105,7 +105,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
         return (
           <>
             <Input type="number" step="0.01" {...field} className={cn(err && 'border-red-400 focus-visible:ring-red-400')} />
-            {err && <p className="text-xs text-red-600 font-medium mt-1">Only {avail?.toLocaleString()} {unit} available</p>}
+            {err && <p className="text-base text-red-600 font-medium mt-1">Only {avail?.toLocaleString()} {unit} available</p>}
           </>
         );
       },
@@ -160,7 +160,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
                 type="button"
                 onClick={() => field.onChange(false)}
                 className={cn(
-                  'flex-1 px-4 py-2 text-sm font-medium transition-colors',
+                  'flex-1 px-4 py-2 text-base font-medium transition-colors',
                   !isInstant ? 'bg-green-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50',
                 )}
               >
@@ -171,7 +171,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
                 onClick={() => isStock && field.onChange(true)}
                 disabled={!isStock}
                 className={cn(
-                  'flex-1 px-4 py-2 text-sm font-medium border-l border-gray-200 transition-colors',
+                  'flex-1 px-4 py-2 text-base font-medium border-l border-gray-200 transition-colors',
                   isInstant ? 'bg-green-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50',
                   !isStock && 'cursor-not-allowed opacity-50',
                 )}
@@ -179,7 +179,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
                 ⚡ Instant Delivery
               </button>
             </div>
-            {!isStock && <p className="text-xs text-gray-500 mt-1">Stock fulfillment required for instant delivery</p>}
+            {!isStock && <p className="text-base text-gray-500 mt-1">Stock fulfillment required for instant delivery</p>}
           </>
         );
       },
@@ -277,7 +277,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
       bodyPrefix={
         errorMessage ? (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-            <span className="text-red-600 text-sm font-medium flex-1">{errorMessage}</span>
+            <span className="text-red-600 text-base font-medium flex-1">{errorMessage}</span>
             <button
               type="button"
               onClick={() => setErrorMessage(null)}

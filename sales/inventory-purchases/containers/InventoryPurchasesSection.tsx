@@ -61,7 +61,7 @@ const InventoryPurchasesSection: React.FC = () => {
       render: (val: string, record: any) => (
         <div>
           <div>{val}</div>
-          <div className="text-xs text-gray-500">{record.unit}</div>
+          <div className="text-base text-gray-500">{record.unit}</div>
         </div>
       )
     },

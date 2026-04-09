@@ -112,7 +112,7 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Batch Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Batch Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Plant Name</Label>
@@ -142,7 +142,7 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Incubation Conditions</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Incubation Conditions</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Incubation Period (days)</Label>
@@ -164,7 +164,7 @@ const fetchOperatorIds = async (recordId: number) => {
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-base text-gray-700">Operator Assignment</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Operator Assignment</p>
           <OperatorSelector operators={operators} selectedIds={form.operatorIds} onChange={(ids) => updateForm('operatorIds', ids)} />
         </div>
       </div>

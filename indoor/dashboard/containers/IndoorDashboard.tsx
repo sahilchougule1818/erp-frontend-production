@@ -35,13 +35,13 @@ export function IndoorDashboard() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Indoor Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">Real-time production metrics and operator performance</p>
+        <p className="text-base text-gray-500 mt-1">Real-time production metrics and operator performance</p>
       </div>
 
       <div className="grid grid-cols-3 gap-6">
         <div className="p-5 bg-green-50 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center">
-            <span className="text-xs font-semibold text-green-800 uppercase tracking-wider">Total Media Batches</span>
+            <span className="text-base font-semibold text-green-800 uppercase tracking-wider">Total Media Batches</span>
             <FlaskConical className="text-green-600 w-5 h-5" />
           </div>
           <div className="text-3xl font-bold text-green-900 mt-2">{totalMediaBatches}</div>
@@ -49,7 +49,7 @@ export function IndoorDashboard() {
 
         <div className="p-5 bg-teal-50 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center">
-            <span className="text-xs font-semibold text-teal-800 uppercase tracking-wider">Total Batches</span>
+            <span className="text-base font-semibold text-teal-800 uppercase tracking-wider">Total Batches</span>
             <Package className="text-teal-600 w-5 h-5" />
           </div>
           <div className="text-3xl font-bold text-teal-900 mt-2">{totalBatches}</div>
@@ -57,7 +57,7 @@ export function IndoorDashboard() {
 
         <div className="p-5 bg-blue-50 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center">
-            <span className="text-xs font-semibold text-blue-800 uppercase tracking-wider">Total Bottles Processed</span>
+            <span className="text-base font-semibold text-blue-800 uppercase tracking-wider">Total Bottles Processed</span>
             <Boxes className="text-blue-600 w-5 h-5" />
           </div>
           <div className="text-3xl font-bold text-blue-900 mt-2">{totalBottles.toLocaleString()}</div>

@@ -218,7 +218,7 @@ export function SharedForm({
                     disabled={field.disabled}
                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-600">{field.placeholder}</span>
+                  <span className="text-base text-gray-600">{field.placeholder}</span>
                 </div>
               );
             }
@@ -239,7 +239,7 @@ export function SharedForm({
           }}
         />
         {errors[field.name] && (
-          <p className="text-xs text-red-600">{errors[field.name]?.message as string}</p>
+          <p className="text-base text-red-600">{errors[field.name]?.message as string}</p>
         )}
       </div>
     );
@@ -252,7 +252,7 @@ export function SharedForm({
       return sections.map((section, idx) => (
         <div key={idx} className="space-y-4">
           {section.title && (
-            <h3 className="font-semibold text-sm text-gray-700 border-b pb-2">{section.title}</h3>
+            <h3 className="font-semibold text-base text-gray-700 border-b pb-2">{section.title}</h3>
           )}
           <div className="grid grid-cols-2 gap-4">
             {section.fields.map((fieldName) => {

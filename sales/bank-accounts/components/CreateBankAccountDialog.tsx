@@ -44,7 +44,7 @@ const CreateBankAccountDialog: React.FC<Props> = ({ open, onOpenChange, onSucces
     <ModalLayout title="Register Bank Account">
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Account Identity</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Account Identity</p>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Display Name *</Label>
@@ -66,7 +66,7 @@ const CreateBankAccountDialog: React.FC<Props> = ({ open, onOpenChange, onSucces
         </div>
 
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">Bank Details</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Bank Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2 space-y-2">
               <Label>Bank Name *</Label>

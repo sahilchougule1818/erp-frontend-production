@@ -88,7 +88,7 @@ export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelet
                     {status.replace('_', ' ').toUpperCase()}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-600 flex items-center">
+                <p className="text-base text-gray-600 flex items-center">
                   <AlertCircle className="w-4 h-4 mr-2" />
                   {statusInfo.message}
                 </p>
@@ -133,7 +133,7 @@ export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelet
             </div>
 
             {!isEditable && (
-              <p className="text-sm text-gray-500 text-center">
+              <p className="text-base text-gray-500 text-center">
                 Media batch cannot be edited once it enters the autoclave process
               </p>
             )}
