@@ -81,7 +81,7 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                               <h3 className="font-medium">
                                 {event.event_type === 'IMPORT' && `Import to ${phaseLabel(event.event_data?.phase || event.phase)}`}
                                 {event.event_type === 'TRANSITION' && `Transition to ${phaseLabel(event.event_data?.to_phase || event.phase)}`}
-                              </p>
+                              </h3>
                               {event.age_at_arrival !== null && event.age_at_arrival !== undefined && (
                                 <span className="text-base text-gray-500">
                                   Age at Arrival: <span className="font-semibold text-green-600">{event.age_at_arrival} days</span>
