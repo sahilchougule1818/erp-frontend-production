@@ -4,6 +4,7 @@ import { Input } from './shared/ui/input';
 import { Label } from './shared/ui/label';
 import { FlaskConical, LogIn, AlertCircle, UserPlus, Mail, Shield, Key } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import loginBg from '../login_background/login_bg.JPG';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -643,7 +644,7 @@ export function Login() {
       className="min-h-screen flex items-center justify-center p-4"
       style={{
         minHeight: '100vh',
-        backgroundImage: 'url(/login_background/login_bg.JPG)',
+        backgroundImage: `url(${loginBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
