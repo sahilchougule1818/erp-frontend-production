@@ -8,12 +8,18 @@ const apiClient = axios.create({
 
 let csrfToken: string | null = null;
 
+const getCsrfTokenFromCookie = (): string | null => {
+  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+  return match ? match[1] : null;
+};
+
 const fetchCsrfToken = async () => {
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/csrf-token`, {
       withCredentials: true
     });
     csrfToken = response.data.csrfToken;
+    console.log('CSRF token fetched successfully');
   } catch (error) {
     console.error('Failed to fetch CSRF token:', error);
   }
@@ -26,8 +32,13 @@ apiClient.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   
   if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
-    if (csrfToken) {
-      config.headers['X-CSRF-Token'] = csrfToken;
+    const cookieToken = getCsrfTokenFromCookie();
+    const tokenToUse = cookieToken || csrfToken;
+    
+    if (tokenToUse) {
+      config.headers['X-CSRF-Token'] = tokenToUse;
+    } else {
+      console.warn('No CSRF token available for request');
     }
   }
   
@@ -44,10 +55,15 @@ apiClient.interceptors.response.use(
     }
     
     if (error.response?.status === 403 && error.response?.data?.error?.includes('CSRF')) {
+      console.log('CSRF error detected, refetching token...');
       await fetchCsrfToken();
-      if (error.config && csrfToken) {
-        error.config.headers['X-CSRF-Token'] = csrfToken;
-        return axios.request(error.config);
+      if (error.config) {
+        const cookieToken = getCsrfTokenFromCookie();
+        const tokenToUse = cookieToken || csrfToken;
+        if (tokenToUse) {
+          error.config.headers['X-CSRF-Token'] = tokenToUse;
+          return axios.request(error.config);
+        }
       }
     }
     
