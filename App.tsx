@@ -1,14 +1,10 @@
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { Login } from './auth/NewLogin';
 import { Sidebar } from './layout/Sidebar';
 import { Header } from './layout/Header';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { Toaster } from './layout/shared/ui/Toaster';
-import { Toaster as SalesToaster } from './sales/shared/ui/Toaster';
-import { Toaster as IndoorToaster } from './indoor/shared/ui/Toaster';
-import { Toaster as OutdoorToaster } from './outdoor/shared/ui/Toaster';
-import { Toaster as InventoryToaster } from './inventory/shared/ui/Toaster';
+import { Toaster } from './shared/ui/Toaster';
 
 // Lazy load all page components
 const OperatorMaster = lazy(() => import('./indoor/operators/containers/OperatorMaster').then(m => ({ default: m.OperatorMaster })));
@@ -55,59 +51,18 @@ const LoadingFallback = () => (
 );
 
 function AppContent() {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [currentPage, setCurrentPage] = useState('indoor-dashboard');
   const [breadcrumbs, setBreadcrumbs] = useState(['Indoor', 'Dashboard']);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
 
-  // Get default page and breadcrumbs based on user role
-  const getDefaultPage = useCallback(() => {
-    if (!user) return { page: 'indoor-dashboard', breadcrumbs: ['Indoor', 'Dashboard'] };
-    
-    if (user.role === 'Admin') {
-      return { page: 'indoor-dashboard', breadcrumbs: ['Indoor', 'Dashboard'] };
-    }
-    
-    return { page: 'indoor-dashboard', breadcrumbs: ['Indoor', 'Dashboard'] };
-  }, [user]);
-
-  // Check if user has access to a page
-  const hasAccess = useCallback((_page: string): boolean => {
-    if (!user) return false;
-    if (user.role === 'Admin') return true;
-    return true; // Allow all pages for now
-  }, [user]);
-
-  // Initialize page based on user role when user is available
-  useEffect(() => {
-    if (user) {
-      const defaultPage = getDefaultPage();
-      // Only update if current page doesn't match default or user doesn't have access
-      if (currentPage !== defaultPage.page || !hasAccess(currentPage)) {
-        setCurrentPage(defaultPage.page);
-        setBreadcrumbs(defaultPage.breadcrumbs);
-      }
-    }
-  }, [user, hasAccess, getDefaultPage]); // Add hasAccess and getDefaultPage to dependencies
-
   const handleNavigate = (page: string, breadcrumbPath: string[]) => {
     setCurrentPage(page);
     setBreadcrumbs(breadcrumbPath);
-    navigate(`/${page}`); // Use navigate for routing
+    navigate(`/${page}`);
   };
 
-  // Redirect if user does not have access to the current page
-  useEffect(() => {
-    if (user && !isLoading && !hasAccess(currentPage)) {
-      const defaultPage = getDefaultPage();
-      setCurrentPage(defaultPage.page);
-      setBreadcrumbs(defaultPage.breadcrumbs);
-      navigate(`/${defaultPage.page}`);
-    }
-  }, [user, isLoading, currentPage, hasAccess, getDefaultPage, navigate]);
-
-  // Show login if not authenticated
   if (!isAuthenticated) {
     return <Login />;
   }
@@ -137,7 +92,7 @@ function AppContent() {
               <Route path="/secondary-hardening" element={<SecondaryHardening />} />
               <Route path="/shifting" element={<TunnelShifts />} />
 
-              <Route path="/outdoor-contamination" element={<OutdoorMortality />} />
+              <Route path="/outdoor-mortality" element={<OutdoorMortality />} />
               <Route path="/fertilization" element={<Fertilization />} />
               <Route path="/holding-area" element={<HoldingArea />} />
               <Route path="/outdoor-sampling" element={<OutdoorSampling />} />
@@ -149,9 +104,8 @@ function AppContent() {
               <Route path="/sales-inventory-purchases" element={<InventoryPurchasesSection />} />
               <Route path="/sales-ledger" element={<LedgerSection />} />
               <Route path="/booking-lifecycle" element={<BookingLifecycle />} />
-              {/* <Route path="/production-orders" element={<ProductionOrders />} /> */}
-              <Route path="/inventory-dashboard" element={<SalesDashboard />} />
-              <Route path="/inventory-dashboard-master" element={<InventoryOverview />} />
+              <Route path="/sales-dashboard" element={<SalesDashboard />} />
+              <Route path="/inventory-dashboard" element={<InventoryOverview />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/inventory-record" element={<InventoryRecord />} />
               <Route path="/purchase-log" element={<PurchaseLog />} />
@@ -172,10 +126,6 @@ export default function App() {
       <AuthProvider>
         <AppContent />
         <Toaster />
-        <SalesToaster />
-        <IndoorToaster />
-        <OutdoorToaster />
-        <InventoryToaster />
       </AuthProvider>
     </Router>
   );

@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Button } from '../../shared/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
-import { Badge } from '../../shared/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Button } from '../../../shared/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../../shared/ui/alert-dialog';
+import { Badge } from '../../../shared/ui/badge';
 import { Plus } from 'lucide-react';
 import { useMediaData } from '../hooks/useMediaData';
 import { MediaBatchForm } from '../forms/MediaBatchForm';
 import { AutoclaveCycleForm } from '../forms/AutoclaveCycleForm';
-import { DataTable } from '../../shared/components/DataTable';
+import { DataTable } from '../../../shared/components/DataTable';
 
 export function MediaPreparation() {
   const { 

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Button } from '../../shared/ui/button';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Button } from '../../../shared/ui/button';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
 import { WorkerSelector } from '../../workers/components/WorkerSelector';
-import { TrayInput } from '../../shared/components/TrayInput';
+import { TrayInput } from '../../components/TrayInput';
 
 interface Batch {
   batch_code: string;
@@ -29,6 +30,7 @@ interface ShiftFormProps {
 }
 
 export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftFormProps) {
+  const notify = useNotify();
   const [newTunnel, setNewTunnel] = useState('');
   const [plants, setPlants] = useState(batch.available_plants ?? batch.total_plants);
   const [mortalityCount, setMortalityCount] = useState(0);
@@ -38,11 +40,11 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
 
   const handleSubmit = () => {
     if (!newTunnel) {
-      alert('Please select a tunnel');
+      notify.error('Please select a tunnel');
       return;
     }
     if (selectedWorkers.length === 0) {
-      alert('Please select at least one worker');
+      notify.error('Please select at least one worker');
       return;
     }
     onSubmit({ newTunnel, plants, mortalityCount, reason, selectedWorkers, trays });

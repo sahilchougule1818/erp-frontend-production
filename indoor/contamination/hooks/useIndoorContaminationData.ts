@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 import { ContaminationRecord } from '../types';
 
 export const useIndoorContaminationData = () => {

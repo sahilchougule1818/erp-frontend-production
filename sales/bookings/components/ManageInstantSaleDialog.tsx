@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { Badge } from '../../shared/ui/badge';
-import { Button } from '../../shared/ui/button';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Textarea } from '../../shared/ui/textarea';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { Badge } from '../../../shared/ui/badge';
+import { Button } from '../../../shared/ui/button';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Textarea } from '../../../shared/ui/textarea';
 import { format } from 'date-fns';
 import {
   History as HistoryIcon, Trash2,
   CheckCircle2, AlertTriangle, XCircle, ChevronDown, ChevronUp,
 } from 'lucide-react';
-import { PAYMENT_METHODS } from '../../shared/constants/EventTypes';
+import { PAYMENT_METHODS } from '../../constants/EventTypes';
 
 interface ManageInstantSaleDialogProps {
   open: boolean;

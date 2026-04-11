@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Textarea } from '../../shared/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Button } from '../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Textarea } from '../../../shared/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Button } from '../../../shared/ui/button';
 import { Trash2 } from 'lucide-react';
 
 interface CleaningRecordFormProps {

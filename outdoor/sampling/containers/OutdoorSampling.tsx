@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { DataTable } from '../../shared/components/DataTable';
-import { outdoorApi } from '../../shared/services/outdoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { Button } from '../../shared/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
+import { outdoorApi } from '../../services/outdoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
 import { Trash2 } from 'lucide-react';
 // Sampling uses two tables after refactor:
 //   sampling_submissions  (was: create_sampling)

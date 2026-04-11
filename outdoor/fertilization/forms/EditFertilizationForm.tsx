@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Textarea } from '../../shared/ui/textarea';
-import { Button } from '../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Textarea } from '../../../shared/ui/textarea';
+import { Button } from '../../../shared/ui/button';
 import { Trash2 } from 'lucide-react';
 
 type FormValues = {

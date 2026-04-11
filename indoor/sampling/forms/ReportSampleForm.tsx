@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Textarea } from '../../shared/ui/textarea';
-import { Button } from '../../shared/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Input } from '../../../shared/ui/input';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Textarea } from '../../../shared/ui/textarea';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { useNotify } from '../shared/hooks/useNotify';
 
 interface ReportSampleFormProps {
   batch: { batch_code: string };
@@ -21,11 +28,11 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
 
   const handleSubmit = () => {
     if (!status) {
-      alert('Please select a status');
+      notify.error('Please select a status');
       return;
     }
     if (status === 'Yes' && !certificateNo) {
-      alert('Certificate number is required when status is Yes');
+      notify.error('Certificate number is required when status is Yes');
       return;
     }
     onSubmit({ resultDate, status, certificateNo, govtCode, notes });

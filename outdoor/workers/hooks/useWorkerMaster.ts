@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { outdoorApi } from '../../shared/services/outdoorApi';
+import { outdoorApi } from '../../services/outdoorApi';
 import type { Worker } from '../../types/outdoor.types';
 
 export const useWorkerMaster = () => {

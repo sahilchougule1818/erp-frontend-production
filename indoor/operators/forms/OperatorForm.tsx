@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Button } from '../../../shared/ui/button';
 import { Trash2 } from 'lucide-react';
 
 const INITIAL_FORM = {
@@ -36,7 +36,8 @@ export function OperatorForm({ initialData, onSubmit, onDelete, onCancel }: Oper
 
   const handleSubmit = () => {
     if (!form.firstName.trim() || !form.lastName.trim()) {
-      return alert('Please enter both first name and last name');
+      // TODO: Add toast notification
+      return;  // Please enter both first name and last name
     }
     onSubmit(form);
   };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 
 export const useMediaCodes = () => {
   const [mediaCodes, setMediaCodes] = useState<Array<{value: string; label: string}>>([]);

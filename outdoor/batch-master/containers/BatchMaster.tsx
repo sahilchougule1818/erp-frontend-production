@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Tooltip, TooltipProvider } from '../../shared/ui/tooltip';
-import { Button } from '../../shared/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Tooltip, TooltipProvider } from '../../../shared/ui/tooltip';
+import { Button } from '../../../shared/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
-} from '../../shared/ui/dropdown-menu';
-import { Badge } from '../../shared/ui/badge';
+} from '../../../shared/ui/dropdown-menu';
+import { Badge } from '../../../shared/ui/badge';
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader,
   AlertDialogTitle, AlertDialogDescription, AlertDialogFooter,
   AlertDialogCancel, AlertDialogAction
-} from '../../shared/ui/alert-dialog';
+} from '../../../shared/ui/alert-dialog';
 import {
   Upload, MoreHorizontal,
   ArrowRightLeft, ArrowUpRight, RotateCcw, TestTube, Droplet, Download, Lock, Skull, Clock
 } from 'lucide-react';
-import { DataTable }              from '../../shared/components/DataTable';
+import { DataTable }              from '../../../shared/components/DataTable';
 import { useBatchMaster }         from '../hooks/useBatchMaster';
-import { ModalLayout }              from '../../shared/components/ModalLayout';
+import { ModalLayout }              from '../../../shared/components/ModalLayout';
 import { SampleForm }             from '../../sampling/forms/SampleForm';
 import { ReportSampleForm }       from '../../sampling/forms/ReportSampleForm';
 import { ShiftForm }              from '../../tunnels/forms/ShiftForm';
@@ -26,9 +26,9 @@ import { TransitionForm }         from '../../hardening/forms/TransitionForm';
 import { ImportForm }             from '../forms/ImportForm';
 import { QuickFertilizeForm }     from '../../fertilization/forms/QuickFertilizeForm';
 import { MortalityForm }          from '../../mortality/forms/MortalityForm';
-import { outdoorApi }             from '../../shared/services/outdoorApi';
-import { useNotify }              from '../../shared/hooks/useNotify';
-import { cn }                     from '../../shared/ui/utils';
+import { outdoorApi }             from '../../services/outdoorApi';
+import { useNotify }              from '../../../shared/hooks/useNotify';
+import { cn }                     from '../../../shared/ui/utils';
 import { TimelineModal } from '../components/TimelineModal';
 import type { Batch } from '../../types/outdoor.types';
 
@@ -93,7 +93,7 @@ const BatchMaster: React.FC = () => {
   const handleUndoClick = async (batch: Batch) => {
     setSelected(batch);
     try {
-      const raw = await outdoorApi.unified.getUndoPreview(batch.batch_code);
+      const raw = await outdoorApi.batchOperations.getUndoPreview(batch.batch_code);
       const preview = raw.data || raw;
       setUndoPreview(preview);
 
@@ -119,7 +119,7 @@ const BatchMaster: React.FC = () => {
   const handleDropdownOpen = async (open: boolean, batch: Batch) => {
     if (!open) return;
     try {
-      const raw = await outdoorApi.unified.getUndoPreview(batch.batch_code);
+      const raw = await outdoorApi.batchOperations.getUndoPreview(batch.batch_code);
       const preview = raw.data || raw;
       setUndoLockReasons(prev => ({
         ...prev,
@@ -131,20 +131,15 @@ const BatchMaster: React.FC = () => {
   };
 
   const handleTimeline = async (batch: Batch) => {
-    console.log('handleTimeline called for batch:', batch.batch_code);
     try {
-      console.log('Fetching timeline data...');
       const [timeline, stats] = await Promise.all([
         outdoorApi.batchTimeline.getTimeline(batch.batch_code),
         outdoorApi.batchTimeline.getStats(batch.batch_code)
       ]);
-      console.log('Timeline data:', timeline);
-      console.log('Stats data:', stats);
       setTimelineData(timeline || []);
       setTimelineStats(stats || null);
       setSelected(batch);
       setModal('TIMELINE');
-      console.log('Modal set to TIMELINE');
     } catch (error: any) {
       console.error('Timeline error:', error);
       notify.error(error.response?.data?.message || 'Failed to load timeline');
@@ -301,7 +296,7 @@ const BatchMaster: React.FC = () => {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border animate-pulse">
               <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-4" />
-              <p className="text-base text-slate-500 font-medium tracking-tight">Accessing encrypted registry...</p>
+              <p className="text-base text-slate-500 font-medium tracking-tight">Loading batch data...</p>
             </div>
           ) : (
             <DataTable
@@ -309,7 +304,7 @@ const BatchMaster: React.FC = () => {
               columns={columns}
               records={batches}
               filterConfig={{ filter1Key: 'plant_name', filter1Label: 'Plant Name', filter2Key: 'batch_code', filter2Label: 'Batch Code' }}
-              exportFileName="outdoor_batch_registry"
+              exportFileName="outdoor_batch_list"
               pagination={pagination}
               addButton={
                 <Button

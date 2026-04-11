@@ -1,7 +1,7 @@
 import { useIndoorContaminationData } from '../hooks/useIndoorContaminationData';
-import { DataTable } from '../../shared/components/DataTable';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Badge } from '../../shared/ui/badge';
+import { DataTable } from '../../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Badge } from '../../../shared/ui/badge';
 import { useEffect } from 'react';
 
 export function IndoorContamination() {

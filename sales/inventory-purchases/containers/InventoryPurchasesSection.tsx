@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Badge } from '../../shared/ui/badge';
-import { Button } from '../../shared/ui/button';
+import { Badge } from '../../../shared/ui/badge';
+import { Button } from '../../../shared/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
-import { useInventoryPayments, useInventoryItems, useWithdrawSuppliers, useBankAccounts } from '../../shared/hooks/useSalesApi';
+import { useInventoryPayments, useInventoryItems, useWithdrawSuppliers, useBankAccounts } from '../../hooks/useSalesApi';
 import { CreateWithdrawDialog } from '../components/CreateWithdrawDialog';
-import { inventoryPaymentsApi, inventoryPurchasesApi } from '../../shared/services/salesApi';
-import { DataTable } from '../../shared/components/DataTable';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { cn } from '../../shared/ui/utils';
+import { inventoryPaymentsApi, inventoryPurchasesApi } from '../../services/salesApi';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { cn } from '../../../shared/ui/utils';
 import { format } from 'date-fns';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 
 const InventoryPurchasesSection: React.FC = () => {
   const notify = useNotify();

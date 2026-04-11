@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { MoreVertical, PackageMinus, Plus, RotateCcw } from 'lucide-react';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../../shared/ui/badge';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
-} from '../../shared/ui/dropdown-menu';
-import { Button } from '../../shared/ui/button';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { DataTable } from '../../shared/components/DataTable';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { inventoryApi } from '../../shared/services/inventoryApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+} from '../../../shared/ui/dropdown-menu';
+import { Button } from '../../../shared/ui/button';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { DataTable } from '../../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { inventoryApi } from '../../services/inventoryApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 type Item = { 
   id: number; 

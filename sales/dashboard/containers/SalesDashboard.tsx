@@ -1,6 +1,6 @@
 import { Package, ArrowUp } from 'lucide-react';
-import { DataTable } from '../../shared/components/DataTable';
-import { useIndoorStock, useOutdoorStock, useDashboardStats } from '../../shared/hooks/useSalesApi';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useIndoorStock, useOutdoorStock, useDashboardStats } from '../../hooks/useSalesApi';
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
 

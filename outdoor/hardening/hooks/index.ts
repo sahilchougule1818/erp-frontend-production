@@ -1,4 +1,4 @@
-import { outdoorApi } from '../../shared/services/outdoorApi';
+import { outdoorApi } from '../../services/outdoorApi';
 import { usePhaseView } from './usePhaseView';
 
 export * from './usePhaseView';

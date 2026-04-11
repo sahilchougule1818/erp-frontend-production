@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Button } from '../../shared/ui/button';
-import { Badge } from '../../shared/ui/badge';
+import { Label } from '../../../shared/ui/label';
+import { Button } from '../../../shared/ui/button';
+import { Badge } from '../../../shared/ui/badge';
 import { ChevronDown, ChevronUp, Users, X } from 'lucide-react';
 
 interface OperatorSelectorProps {

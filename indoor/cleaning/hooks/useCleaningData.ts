@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 
 export function useCleaningData() {
   const [cleaningRecords, setCleaningRecords] = useState<any[]>([]);

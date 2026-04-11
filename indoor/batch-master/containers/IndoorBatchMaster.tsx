@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Button } from '../../shared/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Button } from '../../../shared/ui/button';
 import {
   Download,
   Plus,
@@ -22,14 +22,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from '../../shared/ui/dropdown-menu';
+} from '../../../shared/ui/dropdown-menu';
 import { useIndoorBatchMaster } from '../hooks/useIndoorBatchMaster';
-import apiClient from '../../shared/services/apiClient';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { cn } from '../../shared/ui/utils';
-import { Tooltip, TooltipProvider } from '../../shared/ui/tooltip';
-import { DataTable } from '../../shared/components/DataTable';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import apiClient from '../../../shared/services/apiClient';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { cn } from '../../../shared/ui/utils';
+import { Tooltip, TooltipProvider } from '../../../shared/ui/tooltip';
+import { DataTable } from '../../../shared/components/DataTable';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
 import { CreateBatchForm } from '../forms/CreateBatchForm';
 import { SubcultureForm } from '../../subculturing/forms/SubcultureForm';
 import { IncubationForm } from '../../incubation/forms/IncubationForm';
@@ -284,8 +284,7 @@ const IndoorBatchMaster: React.FC = () => {
       'Contamination': batch.contamination_count,
       'Events': batch.event_count
     }));
-    console.log('Export data:', exportData);
-    alert('Export functionality would download Excel file here');
+    notify.error('Export functionality would download Excel file here');
   };
 
   if (loading) return <div className="p-4">Loading...</div>;

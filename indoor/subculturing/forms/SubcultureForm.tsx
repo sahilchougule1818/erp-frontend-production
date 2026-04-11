@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Textarea } from '../../shared/ui/textarea';
-import { Button } from '../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Input } from '../../../shared/ui/input';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Textarea } from '../../../shared/ui/textarea';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
 import { Trash2, ArrowRight } from 'lucide-react';
+import { useNotify } from '../shared/hooks/useNotify';
 import { OperatorSelector } from '../../operators/components/OperatorSelector';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import apiClient from '../../shared/services/apiClient';
+import { useNotify } from '../shared/hooks/useNotify';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { useNotify } from '../shared/hooks/useNotify';
+import apiClient from '../../../shared/services/apiClient';
+import { useNotify } from '../shared/hooks/useNotify';
 
 interface SubcultureFormProps {
   initialData: any;
@@ -87,15 +97,15 @@ const fetchOperatorIds = async (recordId: number) => {
 
   const handleSubmit = () => {
     if (!form.mediaCode) {
-      alert('Please select a media code');
+      notify.error('Please select a media code');
       return;
     }
     if (!form.noOfBottles || parseInt(form.noOfBottles) <= 0) {
-      alert('Please enter a valid new quantity (must be greater than 0)');
+      notify.error('Please enter a valid new quantity (must be greater than 0)');
       return;
     }
     if (!form.operatorIds || form.operatorIds.length === 0) {
-      alert('Please select at least one operator');
+      notify.error('Please select at least one operator');
       return;
     }
     

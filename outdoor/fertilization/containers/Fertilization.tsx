@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../../shared/ui/alert-dialog';
 import { useFertilizationData } from '../hooks';
 import { EditFertilizationForm } from '../forms/EditFertilizationForm';
 import { UnifiedEditModal } from '../../workers/components/UnifiedEditModal';
-import { DataTable } from '../../shared/components/DataTable';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 export function Fertilization() {
   const { records, batches, saveRecord, deleteRecord, pagination } = useFertilizationData();

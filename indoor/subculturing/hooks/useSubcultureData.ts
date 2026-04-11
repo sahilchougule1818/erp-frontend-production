@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
+import type { SubcultureRecord } from '../../types';
 
 export function useSubcultureData() {
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState<SubcultureRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

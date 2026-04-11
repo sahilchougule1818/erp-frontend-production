@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../../shared/ui/button';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Textarea } from '../../shared/ui/textarea';
+import { Button } from '../../../shared/ui/button';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Textarea } from '../../../shared/ui/textarea';
 import { Skull, Save, X } from 'lucide-react';
-import { indoorApi } from '../../indoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { indoorApi } from '../../services/indoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import { Batch } from '../types';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
 
 interface PreloadedRecord {
   incubation_record_id: number;

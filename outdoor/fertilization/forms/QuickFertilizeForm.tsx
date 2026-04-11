@@ -1,10 +1,10 @@
 import { useForm, Controller } from 'react-hook-form';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Button } from '../../../shared/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
 import { WorkerSelector } from '../../workers/components/WorkerSelector';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface Batch {
   batch_code: string;

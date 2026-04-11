@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Button } from '../../shared/ui/button';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Badge } from '../../shared/ui/badge';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Button } from '../../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Badge } from '../../../shared/ui/badge';
 import { Save, Users, Thermometer, ChevronDown, ChevronUp } from 'lucide-react';
-import { indoorApi } from '../../indoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { indoorApi } from '../../services/indoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface IncubationEditModalProps {
   record: any;

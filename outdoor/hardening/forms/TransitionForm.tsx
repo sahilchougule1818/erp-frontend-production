@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Button } from '../../shared/ui/button';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Button } from '../../../shared/ui/button';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
 import { WorkerSelector } from '../../workers/components/WorkerSelector';
-import { TrayInput } from '../../shared/components/TrayInput';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { TrayInput } from '../../components/TrayInput';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface Batch {
   batch_code: string;

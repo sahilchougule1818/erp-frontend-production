@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Button } from '../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Button } from '../../../shared/ui/button';
 import { Trash2, Info } from 'lucide-react';
 import { OperatorSelector } from '../../operators/components/OperatorSelector';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import apiClient from '../../shared/services/apiClient';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import apiClient from '../../../shared/services/apiClient';
 
 interface IncubationFormProps {
   initialData: any;

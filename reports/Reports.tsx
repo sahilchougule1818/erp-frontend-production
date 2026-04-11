@@ -1,30 +1,37 @@
-import { Card, CardContent, CardHeader, CardTitle } from './shared/ui/card';
-import { Button } from './shared/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './shared/ui/tabs';
-import { Input } from './shared/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../shared/ui/card';
+import { Button } from '../shared/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../shared/ui/tabs';
+import { Input } from '../shared/ui/input';
 import { Download, Filter } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import * as XLSX from 'xlsx';
-import { useReportsApi } from './useReportsApi';
+import { reportsApi } from './services/reportsApi';
 import { useState, useEffect } from 'react';
 
 export function Reports() {
   const [activeTab, setActiveTab] = useState('indoor');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const { fetchReport, loading } = useReportsApi();
+  const [loading, setLoading] = useState(false);
 
   const [indoorData, setIndoorData] = useState<any[]>([]);
   const [outdoorData, setOutdoorData] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
 
   const loadData = async () => {
-    const data = await fetchReport(activeTab, startDate, endDate);
-    if (!data) return;
+    setLoading(true);
+    try {
+      const data = await reportsApi.fetchReport(activeTab, { startDate, endDate });
+      if (!data) return;
 
-    if (activeTab === 'indoor') setIndoorData(data);
-    else if (activeTab === 'outdoor') setOutdoorData(data);
-    else if (activeTab === 'sales') setSalesData(data);
+      if (activeTab === 'indoor') setIndoorData(data);
+      else if (activeTab === 'outdoor') setOutdoorData(data);
+      else if (activeTab === 'sales') setSalesData(data);
+    } catch (err) {
+      console.error('Failed to fetch report:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

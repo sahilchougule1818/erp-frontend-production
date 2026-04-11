@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useBankAccounts } from '../../shared/hooks/useSalesApi';
-import { Button } from '../../shared/ui/button';
-import { Badge } from '../../shared/ui/badge';
-import { BankAccount, bankAccountsApi } from '../../shared/services/salesApi';
+import { useBankAccounts } from '../../hooks/useSalesApi';
+import { Button } from '../../../shared/ui/button';
+import { Badge } from '../../../shared/ui/badge';
+import { BankAccount, bankAccountsApi } from '../../services/salesApi';
 import { Plus, Pencil, Trash2, Lock } from 'lucide-react';
-import { DataTable } from '../../shared/components/DataTable';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { cn } from '../../shared/ui/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { cn } from '../../../shared/ui/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import CreateBankAccountDialog from '../components/CreateBankAccountDialog';
 import EditBankAccountDialog from '../components/EditBankAccountDialog';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../shared/ui/button';
+import { Button } from '../../../shared/ui/button';
 import { Upload, ArrowRightLeft, ArrowUpRight, Clock } from 'lucide-react';
 import type { Batch } from '../../types/outdoor.types';
 

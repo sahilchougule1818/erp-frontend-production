@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Textarea } from '../../shared/ui/textarea';
-import { Button } from '../../shared/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Textarea } from '../../../shared/ui/textarea';
+import { Button } from '../../../shared/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
 
 interface SampleFormProps {
   batch: { batch_code: string; phase: string; plant_name: string };

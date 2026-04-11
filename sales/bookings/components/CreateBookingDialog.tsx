@@ -1,10 +1,10 @@
 import React from 'react';
-import { SharedForm, FieldConfig } from '../../shared/components/SharedForm';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Input } from '../../shared/ui/input';
-import { FULFILLMENT_TYPES } from '../../shared/constants/EventTypes';
-import { cn } from '../../shared/ui/utils';
-import { Customer } from '../../shared/services/salesApi';
+import { SharedForm, FieldConfig } from '../../components/SharedForm';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Input } from '../../../shared/ui/input';
+import { FULFILLMENT_TYPES } from '../../constants/EventTypes';
+import { cn } from '../../../shared/ui/utils';
+import { Customer } from '../../services/salesApi';
 
 type BookingFormValues = {
   customer_id: string;
@@ -257,7 +257,7 @@ export const CreateBookingDialog: React.FC<Props> = ({
       await onSubmit(payload);
       onOpenChange(false);
     } catch (error: any) {
-      setErrorMessage(error?.message || 'Failed to create booking');
+      setErrorMessage(error?.response?.data?.message || error?.message || 'Failed to create booking');
     } finally {
       setIsSubmitting(false);
     }

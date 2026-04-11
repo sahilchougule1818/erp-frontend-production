@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { DataTable } from '../../shared/components/DataTable';
-import { Button } from '../../shared/ui/button';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { useCustomers } from '../../shared/hooks/useSalesApi';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { customersApi, Customer } from '../../shared/services/salesApi';
+import { DataTable } from '../../../shared/components/DataTable';
+import { Button } from '../../../shared/ui/button';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { useCustomers } from '../../hooks/useSalesApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { customersApi, Customer } from '../../services/salesApi';
 import { Plus, Pencil } from 'lucide-react';
 
 type CustomerFormValues = {

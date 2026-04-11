@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { Badge } from '../../shared/ui/badge';
-import { Button } from '../../shared/ui/button';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
-import { DataTable } from '../../shared/components/DataTable';
-import { useRefunds, useRefundDetail, useBankAccounts } from '../../shared/hooks/useSalesApi';
-import { PAYMENT_METHODS } from '../../shared/constants/EventTypes';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { cn } from '../../shared/ui/utils';
+import { Badge } from '../../../shared/ui/badge';
+import { Button } from '../../../shared/ui/button';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useRefunds, useRefundDetail, useBankAccounts } from '../../hooks/useSalesApi';
+import { PAYMENT_METHODS } from '../../constants/EventTypes';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { cn } from '../../../shared/ui/utils';
 import { format } from 'date-fns';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import {
   History as HistoryIcon,
   Banknote,
@@ -74,8 +74,8 @@ const RefundDisbursementSection: React.FC = () => {
         notes: termForm.notes || undefined
       });
       notify.success('Refund term recorded');
-      refetchDetail();
-      refetch();
+      await refetchDetail();
+      await refetch();
       setTermForm(f => ({ ...f, amount: '', transaction_number: '', notes: '' }));
     } catch (err: any) {
       const errorMessage = err.message || 'Failed to record refund term';
@@ -219,7 +219,11 @@ const RefundDisbursementSection: React.FC = () => {
             )}
           </DialogHeader>
 
-          {refund && (
+          {!refund ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+          ) : (
             <div className="space-y-5 max-h-[60vh] overflow-y-auto py-2">
 
               {/* Refund Summary */}

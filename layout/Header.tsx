@@ -3,13 +3,14 @@ import {
   Home, TestTube, Microscope, Thermometer, ShieldCheck, Warehouse, TreePine,
   ArrowRightLeft, Bug, Droplets, Clock, LayoutDashboard, Building, Shield, Menu, Users
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from './shared/ui/avatar';
-import { Badge } from './shared/ui/badge';
-import { Button } from './shared/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '../shared/ui/avatar';
+import { Badge } from '../shared/ui/badge';
+import { Button } from '../shared/ui/button';
 import { useAuth, User } from '../auth/AuthContext';
 import { useState, useEffect } from 'react';
 import { TwoFactorSetup } from '../auth/TwoFactorSetup';
-import { NotificationPanel } from '../sales/shared/components/NotificationPanel';
+import { useToast } from '../shared/ui/use-toast';
+import { NotificationPanel } from '../sales/components/NotificationPanel';
 
 import {
   DropdownMenu,
@@ -18,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './shared/ui/dropdown-menu';
+} from '../shared/ui/dropdown-menu';
 
 interface HeaderProps {
   breadcrumbs: string[];
@@ -43,6 +44,7 @@ const getRoleLabel = (role: string) => {
 
 export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
   const { logout } = useAuth();
+  const { toast } = useToast();
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [has2FA, setHas2FA] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -90,10 +92,12 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
       });
       if (res.ok) {
         setHas2FA(false);
-        alert('2FA disabled successfully');
+        toast({ title: '2FA disabled successfully' });
+      } else {
+        toast({ title: 'Failed to disable 2FA', variant: 'destructive' });
       }
     } catch (err) {
-      alert('Failed to disable 2FA');
+      toast({ title: 'Failed to disable 2FA', variant: 'destructive' });
     }
   };
 

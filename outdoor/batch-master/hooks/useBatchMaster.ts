@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { outdoorApi } from '../../shared/services/outdoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { outdoorApi } from '../../services/outdoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import type { Batch, Tunnel, Worker } from '../../types/outdoor.types';
 
 export function useBatchMaster() {
@@ -19,7 +19,7 @@ export function useBatchMaster() {
     setLoading(true);
     try {
       const [batchesRes, tunnelsRes, workersRes] = await Promise.all([
-        outdoorApi.unified.getRegistry(page, limit),
+        outdoorApi.dashboard.getAllBatches(page, limit),
         outdoorApi.tunnels.getAll(),
         outdoorApi.workers.getAll(1, 500),
       ]);
@@ -34,7 +34,7 @@ export function useBatchMaster() {
         setTotal(batchesRes.pagination.total);
       }
     } catch (error: any) {
-      notify.error(error.response?.data?.message || 'Failed to load data');
+      notify.error(error.message || error.response?.data?.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export function useBatchMaster() {
       await loadData();
       return true;
     } catch (error: any) {
-      notify.error(error.response?.data?.message || 'Failed to import batch');
+      notify.error(error.message || error.response?.data?.message || 'Failed to import batch');
       return false;
     }
   };
@@ -85,7 +85,7 @@ export function useBatchMaster() {
   const makeShift = async (batchCode: string, data: any) => {
     try {
       const operatorObjects = _mapWorkers(data.selectedWorkers, workers);
-      await outdoorApi.unified.makeShift({
+      await outdoorApi.batchOperations.makeShift({
         batchCode,
         newTunnel: data.newTunnel,
         plants: data.plants,
@@ -98,7 +98,7 @@ export function useBatchMaster() {
       await loadData();
       return true;
     } catch (error: any) {
-      notify.error(error.response?.data?.message || 'Failed to create shift');
+      notify.error(error.message || error.response?.data?.message || 'Failed to create shift');
       return false;
     }
   };
@@ -106,7 +106,7 @@ export function useBatchMaster() {
   const phaseTransition = async (batchCode: string, currentTunnel: string, data: any) => {
     try {
       const operatorObjects = _mapWorkers(data.selectedWorkers, workers);
-      await outdoorApi.unified.phaseTransition({
+      await outdoorApi.batchOperations.phaseTransition({
         batchCode,
         targetPhase: data.targetPhase,
         // holding_area has no tunnel — pass current as placeholder, backend ignores it
@@ -121,7 +121,7 @@ export function useBatchMaster() {
       await loadData();
       return true;
     } catch (error: any) {
-      notify.error(error.response?.data?.message || 'Failed to transition phase');
+      notify.error(error.message || error.response?.data?.message || 'Failed to transition phase');
       return false;
     }
   };
@@ -130,7 +130,7 @@ export function useBatchMaster() {
 
   const undoLastAction = async (batchCode: string) => {
     try {
-      const response = await outdoorApi.unified.undoLastAction({ batchCode });
+      const response = await outdoorApi.batchOperations.undoLastAction({ batchCode });
       const data = response?.data ?? response;
 
       const isImportUndo = data?.undone_event?.event_type === 'IMPORT';
@@ -142,7 +142,7 @@ export function useBatchMaster() {
       await loadData();
       return true;
     } catch (error: any) {
-      notify.error(error.response?.data?.message || 'Failed to undo action');
+      notify.error(error.message || error.response?.data?.message || 'Failed to undo action');
       return false;
     }
   };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { SharedForm, FieldConfig } from '../../shared/components/SharedForm';
-import { PAYMENT_METHODS } from '../../shared/constants/EventTypes';
+import { SharedForm, FieldConfig } from '../../components/SharedForm';
+import { PAYMENT_METHODS } from '../../constants/EventTypes';
 import { format } from 'date-fns';
 
 interface Props {

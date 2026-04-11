@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../../shared/ui/button';
+import { Button } from '../../../shared/ui/button';
 import { Plus, Edit, Trash2, Truck } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Badge } from '../../shared/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { DataTable } from '../../shared/components/DataTable';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { inventoryApi } from '../../shared/services/inventoryApi';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Badge } from '../../../shared/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { DataTable } from '../../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { inventoryApi } from '../../services/inventoryApi';
 
 type Supplier = {
   id: number;

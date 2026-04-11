@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
+import type { IncubationRecord } from '../../types';
 
 export function useIncubationData() {
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState<IncubationRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

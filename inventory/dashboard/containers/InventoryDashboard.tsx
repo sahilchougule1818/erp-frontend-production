@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Box, AlertTriangle } from 'lucide-react';
-import { DataTable } from '../../shared/components/DataTable';
-import { inventoryApi } from '../../shared/services/inventoryApi';
+import { DataTable } from '../../../shared/components/DataTable';
+import { inventoryApi } from '../../services/inventoryApi';
 
 export function InventoryDashboard() {
   const [stockLevels, setStockLevels] = useState<any[]>([]);

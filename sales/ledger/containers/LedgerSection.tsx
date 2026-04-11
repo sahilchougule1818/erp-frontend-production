@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../../shared/ui/badge';
 import { ArrowUpRight, ArrowDownLeft, TrendingUp, TrendingDown, Clock } from 'lucide-react';
-import { useLedger, useBankSummary, useDashboardStats } from '../../shared/hooks/useSalesApi';
+import { useLedger, useBankSummary, useDashboardStats } from '../../hooks/useSalesApi';
 import { format } from 'date-fns';
-import { DataTable } from '../../shared/components/DataTable';
-import { LedgerFilterBar } from '../../shared/components/LedgerFilterBar';
-import { cn } from '../../shared/ui/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
+import { LedgerFilterBar } from '../../components/LedgerFilterBar';
+import { cn } from '../../../shared/ui/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 
 const ENTRY_TYPE_LABELS: Record<string, { label: string; color: string }> = {
   ADVANCE_IN:         { label: 'Advance In',   color: 'bg-blue-50 text-blue-700 border-blue-200' },

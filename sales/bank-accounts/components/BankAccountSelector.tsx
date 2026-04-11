@@ -5,8 +5,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../shared/ui/select';
-import { bankAccountsApi, BankAccount } from '../../shared/services/salesApi';
+} from '../../../shared/ui/select';
+import { bankAccountsApi, BankAccount } from '../../services/salesApi';
 
 type BankAccountSelectorProps = {
   value?: string;

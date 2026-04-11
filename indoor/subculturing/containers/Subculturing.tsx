@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useSubcultureData } from '../hooks/useSubcultureData';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { DataTable } from '../../shared/components/DataTable';
-import { Badge } from '../../shared/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
+import { Badge } from '../../../shared/ui/badge';
 import { UnifiedOperatorEditModal } from '../../operators/components/UnifiedOperatorEditModal';
 
 export function Subculturing() {

@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { Button } from '../../shared/ui/button';
+import { Button } from '../../../shared/ui/button';
 import { Plus } from 'lucide-react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Badge } from '../../shared/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../../shared/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Badge } from '../../../shared/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
 import { useWorkerMaster } from '../hooks/useWorkerMaster';
 import { WorkerForm } from '../forms/WorkerForm';
-import { DataTable } from '../../shared/components/DataTable';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import { Tunnels } from '../../tunnels/containers/Tunnels';
 
 export function OutdoorWorkerMaster() {

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Button } from '../../shared/ui/button';
+import { Button } from '../../../shared/ui/button';
 import { UserPlus, Trash2, Edit2, Plus } from 'lucide-react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Badge } from '../../shared/ui/badge';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../../shared/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Badge } from '../../../shared/ui/badge';
 
 import { useOperatorMaster } from '../hooks/useOperatorMaster';
 import { OperatorForm } from '../forms/OperatorForm';
-import { DataTable } from '../../shared/components/DataTable';
+import { DataTable } from '../../../shared/components/DataTable';
 
 export function OperatorMaster() {
   const {

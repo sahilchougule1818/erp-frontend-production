@@ -1,6 +1,6 @@
 import { useMortalityData } from '../hooks';
-import { DataTable }        from '../../shared/components/DataTable';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { DataTable }        from '../../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 
 export function OutdoorMortality() {
   const { log, summary, loading, paginationLog, paginationSummary } = useMortalityData();

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from './shared/ui/button';
-import { Input } from './shared/ui/input';
-import { Label } from './shared/ui/label';
+import { Button } from '../shared/ui/button';
+import { Input } from '../shared/ui/input';
+import { Label } from '../shared/ui/label';
 import { FlaskConical, LogIn, AlertCircle, UserPlus, Mail, Shield, Key } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import loginBg from '../login_background/login_bg.JPG';
@@ -94,7 +94,6 @@ export function Login() {
         setMaskedMasterEmail(data.masterEmail);
         setStep('MASTER_OTP');
         if (data.otp) {
-          console.log('Development OTP:', data.otp);
         }
       } else {
         setError(data.message || 'Failed to send OTP');
@@ -122,7 +121,6 @@ export function Login() {
       if (res.ok) {
         setStep('EMAIL_OTP');
         if (data.otp) {
-          console.log('Development OTP:', data.otp);
         }
       } else {
         setError(data.message || 'Failed to send verification OTP');
@@ -158,7 +156,7 @@ export function Login() {
       if (res.ok) {
         resetForm();
         setStep('LOGIN');
-        alert('Admin account created successfully! Please login.');
+        // TODO: Replace with toast({ title: 'Admin account created successfully! Please login.' });
       } else {
         setError(data.message || 'Registration failed');
       }
@@ -186,7 +184,6 @@ export function Login() {
       if (res.ok) {
         setStep('RESET_PASSWORD');
         if (data.otp) {
-          console.log('Development OTP:', data.otp);
         }
       } else {
         setError(data.message || 'Failed to send reset OTP');
@@ -219,7 +216,7 @@ export function Login() {
       if (res.ok) {
         resetForm();
         setStep('LOGIN');
-        alert('Password reset successfully! Please login with your new password.');
+        // TODO: Replace with toast({ title: 'Password reset successfully! Please login with your new password.' });
       } else {
         setError(data.message || 'Password reset failed');
       }

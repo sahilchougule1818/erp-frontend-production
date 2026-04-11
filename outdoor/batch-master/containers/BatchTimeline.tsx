@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Card } from '../../shared/ui/card';
-import { Button } from '../../shared/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
+import { Card } from '../../../shared/ui/card';
+import { Button } from '../../../shared/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
 import { FileText, Download, TreePine, Sprout, ArrowRightLeft, Droplet, Package, Box } from 'lucide-react';
-import { Badge } from '../../shared/ui/badge';
-import apiClient from '../../shared/services/apiClient';
+import { Badge } from '../../../shared/ui/badge';
+import apiClient from '../../../shared/services/apiClient';
 import { useSearchParams } from 'react-router-dom';
 
 const getPhaseIcon = (phase: string, eventType: string) => {

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
-import { CardContent } from '../../shared/ui/card';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { outdoorApi } from '../../shared/services/outdoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Button } from '../../../shared/ui/button';
+import { CardContent } from '../../../shared/ui/card';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { outdoorApi } from '../../services/outdoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface MortalityFormProps {
   batch: { batch_code: string; current_phase: string; current_tunnel: string; available_plants: number };

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../shared/ui/dialog';
-import { Button } from '../../shared/ui/button';
-import { Label } from '../../shared/ui/label';
-import { Separator } from '../../shared/ui/separator';
-import { Badge } from '../../shared/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../../shared/ui/dialog';
+import { Button } from '../../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Separator } from '../../../shared/ui/separator';
+import { Badge } from '../../../shared/ui/badge';
 import { X, Save, ChevronDown, ChevronUp, Users } from 'lucide-react';
-import { indoorApi } from '../../indoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { indoorApi } from '../../services/indoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface OperatorEditModalProps {
   recordId?:   number;        // For future use

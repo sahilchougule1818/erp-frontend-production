@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './shared/ui/card';
-import { Button } from './shared/ui/button';
-import { Input } from './shared/ui/input';
-import { Label } from './shared/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './shared/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './shared/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './shared/ui/alert-dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './shared/ui/table';
-import { Badge } from './shared/ui/badge';
-import { UserPlus, Trash2, AlertCircle, Mail, Shield } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../shared/ui/card';
+import { Button } from '../shared/ui/button';
+import { Input } from '../shared/ui/input';
+import { Label } from '../shared/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../shared/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../shared/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../shared/ui/alert-dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../shared/ui/table';
+import { Badge } from '../shared/ui/badge';
+import { UserPlus, Trash2, AlertCircle, Mail, Shield, Settings } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { useNotify } from '../shared/hooks/useNotify';
+import { fetchWithCsrf, fetchCsrfToken } from '../shared/helpers/csrf';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -24,6 +26,7 @@ interface Manager {
 }
 
 export function UserManagement() {
+  const notify = useNotify();
   const [managers, setManagers] = useState<Manager[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -44,11 +47,22 @@ export function UserManagement() {
   const [masterOTP, setMasterOTP] = useState('');
   const [showMasterOTP, setShowMasterOTP] = useState(false);
   
+  // Master email change
+  const [currentMasterEmail, setCurrentMasterEmail] = useState('');
+  const [showMasterEmailDialog, setShowMasterEmailDialog] = useState(false);
+  const [newMasterEmail, setNewMasterEmail] = useState('');
+  const [oldEmailOTP, setOldEmailOTP] = useState('');
+  const [newEmailOTP, setNewEmailOTP] = useState('');
+  const [showMasterEmailOTPs, setShowMasterEmailOTPs] = useState(false);
+  const [masterEmailError, setMasterEmailError] = useState('');
+  
   const { user, hasRole } = useAuth();
 
   useEffect(() => {
     if (hasRole('Admin')) {
+      fetchCsrfToken();
       fetchManagers();
+      fetchMasterEmail();
     }
   }, [hasRole]);
 
@@ -70,6 +84,27 @@ export function UserManagement() {
     }
   };
 
+  const fetchMasterEmail = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/auth/master-email`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentMasterEmail(data.masterEmail);
+      } else {
+        console.error('Failed to fetch master email:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching master email:', error);
+    }
+  };
+
   const resetCreateForm = () => {
     setEmail('');
     setPassword('');
@@ -88,6 +123,14 @@ export function UserManagement() {
     setError('');
   };
 
+  const resetMasterEmailForm = () => {
+    setNewMasterEmail('');
+    setOldEmailOTP('');
+    setNewEmailOTP('');
+    setShowMasterEmailOTPs(false);
+    setMasterEmailError('');
+  };
+
   const handleSendEmailOTP = async () => {
     setError('');
     setLoading(true);
@@ -104,7 +147,6 @@ export function UserManagement() {
       if (response.ok) {
         setShowEmailOTP(true);
         if (data.otp) {
-          console.log('Development OTP:', data.otp);
         }
       } else {
         setError(data.message || 'Failed to send verification OTP');
@@ -145,7 +187,7 @@ export function UserManagement() {
         resetCreateForm();
         setShowCreateModal(false);
         fetchManagers();
-        alert('Manager account created successfully!');
+        notify.success('Manager account created successfully!');
       } else {
         setError(data.message || 'Failed to create manager');
       }
@@ -175,7 +217,6 @@ export function UserManagement() {
       if (response.ok) {
         setShowMasterOTP(true);
         if (data.otp) {
-          console.log('Development OTP:', data.otp);
         }
       } else {
         setError(data.message || 'Failed to send master OTP');
@@ -211,12 +252,83 @@ export function UserManagement() {
         resetDeleteForm();
         setShowDeleteDialog(false);
         fetchManagers();
-        alert('Manager account deleted successfully!');
+        notify.success('Manager account deleted successfully!');
       } else {
         setError(data.message || 'Failed to delete manager');
       }
     } catch (error) {
       setError('Failed to delete manager');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendMasterEmailOTPs = async () => {
+    setMasterEmailError('');
+    setLoading(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetchWithCsrf(`${API_URL}/auth/send-master-email-change-otps`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ newEmail: newMasterEmail })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setShowMasterEmailOTPs(true);
+        if (data.oldOTP && data.newOTP) {
+          console.log('Old OTP:', data.oldOTP, 'New OTP:', data.newOTP);
+        }
+      } else {
+        console.error('Failed to send OTPs:', data);
+        setMasterEmailError(data.message || data.error || 'Failed to send OTPs');
+      }
+    } catch (error: any) {
+      console.error('Error sending OTPs:', error);
+      setMasterEmailError(error.message || 'Failed to send OTPs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateMasterEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMasterEmailError('');
+    setLoading(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetchWithCsrf(`${API_URL}/auth/update-master-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          newEmail: newMasterEmail,
+          oldOTP: oldEmailOTP,
+          newOTP: newEmailOTP
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        resetMasterEmailForm();
+        setShowMasterEmailDialog(false);
+        fetchMasterEmail();
+        notify.success('Master email updated successfully!');
+      } else {
+        setMasterEmailError(data.message || 'Failed to update master email');
+      }
+    } catch (error) {
+      setMasterEmailError('Failed to update master email');
     } finally {
       setLoading(false);
     }
@@ -248,7 +360,7 @@ export function UserManagement() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>User Management</CardTitle>
@@ -313,6 +425,33 @@ export function UserManagement() {
               )}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      {/* Master Email Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="w-5 h-5" />
+            Master Email Settings
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Current Master Email</p>
+              <p className="font-medium">{currentMasterEmail || 'Loading...'}</p>
+              <p className="text-xs text-gray-500 mt-1">Used for admin creation and critical operations</p>
+            </div>
+            <Button 
+              onClick={() => setShowMasterEmailDialog(true)}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Mail className="w-4 h-4" />
+              Change Email
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -506,6 +645,106 @@ export function UserManagement() {
           )}
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Change Master Email Dialog */}
+      <Dialog open={showMasterEmailDialog} onOpenChange={setShowMasterEmailDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Change Master Email</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdateMasterEmail} className="space-y-4">
+            {masterEmailError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-base">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{masterEmailError}</span>
+              </div>
+            )}
+            
+            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-md text-sm">
+              <p className="font-medium mb-1">Current Master Email:</p>
+              <p>{currentMasterEmail}</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newMasterEmail">New Master Email</Label>
+              <Input
+                id="newMasterEmail"
+                type="email"
+                value={newMasterEmail}
+                onChange={(e) => setNewMasterEmail(e.target.value)}
+                required
+                disabled={showMasterEmailOTPs}
+              />
+            </div>
+            
+            {!showMasterEmailOTPs ? (
+              <Button 
+                type="button"
+                onClick={handleSendMasterEmailOTPs}
+                disabled={loading || !newMasterEmail}
+                className="w-full"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {loading ? 'Sending...' : 'Send Verification OTPs'}
+              </Button>
+            ) : (
+              <>
+                <div className="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-md text-sm">
+                  <p>OTPs sent to both current and new email addresses</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="oldEmailOTP">OTP from Current Email</Label>
+                  <Input
+                    id="oldEmailOTP"
+                    placeholder="123456"
+                    value={oldEmailOTP}
+                    onChange={(e) => setOldEmailOTP(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    required
+                    className="text-center text-lg tracking-widest"
+                    maxLength={6}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="newEmailOTP">OTP from New Email</Label>
+                  <Input
+                    id="newEmailOTP"
+                    placeholder="123456"
+                    value={newEmailOTP}
+                    onChange={(e) => setNewEmailOTP(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    required
+                    className="text-center text-lg tracking-widest"
+                    maxLength={6}
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      resetMasterEmailForm();
+                      setShowMasterEmailDialog(false);
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit"
+                    disabled={loading || oldEmailOTP.length !== 6 || newEmailOTP.length !== 6}
+                    className="flex-1"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    {loading ? 'Updating...' : 'Update Email'}
+                  </Button>
+                </div>
+              </>
+            )}
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

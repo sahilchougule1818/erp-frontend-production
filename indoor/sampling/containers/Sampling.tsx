@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../../shared/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { DataTable } from '../../shared/components/DataTable';
-import apiClient from '../../shared/services/apiClient';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
+import { indoorApi } from '../../services/indoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 export function Sampling() {
   const [samples, setSamples] = useState<any[]>([]);
@@ -18,12 +18,11 @@ export function Sampling() {
   const loadSamples = async () => {
     setLoading(true);
     try {
-      let endpoint = 'summary';
-      if (activeTab === 'create') endpoint = 'submissions';
-      if (activeTab === 'report') endpoint = 'results';
-      
-      const response = await apiClient.get(`/indoor/sampling/${endpoint}`);
-      setSamples(response?.data ? response.data : (Array.isArray(response) ? response : []));
+      let res: any;
+      if (activeTab === 'create') res = await indoorApi.sampling.getSubmissions();
+      else if (activeTab === 'report') res = await indoorApi.sampling.getResults();
+      else res = await indoorApi.sampling.getSummary();
+      setSamples(res?.data ? res.data : (Array.isArray(res) ? res : []));
     } catch (error) {
       console.error('Failed to load samples:', error);
       setSamples([]);
@@ -33,9 +32,8 @@ export function Sampling() {
   };
 
   const handleDeleteCreate = async (id: number) => {
-    if (!confirm('Delete this sample?')) return;
     try {
-      await apiClient.delete(`/indoor/sampling/submission/${id}`);
+      await indoorApi.sampling.deleteSubmission(id);
       notify.success('Deleted successfully');
       loadSamples();
     } catch (error: any) {
@@ -44,9 +42,8 @@ export function Sampling() {
   };
 
   const handleDeleteReport = async (id: number) => {
-    if (!confirm('Delete this report?')) return;
     try {
-      await apiClient.delete(`/indoor/sampling/result/${id}`);
+      await indoorApi.sampling.deleteResult(id);
       notify.success('Deleted successfully');
       loadSamples();
     } catch (error) {
@@ -163,7 +160,6 @@ export function Sampling() {
               filter2Label: 'Status'
             }}
             exportFileName="sampling_summary"
-            readOnly={true}
           />
         </TabsContent>
 
@@ -179,7 +175,6 @@ export function Sampling() {
               filter2Label: 'Plant Name'
             }}
             exportFileName="sampling_submissions"
-            readOnly={true}
           />
         </TabsContent>
 
@@ -195,7 +190,6 @@ export function Sampling() {
               filter2Label: 'Status'
             }}
             exportFileName="sampling_results"
-            readOnly={true}
           />
         </TabsContent>
       </Tabs>

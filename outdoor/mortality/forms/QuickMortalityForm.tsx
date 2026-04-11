@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Input } from '../../../shared/ui/input';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { useNotify } from '../shared/hooks/useNotify';
 
 interface QuickMortalityFormProps {
   batch: { batch_code: string; total_mortality: number };
@@ -15,7 +20,7 @@ export const QuickMortalityForm: React.FC<QuickMortalityFormProps> = ({ batch, o
 
   const handleSubmit = () => {
     if (count < 0) {
-      alert('Mortality count cannot be negative');
+      notify.error('Mortality count cannot be negative');
       return;
     }
     onSubmit(count);

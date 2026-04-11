@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Button } from '../../shared/ui/button';
-import { Badge } from '../../shared/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Button } from '../../../shared/ui/button';
+import { Badge } from '../../../shared/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import { Trash2, CheckCircle, X } from 'lucide-react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 
 interface AutoclaveCycleFormProps {
   initialData: any;
@@ -46,6 +47,7 @@ export function AutoclaveCycleForm({
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
+  const notify = useNotify();
 
   useEffect(() => {
     if (initialData) {
@@ -115,7 +117,7 @@ export function AutoclaveCycleForm({
       submitData = data;
     } else {
       if (!form.cycle_date || !form.media_code || !form.operator_ids?.length || !form.started_at) {
-        alert('Please fill in all required fields: Cycle Date, Media Code, Operators, and Autoclave ON Time');
+        notify.error('Please fill in all required fields: Cycle Date, Media Code, Operators, and Autoclave ON Time');
         return;
       }
       

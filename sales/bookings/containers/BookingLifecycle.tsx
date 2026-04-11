@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { DataTable } from '../../shared/components/DataTable';
-import apiClient from '../../shared/services/apiClient';
-import { Badge } from '../../shared/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
+import apiClient from '../../../shared/services/apiClient';
+import { Badge } from '../../../shared/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 
 export function BookingLifecycle() {
   const [records, setRecords] = useState([]);

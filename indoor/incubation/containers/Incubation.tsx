@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useIncubationData } from '../hooks/useIncubationData';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { DataTable } from '../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { DataTable } from '../../../shared/components/DataTable';
 import { IncubationEditModal } from '../components/IncubationEditModal';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../../shared/ui/badge';
 
 export function Incubation() {
   const { records, refetch, pagination } = useIncubationData();

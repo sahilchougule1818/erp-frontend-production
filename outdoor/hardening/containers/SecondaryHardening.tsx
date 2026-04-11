@@ -1,7 +1,7 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import { useSecondaryHardeningData } from '../hooks';
-import { DataTable } from '../../shared/components/DataTable';
-import { createPhaseColumns, phaseColumnConfigs } from '../../shared/components/phaseColumns';
+import { DataTable } from '../../../shared/components/DataTable';
+import { createPhaseColumns, phaseColumnConfigs } from '../../components/phaseColumns';
 import { UnifiedEditModal } from '../../workers/components/UnifiedEditModal';
 import { usePhaseEditing } from '../hooks/usePhaseEditing';
 

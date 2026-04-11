@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LayoutDashboard } from 'lucide-react';
-import { inventoryApi } from '../../shared/services/inventoryApi';
+import { inventoryApi } from '../../services/inventoryApi';
 import { InventoryUpdateTab } from '../components/InventoryUpdateTab';
 
 type ItemWithLastWithdrawal = {

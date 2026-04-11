@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from '../../shared/ui/button';
-import { Badge } from '../../shared/ui/badge';
+import { Button } from '../../../shared/ui/button';
+import { Badge } from '../../../shared/ui/badge';
 import {
   useCustomerBookings,
   useBankAccounts,
@@ -8,12 +8,12 @@ import {
   useAvailableOutdoorBatches,
   useBookingPayments,
   useCustomers
-} from '../../shared/hooks/useSalesApi';
+} from '../../hooks/useSalesApi';
 import { Plus as PlusIcon } from 'lucide-react';
-import { cn } from '../../shared/ui/utils';
-import { DataTable } from '../../shared/components/DataTable';
-import { useNotify } from '../../shared/hooks/useNotify';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { cn } from '../../../shared/ui/utils';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import { ManageInstantSaleDialog } from '../../bookings/components/ManageInstantSaleDialog';
 import { ManagePreBookingDialog } from '../../bookings/components/ManagePreBookingDialog';
 import { CreateBookingDialog } from '../../bookings/components/CreateBookingDialog';
@@ -122,7 +122,7 @@ const CustomerSection: React.FC = () => {
     }
 
     try {
-      await deleteBooking(selectedBooking.booking_id);
+      await deleteBooking(selectedBooking.booking_id, selectedBooking.is_instant_sell);
       notify.success(selectedBooking.is_instant_sell ? 'Instant sale deleted successfully' : 'Booking deleted successfully');
       setIsEditOpen(false);
       setSelectedBooking(null);
@@ -287,7 +287,7 @@ const CustomerSection: React.FC = () => {
           onDeleteSale={handleDeleteBooking}
           onCancelSale={async (reason?: string) => {
             if (!selectedBooking) return;
-            await cancelBooking(selectedBooking.booking_id, { cancellation_reason: reason });
+            await cancelBooking(selectedBooking.booking_id, { cancellation_reason: reason }, true);
             setIsEditOpen(false);
             setSelectedBooking(null);
             refetch();
@@ -315,7 +315,7 @@ const CustomerSection: React.FC = () => {
           onStatusChange={handleStatusChange}
           onCancelBooking={async (reason?: string) => {
             if (!selectedBooking) return;
-            await cancelBooking(selectedBooking.booking_id, { cancellation_reason: reason });
+            await cancelBooking(selectedBooking.booking_id, { cancellation_reason: reason }, false);
             setIsEditOpen(false);
             setSelectedBooking(null);
             refetch();

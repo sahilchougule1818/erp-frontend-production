@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../shared/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/ui/card';
 import { Package, FlaskConical, Boxes } from 'lucide-react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 
 export function IndoorDashboard() {
   const [totalMediaBatches, setTotalMediaBatches] = useState(0);
@@ -14,8 +14,7 @@ export function IndoorDashboard() {
 
   const fetchData = async () => {
     try {
-      const response = await indoorApi.unified.getDashboardStats();
-      console.log('Dashboard response:', response);
+      const response = await indoorApi.dashboard.getDashboardStats();
       setTotalMediaBatches(parseInt(response.totalMediaBatches) || 0);
       setTotalBatches(parseInt(response.totalBatches) || 0);
       setTotalBottles(parseInt(response.totalBottles) || 0);

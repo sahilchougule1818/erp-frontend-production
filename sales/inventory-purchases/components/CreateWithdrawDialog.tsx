@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Button } from '../../shared/ui/button';
-import { PAYMENT_METHODS } from '../../shared/constants/EventTypes';
+import { useNotify } from '../shared/hooks/useNotify';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Input } from '../../../shared/ui/input';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
+import { PAYMENT_METHODS } from '../../constants/EventTypes';
+import { useNotify } from '../shared/hooks/useNotify';
 
 interface Props {
   open: boolean;
@@ -33,7 +40,7 @@ export const CreateWithdrawDialog: React.FC<Props> = ({
 
   const handleSubmit = async () => {
     if (!formData.item_id || !formData.purpose || !formData.amount) {
-      alert('Please fill all required fields');
+      notify.error('Please fill all required fields');
       return;
     }
     const payload = {

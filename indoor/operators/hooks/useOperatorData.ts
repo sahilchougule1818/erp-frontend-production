@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
-import apiClient from '../../shared/services/apiClient';
+import { indoorApi } from '../../services/indoorApi';
+import apiClient from '../../../shared/services/apiClient';
+import type { Operator } from '../../types';
 
 export function useOperatorData() {
-  const [operators, setOperators] = useState([]);
-  const [batches, setBatches] = useState([]);
-  const [workerLogs, setWorkerLogs] = useState([]);
+  const [operators, setOperators] = useState<Operator[]>([]);
+  const [batches, setBatches] = useState<any[]>([]);
+  const [workerLogs, setWorkerLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

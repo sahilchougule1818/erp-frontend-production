@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
-import { BankAccount, bankAccountsApi } from '../../shared/services/salesApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Button } from '../../../shared/ui/button';
+import { BankAccount, bankAccountsApi } from '../../services/salesApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface Props {
   account: BankAccount | null;

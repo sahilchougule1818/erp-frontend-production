@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
-import { Badge } from '../../shared/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Button } from '../../../shared/ui/button';
+import { Badge } from '../../../shared/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
 import { Trash2, AlertCircle } from 'lucide-react';
 
 type FormValues = {
@@ -23,8 +23,9 @@ interface MediaBatchFormProps {
 }
 
 export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelete, onClose }: MediaBatchFormProps) {
+  const isEditMode = !!initialData;
   const status = initialData?.status || 'READY FOR AUTOCLAVE';
-  const isEditable = status === 'READY FOR AUTOCLAVE';
+  const isEditable = !isEditMode || status === 'READY FOR AUTOCLAVE';
   
   const { control, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
@@ -80,7 +81,7 @@ export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelet
           </DialogHeader>
 
           <div className="py-4 space-y-4">
-            {initialData && (
+            {isEditMode && (
               <div className="p-4 border rounded-lg bg-gray-50">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">Workflow Status</span>
@@ -132,7 +133,7 @@ export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelet
               </div>
             </div>
 
-            {!isEditable && (
+            {isEditMode && !isEditable && (
               <p className="text-base text-gray-500 text-center">
                 Media batch cannot be edited once it enters the autoclave process
               </p>
@@ -142,7 +143,7 @@ export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelet
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
             
-            {initialData && onDelete && isEditable && (
+            {isEditMode && onDelete && isEditable && (
               <Button type="button" variant="destructive" onClick={() => onDelete(initialData.id)}>
                 <Trash2 className="w-4 h-4 mr-2" />Delete
               </Button>

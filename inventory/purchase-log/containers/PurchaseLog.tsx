@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ShoppingBag } from 'lucide-react';
-import { Badge } from '../../shared/ui/badge';
-import { DataTable } from '../../shared/components/DataTable';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { inventoryApi } from '../../shared/services/inventoryApi';
+import { Badge } from '../../../shared/ui/badge';
+import { DataTable } from '../../../shared/components/DataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { inventoryApi } from '../../services/inventoryApi';
 import { format } from 'date-fns';
 
 type Transaction = {

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import apiClient from '../../shared/services/apiClient';
+import { useNotify } from '../shared/hooks/useNotify';
+import apiClient from '../../../shared/services/apiClient';
+import { useNotify } from '../shared/hooks/useNotify';
 
 export const useBatchTimeline = () => {
   const [selectedBatch, setSelectedBatch] = useState('');
@@ -90,22 +92,22 @@ export const useBatchTimeline = () => {
   const transferToOutdoor = useCallback(async (batchCode: string) => {
     try {
       await apiClient.post(`/indoor/batch-timeline/${batchCode}/transfer-to-outdoor`, {});
-      alert('Batch marked as available for outdoor!');
+      notify.error('Batch marked as available for outdoor!');
       loadTimeline();
     } catch (error) {
       console.error('Error marking batch for outdoor:', error);
-      alert('Error marking batch for outdoor');
+      notify.error('Error marking batch for outdoor');
     }
   }, [loadTimeline]);
 
   const undoOutdoorTransfer = useCallback(async (batchCode: string) => {
     try {
       await apiClient.post(`/indoor/batch-timeline/${batchCode}/undo-outdoor-transfer`, {});
-      alert('Outdoor availability removed!');
+      notify.error('Outdoor availability removed!');
       loadTimeline();
     } catch (error) {
       console.error('Error undoing outdoor transfer:', error);
-      alert('Error undoing outdoor transfer');
+      notify.error('Error undoing outdoor transfer');
     }
   }, [loadTimeline]);
 

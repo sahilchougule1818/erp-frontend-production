@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../shared/ui/dialog';
-import { Button } from '../../shared/ui/button';
-import { Label } from '../../shared/ui/label';
-import { Separator } from '../../shared/ui/separator';
-import { Badge } from '../../shared/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../../shared/ui/dialog';
+import { Button } from '../../../shared/ui/button';
+import { Label } from '../../../shared/ui/label';
+import { Separator } from '../../../shared/ui/separator';
+import { Badge } from '../../../shared/ui/badge';
 import { X, Save, ChevronDown, ChevronUp, FileEdit } from 'lucide-react';
-import { outdoorApi } from '../../shared/services/outdoorApi';
-import { useNotify } from '../../shared/hooks/useNotify';
+import { outdoorApi } from '../../services/outdoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 interface WorkerEditModalProps {
   eventCode:  string;

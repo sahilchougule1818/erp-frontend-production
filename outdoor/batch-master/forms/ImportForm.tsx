@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { CardContent } from '../../shared/ui/card';
-import { Button } from '../../shared/ui/button';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import { useNotify } from '../shared/hooks/useNotify';
+import { CardContent } from '../../../shared/ui/card';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { useNotify } from '../shared/hooks/useNotify';
 import { WorkerSelector } from '../../workers/components/WorkerSelector';
-import { TrayInput } from '../../shared/components/TrayInput';
+import { useNotify } from '../shared/hooks/useNotify';
+import { TrayInput } from '../../components/TrayInput';
+import { useNotify } from '../shared/hooks/useNotify';
 
 interface IndoorBatch {
   batch_code: string;
@@ -33,15 +39,15 @@ export function ImportForm({ indoorBatch, tunnels, workers, onSubmit, onClose }:
 
   const handleSubmit = () => {
     if (!newTunnel) {
-      alert('Please select a tunnel');
+      notify.error('Please select a tunnel');
       return;
     }
     if (!plants || plants <= 0) {
-      alert('Please enter valid plants count');
+      notify.error('Please enter valid plants count');
       return;
     }
     if (selectedWorkers.length === 0) {
-      alert('Please select at least one worker');
+      notify.error('Please select at least one worker');
       return;
     }
     onSubmit({ newTunnel, plants, trays, selectedWorkers });

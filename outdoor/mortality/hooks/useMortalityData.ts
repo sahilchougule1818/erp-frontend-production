@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { outdoorApi } from '../../shared/services/outdoorApi';
+import { outdoorApi } from '../../services/outdoorApi';
 
 export const useMortalityData = () => {
   const [log, setLog] = useState<any[]>([]);

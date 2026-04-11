@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { indoorApi } from '../../indoorApi';
-import apiClient from '../../shared/services/apiClient';
+import { indoorApi } from '../../services/indoorApi';
+import apiClient from '../../../shared/services/apiClient';
 
 export const useOperatorMaster = () => {
   const [operators, setOperators] = useState<any[]>([]);

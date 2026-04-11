@@ -1,8 +1,8 @@
-import { Card } from '../../shared/ui/card';
-import { Button } from '../../shared/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
+import { Card } from '../../../shared/ui/card';
+import { Button } from '../../../shared/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
 import { FileText, Download } from 'lucide-react';
-import { Badge } from '../../shared/ui/badge';
+import { Badge } from '../../../shared/ui/badge';
 import { FlaskConical, Thermometer, TestTube, CheckCircle } from 'lucide-react';
 import { useBatchTimeline } from '../hooks/useBatchTimeline';
 

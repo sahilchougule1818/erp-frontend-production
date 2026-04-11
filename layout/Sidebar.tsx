@@ -116,7 +116,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
         { id: 'secondary-hardening', label: 'Secondary Hardening', icon: TreePine, page: 'secondary-hardening', breadcrumbs: ['Outdoor', 'Secondary Hardening'] },
         { id: 'shifting', label: 'Shifting Records', icon: ArrowRightLeft, page: 'shifting', breadcrumbs: ['Outdoor', 'Shifting Records'] },
         { id: 'holding-area', label: 'Holding Area', icon: Package, page: 'holding-area', breadcrumbs: ['Outdoor', 'Holding Area'] },
-        { id: 'outdoor-contamination', label: 'Outdoor Mortality', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Outdoor Mortality'] },
+        { id: 'outdoor-mortality', label: 'Outdoor Mortality', icon: Bug, page: 'outdoor-mortality', breadcrumbs: ['Outdoor', 'Outdoor Mortality'] },
         { id: 'fertilization', label: 'Fertilization', icon: Droplets, page: 'fertilization', breadcrumbs: ['Outdoor', 'Fertilization'] },
         { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] }
       ]
@@ -126,7 +126,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
       label: 'Sales',
       icon: ShoppingCart,
       children: [
-        { id: 'inventory-dashboard', label: 'Sales Dashboard', icon: LayoutDashboard, page: 'inventory-dashboard', breadcrumbs: ['Sales', 'Sales Dashboard'] },
+        { id: 'sales-dashboard', label: 'Sales Dashboard', icon: LayoutDashboard, page: 'sales-dashboard', breadcrumbs: ['Sales', 'Sales Dashboard'] },
         { id: 'sales-bank', label: 'Bank Account Master', icon: Building, page: 'sales-bank', breadcrumbs: ['Sales', 'Bank Account Master'] },
         { id: 'sales-customers', label: 'Customers', icon: Users, page: 'sales-customers', breadcrumbs: ['Sales', 'Customers'] },
         { id: 'sales-buyer', label: 'Bookings', icon: ShoppingCart, page: 'sales-buyer', breadcrumbs: ['Sales', 'Bookings'] },
@@ -141,7 +141,7 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
       label: 'Inventory & Supplier',
       icon: Package,
       children: [
-        { id: 'inventory-dashboard-new', label: 'Inventory Dashboard', icon: LayoutDashboard, page: 'inventory-dashboard-master', breadcrumbs: ['Inventory & Supplier', 'Inventory Dashboard'] },
+        { id: 'inventory-dashboard', label: 'Inventory Dashboard', icon: LayoutDashboard, page: 'inventory-dashboard', breadcrumbs: ['Inventory & Supplier', 'Inventory Dashboard'] },
         { id: 'inventory-record', label: 'Inventory Update', icon: Package, page: 'inventory-record', breadcrumbs: ['Inventory & Supplier', 'Inventory Update'] },
         { id: 'purchase-log', label: 'Purchase Log', icon: ShoppingBag, page: 'purchase-log', breadcrumbs: ['Inventory & Supplier', 'Purchase Log'] },
         { id: 'withdrawal-log', label: 'Withdrawal Log', icon: LayoutList, page: 'withdrawal-log', breadcrumbs: ['Inventory & Supplier', 'Withdrawal Log'] },

@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
-import { Button } from '../../shared/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../shared/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../shared/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
+import { Button } from '../../../shared/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../../shared/ui/alert-dialog';
 import { Plus } from 'lucide-react';
 import { useCleaningData } from '../hooks/useCleaningData';
 import { CleaningRecordForm } from '../forms/CleaningRecordForm';
-import { DataTable } from '../../shared/components/DataTable';
+import { DataTable } from '../../../shared/components/DataTable';
 import { UnifiedOperatorEditModal } from '../../operators/components/UnifiedOperatorEditModal';
 
 export function CleaningRecord() {

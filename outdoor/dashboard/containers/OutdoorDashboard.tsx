@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 import { Leaf, TreePine, Warehouse, Skull } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { outdoorApi } from '../../shared/services/outdoorApi';
+import { outdoorApi } from '../../services/outdoorApi';
 
 const UNITS = [
   { name: 'Unit A', prefix: 'A', tunnels: 10 },
@@ -13,7 +13,7 @@ const UNITS = [
 
 const COLORS_HEX = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
-export const OutdoorDashboard = () => {
+export const OutdoorDashboard = memo(() => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<any>(null);
   const [occupancy, setOccupancy] = useState<any[]>([]);
@@ -26,9 +26,9 @@ export const OutdoorDashboard = () => {
       try {
         setLoading(true);
         const [statsData, occupancyData, holdingData] = await Promise.all([
-          outdoorApi.unified.getDashboardStats(),
-          outdoorApi.unified.getTunnelOccupancy(),
-          outdoorApi.unified.getHoldingArea()
+          outdoorApi.dashboard.getDashboardStats(),
+          outdoorApi.dashboard.getTunnelOccupancy(),
+          outdoorApi.dashboard.getHoldingArea()
         ]);
         setStats(statsData);
         setOccupancy(occupancyData);
@@ -42,9 +42,9 @@ export const OutdoorDashboard = () => {
     fetchData();
   }, []);
 
-  const getTunnelData = (tunnelName: string) => {
+  const getTunnelData = useCallback((tunnelName: string) => {
     return occupancy.find(o => o.tunnel === tunnelName);
-  };
+  }, [occupancy]);
 
   const renderOccupancyBar = (tunnelName: string) => {
     const data = getTunnelData(tunnelName);
@@ -279,4 +279,4 @@ export const OutdoorDashboard = () => {
       </div>
     </div>
   );
-};
+});

@@ -1,6 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../shared/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import { useTunnelShiftsData } from '../hooks';
-import { DataTable } from '../../shared/components/DataTable';
+import { DataTable } from '../../../shared/components/DataTable';
 
 const movementTypeLabel = (val: string) => {
   const map: Record<string, string> = {

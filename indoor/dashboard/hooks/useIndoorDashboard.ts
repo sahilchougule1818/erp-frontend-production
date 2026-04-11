@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 
 export function useIndoorDashboard() {
   const [stats, setStats] = useState<any>(null);
@@ -16,10 +16,10 @@ export function useIndoorDashboard() {
     setLoading(true);
     try {
       const [statsRes, stageRes, exportRes, mediaRes] = await Promise.all([
-        indoorApi.unified.getDashboardStats(),
-        indoorApi.unified.getStageDistribution(),
-        indoorApi.unified.getReadyForExport(),
-        indoorApi.unified.getMediaPreparationSummary()
+        indoorApi.dashboard.getDashboardStats(),
+        indoorApi.dashboard.getStageDistribution(),
+        indoorApi.dashboard.getReadyForExport(),
+        indoorApi.mediaPreparation.getPending()
       ]);
 
       setStats(statsRes || {});

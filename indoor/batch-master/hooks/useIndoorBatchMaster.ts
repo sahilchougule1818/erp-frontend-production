@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { indoorApi } from '../../services/indoorApi';
 import { Batch, Operator, UndoPreview } from '../types';
 
 export const useIndoorBatchMaster = () => {
@@ -19,7 +19,7 @@ export const useIndoorBatchMaster = () => {
   const fetchBatches = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const res = await (indoorApi.unified.getRegistry({ page }) as any);
+      const res = await (indoorApi.batchOperations.getAllBatches({ page }) as any);
       if (res.data && res.pagination) {
         setBatches(res.data || []);
         const backendPage = res.pagination.currentPage || res.pagination.page || page;
@@ -62,7 +62,7 @@ export const useIndoorBatchMaster = () => {
 
   const createBatch = async (data: any) => {
     try {
-      const res = await (indoorApi.unified.createBatch(data) as any);
+      const res = await (indoorApi.batchOperations.createBatch(data) as any);
       await fetchBatches();
       return { success: true, data: res };
     } catch (err: any) {
@@ -72,7 +72,7 @@ export const useIndoorBatchMaster = () => {
 
   const recordSubculture = async (batchCode: string, data: any) => {
     try {
-      const res = await (indoorApi.unified.subculture({ batchCode, ...data }) as any);
+      const res = await (indoorApi.batchOperations.subculture({ batchCode, ...data }) as any);
       await fetchBatches();
       return { success: true, data: res };
     } catch (err: any) {
@@ -82,7 +82,7 @@ export const useIndoorBatchMaster = () => {
 
   const recordIncubation = async (batchCode: string, data: any) => {
     try {
-      const res = await (indoorApi.unified.incubate({ batchCode, ...data }) as any);
+      const res = await (indoorApi.batchOperations.incubate({ batchCode, ...data }) as any);
       await fetchBatches();
       return { success: true, data: res };
     } catch (err: any) {
@@ -92,7 +92,7 @@ export const useIndoorBatchMaster = () => {
 
   const exportToOutdoor = async (batchCode: string, data: any) => {
     try {
-      const res = await (indoorApi.unified.exportBatch({ batchCode, ...data }) as any);
+      const res = await (indoorApi.batchOperations.exportBatch({ batchCode, ...data }) as any);
       await fetchBatches();
       return { success: true, data: res };
     } catch (err: any) {
@@ -102,7 +102,7 @@ export const useIndoorBatchMaster = () => {
 
   const unexportFromOutdoor = async (batchCode: string) => {
     try {
-      const res = await (indoorApi.unified.unexportBatch({ batchCode }) as any);
+      const res = await (indoorApi.batchOperations.unexportBatch({ batchCode }) as any);
       await fetchBatches();
       return { success: true, data: res };
     } catch (err: any) {
@@ -112,7 +112,7 @@ export const useIndoorBatchMaster = () => {
 
   const previewUndo = async (batchCode: string) => {
     try {
-      const res = await (indoorApi.unified.getUndoPreview(batchCode) as any);
+      const res = await (indoorApi.batchOperations.getUndoPreview(batchCode) as any);
       return { success: true, data: res };
     } catch (err: any) {
       return { success: false, error: err.response?.data?.message || err.message };
@@ -121,7 +121,7 @@ export const useIndoorBatchMaster = () => {
 
   const undoLastAction = async (batchCode: string) => {
     try {
-      await (indoorApi.unified.undoLastAction({ batchCode }) as any);
+      await (indoorApi.batchOperations.undoLastAction({ batchCode }) as any);
       await fetchBatches();
       return { success: true };
     } catch (err: any) {

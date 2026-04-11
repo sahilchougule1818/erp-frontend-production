@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Textarea } from '../../shared/ui/textarea';
-import { Button } from '../../shared/ui/button';
-import { ModalLayout } from '../../shared/components/ModalLayout';
+import { Label } from '../../../shared/ui/label';
+import { Input } from '../../../shared/ui/input';
+import { Textarea } from '../../../shared/ui/textarea';
+import { Button } from '../../../shared/ui/button';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
 
 interface SampleFormProps {
   batch: { batch_code: string; current_phase: string; current_tunnel: string };

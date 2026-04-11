@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { Label } from '../../shared/ui/label';
-import { Input } from '../../shared/ui/input';
-import { Button } from '../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Label } from '../../../shared/ui/label';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Input } from '../../../shared/ui/input';
+import { useNotify } from '../shared/hooks/useNotify';
+import { Button } from '../../../shared/ui/button';
+import { useNotify } from '../shared/hooks/useNotify';
 
 interface CreateBatchFormProps {
   mediaCodes?: string[];
@@ -17,7 +21,7 @@ export function CreateBatchForm({ mediaCodes = [], onSubmit, onCancel }: CreateB
 
   const handleSubmit = () => {
     if (!form.batchCode || !form.plantName) {
-      alert('Please fill all required fields');
+      notify.error('Please fill all required fields');
       return;
     }
     onSubmit(form);

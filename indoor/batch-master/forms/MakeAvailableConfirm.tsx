@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../../shared/ui/button';
+import { Button } from '../../../shared/ui/button';
 import { AlertTriangle } from 'lucide-react';
 
 interface MakeAvailableConfirmProps {

@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { indoorApi } from '../../indoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { indoorApi } from '../../services/indoorApi';
+import type { Operator } from '../../types';
 
 export function useMediaData() {
-  const [mediaBatches, setMediaBatches] = useState([]);
-  const [pendingMediaBatches, setPendingMediaBatches] = useState([]);
-  const [completedMediaBatches, setCompletedMediaBatches] = useState([]);
-  const [autoclaveCycles, setAutoclaveCycles] = useState([]);
-  const [operators, setOperators] = useState([]);
+  const notify = useNotify();
+  const [mediaBatches, setMediaBatches] = useState<any[]>([]);
+  const [pendingMediaBatches, setPendingMediaBatches] = useState<any[]>([]);
+  const [completedMediaBatches, setCompletedMediaBatches] = useState<any[]>([]);
+  const [autoclaveCycles, setAutoclaveCycles] = useState<any[]>([]);
+  const [operators, setOperators] = useState<Operator[]>([]);
   const [loading, setLoading] = useState(false);
   const [mediaPage, setMediaPage] = useState(1);
   const [autoclavePage, setAutoclavePage] = useState(1);
@@ -103,11 +106,11 @@ export function useMediaData() {
       console.error('Failed to save media batch:', err);
       
       if (err.response?.status === 409) {
-        alert('Error: Media code already exists. Please use a different media code.');
-      } else if (err.response?.status === 403) {
-        alert('Error: Cannot edit this media batch - it is no longer in pending status.');
+        notify.error('Error: Media code already exists. Please use a different media code.');
+      } else if (err.response?.status === 403 && formData.id) {
+        notify.error('Error: Cannot edit this media batch - it is no longer in pending status.');
       } else {
-        alert('Error: Failed to save media batch. Please try again.');
+        notify.error('Failed to save media batch: ' + (err.response?.data?.message || 'Please try again'));
       }
       
       return false;
@@ -132,13 +135,13 @@ export function useMediaData() {
       console.error('Failed to save autoclave cycle:', err);
       
       if (err.response?.status === 409) {
-        alert('Error: Autoclave cycle already exists for this media code.');
+        notify.error('Error: Autoclave cycle already exists for this media code.');
       } else if (err.response?.status === 400) {
-        alert('Error: ' + (err.response?.data?.message || 'Invalid data provided.'));
+        notify.error(err.response?.data?.message || 'Invalid data provided');
       } else if (err.response?.status === 404) {
-        alert('Error: Media batch not found or not available for autoclave.');
+        notify.error('Error: Media batch not found or not available for autoclave.');
       } else {
-        alert('Error: Failed to save autoclave cycle. Please try again.');
+        notify.error('Error: Failed to save autoclave cycle. Please try again.');
       }
       
       return false;

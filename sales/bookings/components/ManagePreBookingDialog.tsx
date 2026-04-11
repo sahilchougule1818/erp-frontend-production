@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ModalLayout } from '../../shared/components/ModalLayout';
-import { Badge } from '../../shared/ui/badge';
-import { Button } from '../../shared/ui/button';
-import { Input } from '../../shared/ui/input';
-import { Label } from '../../shared/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../shared/ui/select';
-import { Textarea } from '../../shared/ui/textarea';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { Badge } from '../../../shared/ui/badge';
+import { Button } from '../../../shared/ui/button';
+import { Input } from '../../../shared/ui/input';
+import { Label } from '../../../shared/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Textarea } from '../../../shared/ui/textarea';
 import { format } from 'date-fns';
 import {
   History as HistoryIcon, Trash2,
   CheckCircle2, Truck, AlertTriangle, XCircle,
   ChevronDown, ChevronUp, PenSquare, X,
 } from 'lucide-react';
-import { PAYMENT_METHODS } from '../../shared/constants/EventTypes';
-import { cn } from '../../shared/ui/utils';
+import { PAYMENT_METHODS } from '../../constants/EventTypes';
+import { cn } from '../../../shared/ui/utils';
 
 const DELIVERY_STATUS_OPTIONS = ['Pending', 'Delivered'] as const;
 
