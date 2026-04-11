@@ -6,20 +6,12 @@ const apiClient = axios.create({
   withCredentials: true
 });
 
-let csrfToken: string | null = null;
-
-const getCsrfTokenFromCookie = (): string | null => {
-  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-  return match ? match[1] : null;
-};
-
 const fetchCsrfToken = async () => {
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/csrf-token`, {
       withCredentials: true
     });
-    csrfToken = response.data.csrfToken;
-    console.log('CSRF token fetched successfully');
+    localStorage.setItem('csrfToken', response.data.csrfToken);
   } catch (error) {
     console.error('Failed to fetch CSRF token:', error);
   }
@@ -32,13 +24,9 @@ apiClient.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   
   if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
-    const cookieToken = getCsrfTokenFromCookie();
-    const tokenToUse = cookieToken || csrfToken;
-    
-    if (tokenToUse) {
-      config.headers['X-CSRF-Token'] = tokenToUse;
-    } else {
-      console.warn('No CSRF token available for request');
+    const csrfToken = localStorage.getItem('csrfToken');
+    if (csrfToken) {
+      config.headers['X-CSRF-Token'] = csrfToken;
     }
   }
   
@@ -55,15 +43,11 @@ apiClient.interceptors.response.use(
     }
     
     if (error.response?.status === 403 && error.response?.data?.error?.includes('CSRF')) {
-      console.log('CSRF error detected, refetching token...');
       await fetchCsrfToken();
-      if (error.config) {
-        const cookieToken = getCsrfTokenFromCookie();
-        const tokenToUse = cookieToken || csrfToken;
-        if (tokenToUse) {
-          error.config.headers['X-CSRF-Token'] = tokenToUse;
-          return axios.request(error.config);
-        }
+      const csrfToken = localStorage.getItem('csrfToken');
+      if (error.config && csrfToken) {
+        error.config.headers['X-CSRF-Token'] = csrfToken;
+        return axios.request(error.config);
       }
     }
     

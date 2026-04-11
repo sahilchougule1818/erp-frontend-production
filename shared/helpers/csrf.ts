@@ -1,7 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-let csrfToken: string | null = null;
-
 export const fetchCsrfToken = async (): Promise<string> => {
   try {
     const response = await fetch(`${API_URL}/csrf-token`, {
@@ -10,8 +8,8 @@ export const fetchCsrfToken = async (): Promise<string> => {
     
     if (response.ok) {
       const data = await response.json();
-      csrfToken = data.csrfToken;
-      return csrfToken;
+      localStorage.setItem('csrfToken', data.csrfToken);
+      return data.csrfToken;
     }
     
     throw new Error('Failed to fetch CSRF token');
@@ -22,12 +20,14 @@ export const fetchCsrfToken = async (): Promise<string> => {
 };
 
 export const getCsrfToken = (): string | null => {
-  return csrfToken;
+  return localStorage.getItem('csrfToken');
 };
 
 export const fetchWithCsrf = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  let csrfToken = getCsrfToken();
+  
   if (!csrfToken) {
-    await fetchCsrfToken();
+    csrfToken = await fetchCsrfToken();
   }
   
   const headers = new Headers(options.headers);

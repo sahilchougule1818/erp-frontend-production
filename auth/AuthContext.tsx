@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
 
 export interface User {
   userId: string;
@@ -20,27 +19,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Fetch CSRF token on app initialization
-const fetchCsrfToken = async () => {
-  try {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-    await axios.get(`${apiUrl}/csrf-token`, {
-      withCredentials: true
-    });
-    console.log('✅ CSRF token fetched successfully');
-  } catch (error) {
-    console.error('❌ Failed to fetch CSRF token:', error);
-  }
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch CSRF token on app load
-    fetchCsrfToken();
-    
     try {
       const storedUser = localStorage.getItem('user');
       if (storedUser && storedUser !== 'undefined') {
