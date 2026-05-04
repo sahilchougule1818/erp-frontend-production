@@ -55,9 +55,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       const data = await response.json();
 
-      if (data.user) {
+      if (data.user && data.token) {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('auth-token', data.token);
         return { success: true };
       }
       return { success: false };
@@ -70,12 +71,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '/api';
-      await fetch(`${apiUrl}/auth/logout`, { method: 'POST', credentials: 'include' });
+      const token = localStorage.getItem('auth-token');
+      await fetch(`${apiUrl}/auth/logout`, { 
+        method: 'POST', 
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
     } catch {
       // best-effort
     }
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('auth-token');
   };
 
   const hasRole = (role: string): boolean => {

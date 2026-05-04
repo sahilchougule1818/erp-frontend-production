@@ -24,6 +24,13 @@ const fetchCsrfToken = async () => {
 fetchCsrfToken();
 
 apiClient.interceptors.request.use((config) => {
+  // Add JWT token from localStorage
+  const token = localStorage.getItem('auth-token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // Add CSRF token for state-changing operations
   if (['post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase() || '')) {
     const csrfToken = getCsrfTokenFromCookie();
     if (csrfToken) {
@@ -44,6 +51,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('user');
+      localStorage.removeItem('auth-token');
       window.location.href = '/login';
     }
 
