@@ -1,17 +1,15 @@
-import { useEffect, useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { ModalLayout } from '../../../shared/components/ModalLayout';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
 import { Label } from '../../../shared/ui/label';
 import { Input } from '../../../shared/ui/input';
 import { Button } from '../../../shared/ui/button';
 import { Badge } from '../../../shared/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
-import { Trash2, AlertCircle } from 'lucide-react';
-
-type FormValues = {
-  prepared_date: string;
-  media_code: string;
-  media_type: string;
-};
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
+import { Save, Users, FlaskConical, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import { indoorApi } from '../../services/indoorApi';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { useAuth } from '../../../auth/AuthContext';
 
 interface MediaBatchFormProps {
   open: boolean;
@@ -22,139 +20,407 @@ interface MediaBatchFormProps {
   onClose: () => void;
 }
 
+const STATUS_COLORS: Record<string, string> = {
+  'pending':           'bg-yellow-100 text-yellow-800',
+  'completed':         'bg-green-100 text-green-800',
+  'stock_unavailable': 'bg-red-100 text-red-800',
+};
+
 export function MediaBatchForm({ open, initialData, operators, onSubmit, onDelete, onClose }: MediaBatchFormProps) {
-  const isEditMode = !!initialData;
-  const status = initialData?.status || 'READY FOR AUTOCLAVE';
-  const isEditable = !isEditMode || status === 'READY FOR AUTOCLAVE';
-  
-  const { control, handleSubmit, reset } = useForm<FormValues>({
-    defaultValues: {
-      prepared_date: '',
-      media_code: '',
-      media_type: ''
-    }
-  });
+  const isEdit = !!initialData;
+  const notify = useNotify();
+  const { user } = useAuth();
+  const isLocked = user?.role === 'IndoorManager';
+  const [activeTab, setActiveTab] = useState('details');
+  const [saving, setSaving] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [form, setForm] = useState<any>({});
+  const [allOperators, setAllOperators] = useState<any[]>([]);
+  const [stagedOperators, setStagedOperators] = useState<any[]>([]);
+  const [initialAssignments, setInitialAssignments] = useState<any[]>([]);
+  const [loadingOperators, setLoadingOperators] = useState(false);
+  const [labs, setLabs] = useState<any[]>([]);
+
+  const getDisplayName = (op: any) => `${op.first_name || ''} ${op.last_name || ''}`.trim() || op.short_name;
 
   useEffect(() => {
-    if (initialData) {
-      reset({
-        prepared_date: initialData.prepared_date?.split('T')[0] || initialData.date?.split('T')[0] || '',
+    if (!open) return;
+    if (isEdit) {
+      setActiveTab('details');
+      setForm({
+        id: initialData.id,
         media_code: initialData.media_code || '',
-        media_type: initialData.media_type || ''
+        media_type: initialData.media_type || '',
+        lab_number: initialData.lab_number?.toString() || '',
+        started_at: initialData.started_at || '',
+        media_loaded_at: initialData.media_loaded_at || '',
+        pressure_reached_at: initialData.pressure_reached_at || '',
+        ended_at: initialData.ended_at || '',
+        opened_at: initialData.opened_at || '',
+        media_volume: initialData.media_volume || '',
+        bottles_count: initialData.bottles_count || '',
+        temperature: initialData.temperature || '',
+        pressure: initialData.pressure || '',
+        duration: initialData.duration || '',
+        notes: initialData.notes || '',
+        status: initialData.status || 'pending',
       });
+      loadOperators();
     } else {
-      reset({ prepared_date: '', media_code: '', media_type: '' });
+      const defaultLab = isLocked && user?.labNumber ? user.labNumber.toString() : '';
+      setForm({ media_code: '', media_type: '', lab_number: defaultLab });
+      setStagedOperators([]);
+      setInitialAssignments([]);
+      setAllOperators([]);
+      loadAllOperators();
+      if (!isLocked) fetchLabs();
     }
-  }, [initialData, reset]);
+  }, [open, initialData, user, isLocked]);
 
-  const statusInfo = useMemo(() => {
-    const messages = {
-      'READY FOR AUTOCLAVE': 'Ready for autoclave cycle - you can edit media code and media type',
-      'IN AUTOCLAVE': 'Currently in autoclave process - editing disabled',
-      'COMPLETED': 'Completed - editing disabled'
-    };
-    const colors = {
-      'READY FOR AUTOCLAVE': 'bg-yellow-100 text-yellow-800',
-      'IN AUTOCLAVE': 'bg-blue-100 text-blue-800',
-      'COMPLETED': 'bg-green-100 text-green-800'
-    };
-    return {
-      message: messages[status as keyof typeof messages] || '',
-      color: colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'
-    };
-  }, [status]);
-
-  const onSubmitForm = (data: FormValues) => {
-    if (!isEditable) return;
-    onSubmit({
-      ...(initialData?.id && { id: initialData.id }),
-      ...data
-    });
+  const loadAllOperators = async () => {
+    try {
+      const res = await indoorApi.operators.getAll({ page: 1, limit: 500 });
+      setAllOperators((res as any)?.data || (Array.isArray(res) ? res : []));
+    } catch { setAllOperators([]); }
   };
 
+  const fetchLabs = async () => {
+    try {
+      const data = await indoorApi.labs.getLabs();
+      const activeLabs = data.filter((lab: any) => lab.is_active);
+      setLabs(activeLabs);
+      if (activeLabs.length === 1 && !form.lab_number) {
+        setForm((prev: any) => ({ ...prev, lab_number: activeLabs[0].lab_number.toString() }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch labs:', error);
+    }
+  };
+
+  const loadOperators = async () => {
+    setLoadingOperators(true);
+    try {
+      const [assignmentsRes, operatorsRes] = await Promise.all([
+        indoorApi.operators.getAssignments({ activity_type: 'autoclave', media_code: initialData.media_code }),
+        indoorApi.operators.getAll({ page: 1, limit: 500 })
+      ]);
+      const assignments = (assignmentsRes as any) || [];
+      const ops = (operatorsRes as any)?.data || (Array.isArray(operatorsRes) ? operatorsRes : []);
+      setAllOperators(ops);
+      setInitialAssignments(assignments);
+      setStagedOperators(assignments.map((a: any) => ({
+        id: parseInt(a.operator_id), short_name: a.short_name,
+        first_name: a.first_name, last_name: a.last_name, assignmentId: a.id
+      })));
+    } catch { notify.error('Failed to load operator data'); }
+    finally { setLoadingOperators(false); }
+  };
+
+  const toggleOperator = (op: any) => {
+    setStagedOperators(prev =>
+      prev.some(o => o.id === op.id)
+        ? prev.filter(o => o.id !== op.id)
+        : [...prev, { id: op.id, short_name: op.short_name, first_name: op.first_name, last_name: op.last_name }]
+    );
+  };
+
+  const set = (key: string, value: any) => setForm((f: any) => ({ ...f, [key]: value }));
+
+  const handleCreate = async () => {
+    if (!form.media_code?.trim()) { notify.error('Media code is required'); return; }
+    if (!form.lab_number) { notify.error('Lab is required'); return; }
+    const labNum = parseInt(form.lab_number);
+    if (isNaN(labNum)) { notify.error('Invalid lab number'); return; }
+    
+    const payload = { 
+      media_code: form.media_code.trim(), 
+      media_type: form.media_type?.trim() || '', 
+      lab_number: labNum,
+      operator_ids: stagedOperators.map(o => o.id) 
+    };
+    
+    setSaving(true);
+    try {
+      await onSubmit(payload);
+    } finally { setSaving(false); }
+  };
+
+  const handleSaveDetails = async () => {
+    setSaving(true);
+    try {
+      const payload = { ...form };
+      // Convert empty strings to null for time fields
+      const timeFields = ['started_at', 'media_loaded_at', 'pressure_reached_at', 'ended_at', 'opened_at'];
+      timeFields.forEach(field => {
+        if (payload[field] === '') payload[field] = null;
+      });
+      // Convert empty strings to null for numeric fields
+      const numericFields = ['media_volume', 'bottles_count', 'temperature', 'pressure', 'duration'];
+      numericFields.forEach(field => {
+        if (payload[field] === '') payload[field] = null;
+      });
+      await onSubmit(payload);
+    } finally { setSaving(false); }
+  };
+
+  const handleSaveOperators = async () => {
+    setSaving(true);
+    try {
+      const stagedIds = stagedOperators.map(o => o.id);
+      const savedIds = initialAssignments.map((a: any) => parseInt(a.operator_id));
+      const removals = initialAssignments.filter((a: any) => !stagedIds.includes(parseInt(a.operator_id)));
+      const additions = stagedOperators.filter(o => !savedIds.includes(o.id));
+      await Promise.all([
+        ...additions.map(o => indoorApi.operators.addAssignment({ operator_id: o.id, activity_type: 'autoclave', media_code: initialData.media_code })),
+        ...removals.filter((a: any) => a.id).map((a: any) => indoorApi.operators.removeAssignment(a.id))
+      ]);
+      notify.success('Operators updated successfully');
+      setInitialAssignments(prev => prev.filter((a: any) => stagedIds.includes(parseInt(a.operator_id))));
+    } catch (error: any) {
+      notify.error(error.message || 'Failed to save operators');
+    } finally { setSaving(false); }
+  };
+
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
-        <form onSubmit={handleSubmit(onSubmitForm)}>
-          <DialogHeader className="pb-4 border-b">
-            <DialogTitle>{initialData ? 'Edit Media Batch' : 'Create Media Batch'}</DialogTitle>
-          </DialogHeader>
+    <ModalLayout
+      isOpen={open}
+      onClose={() => !saving && onClose()}
+      title={isEdit ? 'Edit Media Batch' : 'Create Media Batch'}
+      subtitle={isEdit ? `Media Code: ${initialData.media_code}` : undefined}
+      maxWidth="650px"
+    >
+      {isEdit ? (
+        <div className="flex-1 overflow-y-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="details" className="flex items-center gap-2">
+                <FlaskConical className="w-4 h-4" />Details
+              </TabsTrigger>
+              <TabsTrigger value="operators" className="flex items-center gap-2">
+                <Users className="w-4 h-4" />Operators
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="py-4 space-y-4">
-            {isEditMode && (
-              <div className="p-4 border rounded-lg bg-gray-50">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">Workflow Status</span>
-                  <Badge className={statusInfo.color}>
-                    {status.replace('_', ' ').toUpperCase()}
-                  </Badge>
-                </div>
-                <p className="text-base text-gray-600 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-2" />
-                  {statusInfo.message}
-                </p>
+            <TabsContent value="details" className="space-y-4 py-4 px-6">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-semibold text-gray-500 uppercase">Media Batch</p>
+                <Badge className={STATUS_COLORS[form.status] || 'bg-gray-100 text-gray-800'}>{form.status}</Badge>
               </div>
-            )}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Media Code</Label>
+                  <Input value={form.media_code} disabled className="bg-gray-100" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Media Type</Label>
+                  <Input value={form.media_type} onChange={e => set('media_type', e.target.value)} placeholder="e.g. MS Medium" disabled={saving} />
+                </div>
+              </div>
 
+              <p className="text-sm font-semibold text-gray-500 uppercase mt-4">Autoclave Process</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Autoclave ON Time</Label>
+                  <Input type="time" value={form.started_at} onChange={e => set('started_at', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Media Loading Time</Label>
+                  <Input type="time" value={form.media_loaded_at} onChange={e => set('media_loaded_at', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Pressure Time</Label>
+                  <Input type="time" value={form.pressure_reached_at} onChange={e => set('pressure_reached_at', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Off Time</Label>
+                  <Input type="time" value={form.ended_at} onChange={e => set('ended_at', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Open Time</Label>
+                  <Input type="time" value={form.opened_at} onChange={e => set('opened_at', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Media Volume</Label>
+                  <Input type="number" value={form.media_volume} onChange={e => set('media_volume', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Bottles Count</Label>
+                  <Input type="number" value={form.bottles_count} onChange={e => set('bottles_count', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Temperature (°C)</Label>
+                  <Input type="number" step="0.1" value={form.temperature} onChange={e => set('temperature', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Pressure (PSI)</Label>
+                  <Input type="number" step="0.1" value={form.pressure} onChange={e => set('pressure', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Duration (min)</Label>
+                  <Input type="number" value={form.duration} onChange={e => set('duration', e.target.value)} disabled={saving} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Status</Label>
+                  <Select value={form.status} onValueChange={v => set('status', v)} disabled={saving}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="stock_unavailable">Stock Unavailable</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label>Notes</Label>
+                  <Input value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Additional notes..." disabled={saving} />
+                </div>
+              </div>
+
+              <div className="flex justify-between gap-3 pt-4 border-t">
+                <div>
+                  {onDelete && (
+                    <Button variant="destructive" onClick={() => onDelete(initialData.id)} disabled={saving}>
+                      <Trash2 className="w-4 h-4 mr-2" />Delete
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
+                  <Button onClick={handleSaveDetails} disabled={saving} className="bg-green-600 hover:bg-green-700">
+                    {saving ? <><div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />Saving...</> : <><Save className="w-4 h-4 mr-2" />Save Details</>}
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="operators" className="space-y-4 py-4 px-6">
+              {loadingOperators ? (
+                <div className="py-12 text-center flex flex-col items-center gap-2">
+                  <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+                  Loading operators...
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-base font-semibold">Assigned Operators ({stagedOperators.length})</Label>
+                    <div className="border rounded-md p-3 min-h-[60px]">
+                      {stagedOperators.length === 0
+                        ? <span className="text-gray-500 text-base">No operators assigned</span>
+                        : <div className="flex flex-wrap gap-2">{stagedOperators.map(op => <Badge key={op.id} variant="secondary">{getDisplayName(op)}</Badge>)}</div>
+                      }
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-base font-semibold">Directory</Label>
+                    <div className="border rounded-md overflow-hidden">
+                      <button type="button" onClick={() => setIsExpanded(!isExpanded)} disabled={saving}
+                        className="w-full flex items-center justify-between px-3 py-2.5 text-base bg-transparent hover:bg-muted/30 transition-colors">
+                        <span className="text-muted-foreground">Click to browse operator directory...</span>
+                        {isExpanded ? <ChevronUp className="w-4 h-4 opacity-50" /> : <ChevronDown className="w-4 h-4 opacity-50" />}
+                      </button>
+                      {isExpanded && (
+                        <div className="border-t max-h-[200px] overflow-y-auto p-3 space-y-2">
+                          {allOperators.map(op => (
+                            <div key={op.id} className="flex items-center space-x-2">
+                              <input type="checkbox" id={`op-${op.id}`} checked={stagedOperators.some(o => o.id === op.id)}
+                                onChange={() => toggleOperator(op)} disabled={saving}
+                                className="rounded border-gray-300 text-green-600 focus:ring-green-500" />
+                              <Label htmlFor={`op-${op.id}`} className="text-base cursor-pointer">{getDisplayName(op)}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3 pt-4 border-t">
+                    <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
+                    <Button onClick={handleSaveOperators} disabled={saving} className="bg-green-600 hover:bg-green-700">
+                      {saving ? <><div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />Saving...</> : <><Save className="w-4 h-4 mr-2" />Save Operators</>}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase mb-3">Media Batch</p>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Date *</Label>
-                <Controller
-                  name="prepared_date"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Input type="date" {...field} disabled={!isEditable} />
-                  )}
-                />
-              </div>
-              
-              <div className="space-y-2">
                 <Label>Media Code *</Label>
-                <Controller
-                  name="media_code"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Input {...field} disabled={!isEditable} placeholder="e.g., MS-001" />
-                  )}
-                />
+                <Input value={form.media_code} onChange={e => set('media_code', e.target.value)} placeholder="e.g. MS-001" disabled={saving} autoFocus />
               </div>
-
-              <div className="space-y-2 col-span-2">
+              <div className="space-y-2">
                 <Label>Media Type</Label>
-                <Controller
-                  name="media_type"
-                  control={control}
-                  render={({ field }) => (
-                    <Input {...field} disabled={!isEditable} placeholder="e.g., MS Medium, PDA Medium" />
-                  )}
-                />
+                <Input value={form.media_type} onChange={e => set('media_type', e.target.value)} placeholder="e.g. MS Medium" disabled={saving} />
+              </div>
+              <div className="space-y-2 col-span-2">
+                <Label>Lab *</Label>
+                {isLocked ? (
+                  <Input value={`Lab ${form.lab_number || ''}`} disabled className="bg-gray-100" />
+                ) : (
+                  <Select value={form.lab_number || ''} onValueChange={v => set('lab_number', v)} disabled={saving}>
+                    <SelectTrigger><SelectValue placeholder="Select lab" /></SelectTrigger>
+                    <SelectContent>
+                      {labs.length === 0 ? (
+                        <div className="px-2 py-1.5 text-sm text-gray-500">No labs available</div>
+                      ) : (
+                        labs.map((lab) => (
+                          <SelectItem key={lab.lab_number} value={lab.lab_number.toString()}>
+                            Lab {lab.lab_number} - {lab.lab_name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
+          </div>
 
-            {isEditMode && !isEditable && (
-              <p className="text-base text-gray-500 text-center">
-                Media batch cannot be edited once it enters the autoclave process
-              </p>
-            )}
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase mb-3">Operators</p>
+            <div className="space-y-2">
+              <div className="border rounded-md p-3 min-h-[50px]">
+                {stagedOperators.length === 0
+                  ? <span className="text-gray-500 text-base">No operators selected</span>
+                  : <div className="flex flex-wrap gap-2">{stagedOperators.map(op => <Badge key={op.id} variant="secondary">{getDisplayName(op)}</Badge>)}</div>
+                }
+              </div>
+              <div className="border rounded-md overflow-hidden">
+                <button type="button" onClick={() => setIsExpanded(!isExpanded)} disabled={saving}
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-base bg-transparent hover:bg-muted/30 transition-colors">
+                  <span className="text-muted-foreground">Click to browse operator directory...</span>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 opacity-50" /> : <ChevronDown className="w-4 h-4 opacity-50" />}
+                </button>
+                {isExpanded && (
+                  <div className="border-t max-h-[200px] overflow-y-auto p-3 space-y-2">
+                    {allOperators.map(op => (
+                      <div key={op.id} className="flex items-center space-x-2">
+                        <input type="checkbox" id={`create-op-${op.id}`} checked={stagedOperators.some(o => o.id === op.id)}
+                          onChange={() => toggleOperator(op)} disabled={saving}
+                          className="rounded border-gray-300 text-green-600 focus:ring-green-500" />
+                        <Label htmlFor={`create-op-${op.id}`} className="text-base cursor-pointer">{getDisplayName(op)}</Label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-            
-            {isEditMode && onDelete && isEditable && (
-              <Button type="button" variant="destructive" onClick={() => onDelete(initialData.id)}>
-                <Trash2 className="w-4 h-4 mr-2" />Delete
-              </Button>
-            )}
-            
-            <Button type="submit" className="bg-green-600 hover:bg-green-700" disabled={!isEditable}>
-              Save
+            <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
+            <Button onClick={handleCreate} disabled={saving} className="bg-green-600 hover:bg-green-700">
+              {saving ? <><div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />Creating...</> : <><Save className="w-4 h-4 mr-2" />Create</>}
             </Button>
           </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      )}
+    </ModalLayout>
   );
 }

@@ -6,11 +6,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../shared/ui/avatar';
 import { Badge } from '../shared/ui/badge';
 import { Button } from '../shared/ui/button';
+import { LabSelector } from '../shared/components/LabSelector';
+import { useLabContext } from '../indoor/contexts/LabContext';
 import { useAuth, User } from '../auth/AuthContext';
 import { useState, useEffect } from 'react';
 import { TwoFactorSetup } from '../auth/TwoFactorSetup';
 import { useToast } from '../shared/ui/use-toast';
 import { NotificationPanel } from '../sales/components/NotificationPanel';
+import apiClient from '../shared/services/apiClient';
 
 import {
   DropdownMenu,
@@ -44,6 +47,7 @@ const getRoleLabel = (role: string) => {
 
 export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
   const { logout } = useAuth();
+  const { labNumber, setLabNumber, isLocked } = useLabContext();
   const { toast } = useToast();
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [has2FA, setHas2FA] = useState(false);
@@ -57,46 +61,29 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
 
   const fetchNotificationCount = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/sales/notifications/upcoming-deliveries`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setNotificationCount(data.length);
-      }
-    } catch (err) {
-      console.error('Failed to fetch notification count');
+      const data = await apiClient.get<any[]>('/sales/notifications/upcoming-deliveries');
+      setNotificationCount(data.length);
+    } catch {
+      // non-critical
     }
   };
 
   const check2FAStatus = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/auth/2fa/status`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setHas2FA(data.enabled);
-      }
-    } catch (err) {
-      console.error('Failed to check 2FA status');
+      const data = await apiClient.get<{ enabled: boolean }>('/auth/2fa/status');
+      setHas2FA(data.enabled);
+    } catch {
+      // non-critical
     }
   };
 
   const handleDisable2FA = async () => {
     if (!confirm('Are you sure you want to disable 2FA?')) return;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/auth/2fa/disable`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        setHas2FA(false);
-        toast({ title: '2FA disabled successfully' });
-      } else {
-        toast({ title: 'Failed to disable 2FA', variant: 'destructive' });
-      }
-    } catch (err) {
+      await apiClient.post('/auth/2fa/disable', {});
+      setHas2FA(false);
+      toast({ title: '2FA disabled successfully' });
+    } catch {
       toast({ title: 'Failed to disable 2FA', variant: 'destructive' });
     }
   };
@@ -149,6 +136,16 @@ export function Header({ breadcrumbs, user, onNavigate }: HeaderProps) {
       <div className="h-16 px-6 flex items-center justify-end">
         {/* Right Side */}
         <div className="flex items-center gap-4">
+          {/* Lab Selector - Only show for Indoor module */}
+          {breadcrumbs[0] === 'Indoor' && (
+            <div className="pr-4 border-r border-gray-200">
+              {isLocked
+                ? <span className="text-sm font-medium text-slate-600">Lab {labNumber}</span>
+                : <LabSelector value={labNumber} onChange={setLabNumber} />
+              }
+            </div>
+          )}
+          
           {/* Notification Bell */}
           <div className="relative">
             <button

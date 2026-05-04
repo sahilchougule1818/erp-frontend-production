@@ -1,29 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #030213;
-  --color-background: #ffffff;
-  --color-destructive: #d4183d;
-  --radius: 0.625rem;
-  
-  /* Additional variables needed by the application */
-  --color-foreground: #3a3a3a;
-  --color-card: #ffffff;
-  --color-card-foreground: #3a3a3a;
-  --color-popover: #ffffff;
+  --color-primary:            #16a34a;
+  --color-background:         #ffffff;
+  --color-destructive:        #d4183d;
+  --radius:                   0.625rem;
+  --color-foreground:         #3a3a3a;
+  --color-card:               #ffffff;
+  --color-card-foreground:    #3a3a3a;
+  --color-popover:            #ffffff;
   --color-popover-foreground: #3a3a3a;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
+  --color-secondary:          #f1f5f9;
   --color-secondary-foreground: #030213;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #6b7280;
-  --color-accent: #f1f5f9;
-  --color-accent-foreground: #030213;
-  --color-border: #e2e8f0;
-  --color-input: #ffffff;
-  --color-ring: #94a3b8;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
+  --color-muted:              #f1f5f9;
+  --color-muted-foreground:   #6b7280;
+  --color-accent:             #f1f5f9;
+  --color-accent-foreground:  #030213;
+  --color-border:             #e5e7eb;
+  --color-input:              #ffffff;
+  --color-ring:               #94a3b8;
+  --font-weight-medium:       500;
+  --font-weight-normal:       400;
 }
 
 /* Base styles */

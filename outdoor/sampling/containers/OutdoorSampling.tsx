@@ -84,8 +84,7 @@ export function OutdoorSampling() {
         return <span className="px-2 py-1 rounded border text-base bg-gray-50 text-gray-600 border-gray-200 shadow-none">Pending</span>;
       }
     },
-    { key: 'certificate_number', label: 'Certificate No' },  // was: certificate_no
-    { key: 'government_digital_code', label: 'Govt Code' },
+    { key: 'seed_certificate_number', label: 'Seed Cert. No' },
   ];
 
   // Submissions columns — sampling_submissions table
@@ -118,8 +117,7 @@ export function OutdoorSampling() {
         return <span className="px-2 py-1 rounded border text-base bg-gray-50 text-gray-600 border-gray-200 shadow-none">Pending</span>;
       }
     },
-    { key: 'certificate_number', label: 'Certificate No' },   // was: certificate_no
-    { key: 'government_digital_code', label: 'Govt Code' },
+    { key: 'seed_certificate_number', label: 'Seed Cert. No' },
     { key: 'reason',        label: 'Notes' },
     { key: 'actions',       label: 'Actions', render: (_: any, record: any) => (
       <div className="flex gap-1 justify-end">

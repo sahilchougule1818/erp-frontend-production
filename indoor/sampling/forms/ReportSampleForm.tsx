@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
-import { useNotify } from '../shared/hooks/useNotify';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import { Label } from '../../../shared/ui/label';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Input } from '../../../shared/ui/input';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Textarea } from '../../../shared/ui/textarea';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Button } from '../../../shared/ui/button';
-import { useNotify } from '../shared/hooks/useNotify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../shared/ui/dialog';
-import { useNotify } from '../shared/hooks/useNotify';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../shared/ui/dialog';
 
 interface ReportSampleFormProps {
   batch: { batch_code: string };
   onClose: () => void;
-  onSubmit: (data: { resultDate: string; status: string; certificateNo: string; govtCode: string; notes: string }) => void;
+  onSubmit: (data: { received_date: string; status: string; government_digital_code: string; reason: string }) => void;
 }
 
 export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClose, onSubmit }) => {
+  const notify = useNotify();
   const [resultDate, setResultDate] = useState(new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState('');
-  const [certificateNo, setCertificateNo] = useState('');
   const [govtCode, setGovtCode] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -31,11 +25,16 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
       notify.error('Please select a status');
       return;
     }
-    if (status === 'Yes' && !certificateNo) {
-      notify.error('Certificate number is required when status is Yes');
+    if (status === 'Yes' && !govtCode) {
+      notify.error('Government code is required when status is Yes');
       return;
     }
-    onSubmit({ resultDate, status, certificateNo, govtCode, notes });
+    onSubmit({ 
+      received_date: resultDate, 
+      status, 
+      government_digital_code: govtCode, 
+      reason: notes 
+    });
   };
 
   return (
@@ -43,6 +42,7 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Report Sample Result</DialogTitle>
+          <DialogDescription>Submit the laboratory test results for this batch sample</DialogDescription>
         </DialogHeader>
         <div className="px-6 py-4">
           <div className="space-y-4">
@@ -83,25 +83,14 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
 
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Certificate Information</p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-base">Certificate Number {status === 'Yes' && '*'}</Label>
-                  <Input 
-                    value={certificateNo} 
-                    onChange={(e) => setCertificateNo(e.target.value)}
-                    disabled={status !== 'Yes'}
-                    placeholder="Enter certificate number"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-base">Govt Code</Label>
-                  <Input 
-                    value={govtCode} 
-                    onChange={(e) => setGovtCode(e.target.value)}
-                    disabled={status !== 'Yes'}
-                    placeholder="Enter government code"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label className="text-base">Government Code {status === 'Yes' && '*'}</Label>
+                <Input 
+                  value={govtCode} 
+                  onChange={(e) => setGovtCode(e.target.value)}
+                  disabled={status !== 'Yes'}
+                  placeholder="Enter government code"
+                />
               </div>
             </div>
 

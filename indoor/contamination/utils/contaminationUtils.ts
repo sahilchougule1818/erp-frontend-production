@@ -13,7 +13,7 @@ export const handleEditContamination = async (record: any, notify: any, onSucces
       return;
     }
     
-    const newCountStr = window.prompt(`Enter new contamination count for ${record.batch_code}:`, record.contamination_count || 0);
+    const newCountStr = window.prompt(`Enter new contamination count for ${record.batch_code}:`, record.qty_contaminated || 0);
     if (newCountStr === null) return;
     
     const newCount = parseInt(newCountStr, 10);
@@ -22,7 +22,7 @@ export const handleEditContamination = async (record: any, notify: any, onSucces
       return;
     }
 
-    await indoorApi.contamination.update(record.id, { contamination_count: newCount });
+    await indoorApi.contamination.update(record.id, { qty_contaminated: newCount, contamination_count: newCount });
     if (notify?.success) notify.success('Contamination updated successfully');
     onSuccess();
   } catch (error: any) {

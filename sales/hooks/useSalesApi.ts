@@ -7,3 +7,4 @@ export * from './useInventoryPurchases';
 export * from './useRefunds';
 export * from './useStock';
 export * from './useDashboard';
+export * from './useSettings';

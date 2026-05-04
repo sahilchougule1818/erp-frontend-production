@@ -1,7 +1,6 @@
 import { useIndoorContaminationData } from '../hooks/useIndoorContaminationData';
 import { DataTable } from '../../../shared/components/DataTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
-import { Badge } from '../../../shared/ui/badge';
 import { useEffect } from 'react';
 
 export function IndoorContamination() {
@@ -15,33 +14,19 @@ export function IndoorContamination() {
   const summaryColumns = [
     { key: 'batch_code', label: 'Batch Code' },
     { key: 'plant_name', label: 'Plant Name' },
-    {
-      key: 'total_contamination',
-      label: 'Total Contamination',
-      render: (val: number) => <span className="font-bold text-red-600 underline decoration-red-200 decoration-2">{val || 0}</span>
-    }
+    { key: 'lab_number', label: 'Lab', render: (v: number) => v ? `Lab ${v}` : '-' },
+    { key: 'total_qty_contaminated', label: 'Total Contamination' },
   ];
 
   const recordsColumns = [
-    { key: 'arrived_at', label: 'Recorded At', render: (val: string) => val?.split('T')[0] },
+    { key: 'recorded_at', label: 'Recorded At', render: (val: string) => val?.split('T')[0] },
     { key: 'batch_code', label: 'Batch Code' },
     { key: 'plant_name', label: 'Plant Name' },
+    { key: 'lab_number', label: 'Lab', render: (v: number) => v ? `Lab ${v}` : '-' },
     { key: 'stage', label: 'Stage' },
-    {
-      key: 'contamination_count',
-      label: 'Contamination',
-      render: (val: number) => <span className="font-semibold text-red-600">{val || 0}</span>
-    },
-    { key: 'notes', label: 'Notes', render: (val: string) => <span className="text-gray-500 text-base">{val || '—'}</span> },
-    {
-      key: 'is_active',
-      label: 'State',
-      render: (val: boolean) => (
-        <Badge variant={val ? 'default' : 'secondary'} className={val ? 'bg-green-100 text-green-800 border-green-200' : ''}>
-          {val ? 'Active' : 'Completed'}
-        </Badge>
-      )
-    }
+    { key: 'qty_contaminated', label: 'Contamination' },
+    { key: 'notes', label: 'Notes' },
+    { key: 'state', label: 'State' }
   ];
 
   return (

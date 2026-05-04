@@ -7,6 +7,7 @@ import { Trash2 } from 'lucide-react';
 const INITIAL_FORM = {
   id: null as number | null,
   firstName: '',
+  middleName: '',
   lastName: '',
   isActive: true
 };
@@ -26,6 +27,7 @@ export function WorkerForm({ initialData, onSubmit, onDelete, onCancel }: Worker
       setForm({
         id: initialData.id,
         firstName: initialData.first_name,
+        middleName: initialData.middle_name || '',
         lastName: initialData.last_name,
         isActive: initialData.is_active
       });
@@ -44,10 +46,14 @@ export function WorkerForm({ initialData, onSubmit, onDelete, onCancel }: Worker
 
   return (
     <div className="space-y-4 py-2">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <Label>First Name *</Label>
           <Input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} placeholder="First name" />
+        </div>
+        <div>
+          <Label>Middle Name</Label>
+          <Input value={form.middleName} onChange={(e) => setForm({ ...form, middleName: e.target.value })} placeholder="Middle name" />
         </div>
         <div>
           <Label>Last Name *</Label>

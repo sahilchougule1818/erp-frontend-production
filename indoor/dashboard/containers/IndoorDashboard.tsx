@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/ui/card';
 import { Package, FlaskConical, Boxes } from 'lucide-react';
-import { indoorApi } from '../../services/indoorApi';
+import { DataTable } from '../../../shared/components/DataTable';
+import { useIndoorDashboard } from '../hooks/useIndoorDashboard';
 
 export function IndoorDashboard() {
   const [totalMediaBatches, setTotalMediaBatches] = useState(0);
@@ -9,26 +10,17 @@ export function IndoorDashboard() {
   const [totalBatches, setTotalBatches] = useState(0);
   const [mediaBatches, setMediaBatches] = useState([]);
   const [activeBatches, setActiveBatches] = useState([]);
+  const { stats, loading } = useIndoorDashboard();
 
-  useEffect(() => { fetchData(); }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await indoorApi.dashboard.getDashboardStats();
-      setTotalMediaBatches(parseInt(response.totalMediaBatches) || 0);
-      setTotalBatches(parseInt(response.totalBatches) || 0);
-      setTotalBottles(parseInt(response.totalBottles) || 0);
-      setMediaBatches(response.mediaBatches || []);
-      setActiveBatches(response.activeBatches || []);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      setTotalMediaBatches(0);
-      setTotalBatches(0);
-      setTotalBottles(0);
-      setMediaBatches([]);
-      setActiveBatches([]);
+  useEffect(() => {
+    if (stats) {
+      setTotalMediaBatches(parseInt(stats.totalMediaBatches) || 0);
+      setTotalBatches(parseInt(stats.totalBatches) || 0);
+      setTotalBottles(parseInt(stats.totalBottles) || 0);
+      setMediaBatches(stats.mediaBatches || []);
+      setActiveBatches(stats.activeBatches || []);
     }
-  };
+  }, [stats]);
 
   return (
     <div className="p-6 space-y-6">
@@ -74,10 +66,10 @@ export function IndoorDashboard() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b sticky top-0">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Media Code</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Media Type</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Media Total</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Completed Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Media Code</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Media Type</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Media Total</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Completed Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -90,10 +82,10 @@ export function IndoorDashboard() {
                     ) : (
                       mediaBatches.map((media: any, idx: number) => (
                         <tr key={idx} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 text-base">{media.media_code}</td>
-                          <td className="px-4 py-3 text-base">{media.media_type || '—'}</td>
-                          <td className="px-4 py-3 text-base">{media.media_total || '—'}</td>
-                          <td className="px-4 py-3 text-base">{media.completed_date ? new Date(media.completed_date).toLocaleDateString() : '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{media.media_code}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{media.media_type || '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{media.media_total || '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{media.completed_date ? new Date(media.completed_date).toLocaleDateString() : '—'}</td>
                         </tr>
                       ))
                     )}
@@ -110,30 +102,34 @@ export function IndoorDashboard() {
           </CardHeader>
           <CardContent>
             <div className="border rounded-lg overflow-hidden">
-              <div className="max-h-[300px] overflow-y-auto">
+              <div className="max-h-[300px] overflow-y-auto overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b sticky top-0">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Batch Code</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plant Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Current Bottles</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Created Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Batch Code</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Plant Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Stage</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Phase</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Lab</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Available Plants</th>
                     </tr>
                   </thead>
                   <tbody>
                     {activeBatches.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-4 py-8 text-center text-base text-gray-500">
+                        <td colSpan={6} className="px-4 py-8 text-center text-base text-gray-500">
                           No data available
                         </td>
                       </tr>
                     ) : (
                       activeBatches.map((batch: any, idx: number) => (
                         <tr key={idx} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 text-base">{batch.batch_code}</td>
-                          <td className="px-4 py-3 text-base">{batch.plant_name || '—'}</td>
-                          <td className="px-4 py-3 text-base">{batch.current_bottles}</td>
-                          <td className="px-4 py-3 text-base">{batch.created_date ? new Date(batch.created_date).toLocaleDateString() : '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{batch.batch_code}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{batch.plant_name || '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{batch.stage || '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{batch.phase || '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{batch.lab_number || '—'}</td>
+                          <td className="px-4 py-3 text-base whitespace-nowrap">{(batch.available_bottles || 0).toLocaleString()}</td>
                         </tr>
                       ))
                     )}

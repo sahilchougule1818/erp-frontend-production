@@ -10,30 +10,18 @@ export function Subculturing() {
   const [editingRecord, setEditingRecord] = useState<any>(null);
 
   const columns = [
-    { key: 'transfer_date', label: 'Transfer Date', render: (val: string) => val?.split('T')[0] },
-    { key: 'next_stage', label: 'Stage Number' },
+    { key: 'subculture_date', label: 'Subculture Date', render: (val: string) => val?.split('T')[0] },
+    { key: 'to_stage', label: 'Stage Number' },
     { key: 'batch_code', label: 'Batch Name' },
+    { key: 'lab_number', label: 'Lab', render: (v: number) => v ? `Lab ${v}` : '-' },
     { key: 'media_code', label: 'Media Code' },
     { key: 'plant_name', label: 'Plant Name' },
-    { key: 'current_bottles_count', label: 'Current Bottles (Before)' },
-    { key: 'new_bottles_count', label: 'New Bottles (After)' },
+    { key: 'qty_inherited', label: 'Current Bottles (Before)' },
+    { key: 'qty_in', label: 'New Bottles (After)' },
+    { key: 'qty_p_rooted', label: 'Partial Rooting' },
+    { key: 'qty_available', label: 'Available Bottles' },
     { key: 'notes', label: 'Notes' },
-    {
-      key: 'state',
-      label: 'Status',
-      render: (val: string) => (
-        <span className={`px-2 py-1 rounded border text-base ${
-          val === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-200' :
-          val === 'OUTDOOR_READY' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-          val === 'SOLD_OUT' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-          val === 'AT_OUTDOOR' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-          val === 'COMPLETED' ? 'bg-gray-50 text-gray-700 border-gray-200' :
-          'bg-gray-50 text-gray-700 border-gray-200'
-        }`}>
-          {val}
-        </span>
-      )
-    }
+    { key: 'state', label: 'State' },
   ];
 
   return (
@@ -66,7 +54,7 @@ export function Subculturing() {
         <UnifiedOperatorEditModal
           eventCode={editingRecord.event_code}
           batchCode={editingRecord.batch_code}
-          stage={editingRecord.next_stage}
+          stage={editingRecord.to_stage}
           activityType="event"
           onClose={() => setEditingRecord(null)}
           onSuccess={refetch}

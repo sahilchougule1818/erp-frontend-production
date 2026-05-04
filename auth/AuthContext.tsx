@@ -2,10 +2,12 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 export interface User {
   userId: string;
+  username: string;
   email: string;
   firstName: string;
   lastName: string;
   role: string;
+  labNumber: number | null;
 }
 
 interface AuthContextType {
@@ -38,16 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string): Promise<{ success: boolean }> => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          password,
-          ipAddress: '0.0.0.0',
-          userAgent: navigator.userAgent
-        }),
+        credentials: 'include',
+        body: JSON.stringify({ email, password, ipAddress: '0.0.0.0', userAgent: navigator.userAgent }),
       });
       
       if (!response.ok) {
@@ -56,11 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       const data = await response.json();
-      
-      if (data.user && data.token) {
+
+      if (data.user) {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('token', data.token);
         return { success: true };
       }
       return { success: false };
@@ -70,10 +67,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      await fetch(`${apiUrl}/auth/logout`, { method: 'POST', credentials: 'include' });
+    } catch {
+      // best-effort
+    }
     setUser(null);
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
   };
 
   const hasRole = (role: string): boolean => {

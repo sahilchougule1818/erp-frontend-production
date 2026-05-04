@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { indoorApi } from '../../services/indoorApi';
+import { useLabContext } from '../../contexts/LabContext';
 import type { SubcultureRecord } from '../../types';
 
 export function useSubcultureData() {
@@ -8,16 +9,17 @@ export function useSubcultureData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const { labNumber } = useLabContext();
   const limit = 10;
 
   useEffect(() => {
     fetchRecords(currentPage);
-  }, [currentPage]);
+  }, [currentPage, labNumber]);
 
   const fetchRecords = async (page: number) => {
     setLoading(true);
     try {
-      const res = await indoorApi.phaseViews.getSubculturing(page, limit);
+      const res = await indoorApi.phaseViews.getSubculturing(page, limit, labNumber);
       const data = (res as any)?.data || [];
       setRecords(data);
       const pagination = (res as any)?.pagination;

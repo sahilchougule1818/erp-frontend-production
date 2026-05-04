@@ -9,41 +9,58 @@ export type BankAccount = {
   total_credits: number;
   total_debits: number;
   created_at?: string;
-  updated_at?: string;
+};
+
+export type BookingAllocation = {
+  batch_code: string;
+  plant_name?: string;
+  quantity: number;
+  is_terminal_incubation?: boolean;
+  source_table?: 'incubation_records' | 'rooted_batches';
+  source_phase?: string;
+  source_record_id?: number;
+  schema?: 'indoor' | 'outdoor';
+};
+
+export type OrderItem = {
+  id?: number;
+  item_number: number;
+  plant_name: string;
+  quantity: number;
+  unit_amount: number;
+  total_price?: number;  // Computed on backend, optional in frontend
+  allocations?: BookingAllocation[];
 };
 
 export type Booking = {
   id?: number;
-  booking_id: string;
+  order_id: string;
   customer_name: string;
   phone_number: string;
   address: string;
-  plant_name: string;
-  quantity: number;
+  items: OrderItem[];
   total_amount: number;
   amount_paid_at_booking: number;
   paid_amount: number;
   remaining_amount: number;
-  booking_date: string;
+  order_date: string;
   expected_delivery_date?: string | null;
-  fulfillment_type: 'STOCK_FROM_OUTDOOR' | 'STOCK_FROM_INDOOR';
-  batch_code?: string;
+  fulfillment_type?: 'STOCK_FROM_OUTDOOR' | 'STOCK_FROM_INDOOR';
   payment_status: 'Paid' | 'Partially Paid' | 'Pending';
-  delivery_status: 'Pending' | 'Ready' | 'Delivered' | 'Cancelled';
+  delivery_status: 'Pending' | 'Delivered' | 'Cancelled';
   notes?: string;
   cancelled_at?: string;
   cancellation_reason?: string;
   is_instant_sell?: boolean;
   created_at?: string;
-  updated_at?: string;
 };
 
 export type BookingPayment = {
   id: number;
   transaction_number: string;
-  booking_id: string;
-  payment_date: string;
-  amount: number;
+  order_id: string;
+  entry_date: string;
+  credit_amount: number;
   payment_method: 'Cash' | 'Card' | 'NEFT' | 'UPI' | 'Cheque';
   bank_account_id?: number | null;
   bank_account_name?: string | null;
@@ -58,18 +75,25 @@ export type LedgerEntry = {
   transaction_number: string;
   entry_date: string;
   entry_type: string;
-  particulars: string;
+  entry_direction: 'CREDIT' | 'DEBIT';
   debit_amount: number;
   credit_amount: number;
-  running_balance: number;
   bank_account_id?: number;
   bank_account_name?: string;
+  bank_name?: string;
+  customer_id?: string;
   customer_name?: string;
+  customer_phone?: string;
   payment_method?: string;
   payment_reference?: string;
-  booking_id?: string;
-  purchase_id?: string;
-  term_number?: number;
+  notes?: string;
+  order_id?: string;
+  refund_id?: string;
+  refund_term_no?: number;
+  stock_purchase_id?: string;
+  is_deleted: boolean;
+  created_at: string;
+  created_by?: string;
 };
 
 export type WithdrawEntry = {
@@ -94,26 +118,25 @@ export type WithdrawEntry = {
 
 export type Refund = {
   refund_id: string;
-  booking_id: string;
+  order_id: string;
   customer_name?: string;
   phone_number?: string;
   product_type?: string;
   cancelled_quantity?: number;
   refund_amount: number;
-  paid_amount: number;
-  remaining_amount: number;
+  amount_paid: number;
+  amount_remaining: number;
   status: 'Pending' | 'In Progress' | 'Completed';
   total_terms: number;
   refund_reason?: string;
   created_at?: string;
-  updated_at?: string;
 };
 
 export type RefundPayment = {
   transaction_number: string;
-  term_number: number;
-  amount: number;
-  payment_date: string;
+  refund_term_no: number;
+  debit_amount: number;
+  entry_date: string;
   payment_method: string;
   bank_account_id?: number;
   bank_account_name?: string;
@@ -148,13 +171,12 @@ export type DashboardStats = {
 };
 
 export type UpcomingDelivery = {
-  booking_id: string;
+  order_id: string;
   customer_id: string;
   customer_name: string;
   plant_name: string;
   quantity: number;
   expected_delivery_date: string;
-  fulfillment_type: string;
 };
 
 export type Customer = {
@@ -164,5 +186,4 @@ export type Customer = {
   address: string | null;
   is_deleted: boolean;
   created_at: string;
-  updated_at: string;
 };

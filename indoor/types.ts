@@ -5,33 +5,42 @@ export interface Batch {
   phase: string;
   stage: string;
   status: string;
-  current_bottles_count: number;
-  contamination_count: number;
-  current_contamination: number;
-  total_sold_bottles: number;
-  current_stage_sold: number;
-  available_bottles: number;
+  qty_in: number;
+  qty_contaminated: number;
+  qty_sold: number;
+  qty_available: number;
+  total_qty_contaminated: number;
+  total_qty_sold: number;
+  total_qty_rooted: number;
   current_age: number;
   phase_display: string;
   last_event_type: string;
   event_count: number;
-  state: 'ACTIVE' | 'AO' | 'TO' | 'SO';
+  state: 'ACTIVE' | 'SOLD_OUT' | 'OUTDOOR_READY' | 'AT_OUTDOOR';
   is_sampled: 'n' | 's' | 'c';
+  lab_number?: number;
+  lab_name?: string;
+  current_source_table?: string;
+  current_source_id?: number;
+  qty_inherited?: number;
 }
 
 export interface SubcultureRecord {
   id: number;
   batch_code: string;
   plant_name: string;
-  event_code: string;             // was event_id
+  event_code: string;
   current_stage: string;
   next_stage: string;
   media_code: string;
-  current_bottles_count: number;  // before
-  new_bottles_count: number;      // after (real input)
-  notes: string;                  // was notes
+  qty_inherited: number;
+  qty_in: number;
+  qty_contaminated: number;
+  qty_sold: number;
+  qty_available: number;
+  notes: string;
   state: 'ACTIVE' | 'COMPLETED';
-  arrived_at: string;
+  created_at: string;
   departed_at: string | null;
   operators: OperatorRef[];
 }
@@ -42,15 +51,16 @@ export interface IncubationRecord {
   plant_name: string;
   event_code: string;
   stage: string;
-  current_bottles_count: number;
-  contamination_count: number;
-  new_bottles_count: number;      // generated: current - contamination
+  qty_in: number;
+  qty_contaminated: number;
+  qty_sold: number;
+  qty_available: number;
   incubation_period: number;
   temperature: number | null;
   humidity: number | null;
   light_intensity: number | null;
-  state: 'ACTIVE' | 'COMPLETED';
-  arrived_at: string;
+  state: 'ACTIVE' | 'COMPLETED' | 'SOLD_OUT';
+  created_at: string;
   departed_at: string | null;
   operators: OperatorRef[];
 }
@@ -61,10 +71,10 @@ export interface ContaminationRecord {
   plant_name: string;
   phase: string;
   stage: string;
-  contamination_count: number;
-  current_bottles_count: number;
-  new_bottles_count: number;
-  arrived_at: string;
+  qty_contaminated: number;
+  qty_in: number;
+  qty_available: number;
+  created_at: string;
   departed_at: string | null;
   state: string;
   event_code: string;

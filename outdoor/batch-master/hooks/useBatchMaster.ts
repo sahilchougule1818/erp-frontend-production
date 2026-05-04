@@ -6,6 +6,7 @@ import type { Batch, Tunnel, Worker } from '../../types/outdoor.types';
 export function useBatchMaster() {
   const [batches, setBatches] = useState<Batch[]>([]);
   const [tunnels, setTunnels] = useState<Tunnel[]>([]);
+  const [shUnits, setShUnits] = useState<any[]>([]);
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [indoorBatches, setIndoorBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -18,15 +19,19 @@ export function useBatchMaster() {
   const loadData = useCallback(async (page = currentPage) => {
     setLoading(true);
     try {
-      const [batchesRes, tunnelsRes, workersRes] = await Promise.all([
+      const [batchesRes, phUnitsRes, shUnitsRes, workersRes] = await Promise.all([
         outdoorApi.dashboard.getAllBatches(page, limit),
-        outdoorApi.tunnels.getAll(),
+        outdoorApi.phUnits.getAll(),
+        outdoorApi.shUnits.getAll(),
         outdoorApi.workers.getAll(1, 500),
       ]);
       const batchesData = batchesRes?.data || batchesRes;
+      const phUnitsData = phUnitsRes?.data || phUnitsRes;
+      const shUnitsData = shUnitsRes?.data || shUnitsRes;
       const workersData = workersRes?.data || workersRes;
       setBatches(Array.isArray(batchesData) ? batchesData : []);
-      setTunnels(Array.isArray(tunnelsRes) ? tunnelsRes : []);
+      setTunnels(Array.isArray(phUnitsData) ? phUnitsData : []);
+      setShUnits(Array.isArray(shUnitsData) ? shUnitsData : []);
       setWorkers(Array.isArray(workersData) ? workersData : []);
       if (batchesRes?.pagination) {
         setCurrentPage(batchesRes.pagination.currentPage);
@@ -61,12 +66,13 @@ export function useBatchMaster() {
     }
   };
 
-  const importFromIndoor = async (indoorBatchId: number, data: any) => {
+  const importFromIndoor = async (indoorBatchId: number, data: any, sourceType?: string) => {
     try {
       const operatorObjects = _mapWorkers(data.selectedWorkers, workers);
       await outdoorApi.batches.importFromIndoor({
         indoorBatchId,
-        tunnel: data.newTunnel,
+        sourceType: sourceType || 'batch',
+        unit: data.newTunnel,
         plants: data.plants,
         trays: data.trays ?? [],
         operators: operatorObjects,
@@ -88,6 +94,7 @@ export function useBatchMaster() {
       await outdoorApi.batchOperations.makeShift({
         batchCode,
         newTunnel: data.newTunnel,
+        newUnit: data.newUnit,  // Add newUnit field for secondary hardening shifts
         plants: data.plants,
         mortalityCount: data.mortalityCount,
         reason: data.reason,
@@ -109,8 +116,8 @@ export function useBatchMaster() {
       await outdoorApi.batchOperations.phaseTransition({
         batchCode,
         targetPhase: data.targetPhase,
-        // holding_area has no tunnel — pass current as placeholder, backend ignores it
-        newTunnel: data.targetPhase === 'holding_area' ? currentTunnel : data.newTunnel,
+        newTunnel: data.newTunnel,
+        unit: data.unit,  // Add unit field for secondary hardening
         plants: data.plants,
         mortalityCount: data.mortalityCount,
         reason: data.reason,
@@ -194,8 +201,7 @@ export function useBatchMaster() {
       await outdoorApi.sampling.reportResult(submission.id, {
         received_date: data.resultDate,
         status: data.status,
-        certificate_number: data.certificateNumber || null,
-        government_digital_code: data.govtCode || null,
+        seed_certificate_number: data.seedCertificateNumber || null,
         reason: data.notes || null,
       });
       notify.success('Sample result reported successfully');
@@ -209,12 +215,13 @@ export function useBatchMaster() {
 
   // ── Derived helpers ───────────────────────────────────────────────────────
 
-  // Tunnels with available space — uses `name` not `tunnel_name`
-  const getAvailableTunnels = () => tunnels.filter(t => t.available_space > 0);
+  // Tunnels with available space — uses `name` field
+  const getAvailableTunnels = () => tunnels.filter(t => (t.available_space ?? 0) > 0);
 
   return {
     batches,
     tunnels,
+    shUnits,
     workers,
     indoorBatches,
     loading,

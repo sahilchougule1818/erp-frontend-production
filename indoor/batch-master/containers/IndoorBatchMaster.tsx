@@ -13,7 +13,9 @@ import {
   RotateCcw,
   Clock,
   Lock,
-  Skull
+  Skull,
+  GitBranch,
+  GitMerge
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -37,9 +39,15 @@ import { SampleForm } from '../../sampling/forms/SampleForm';
 import { ReportSampleForm } from '../../sampling/forms/ReportSampleForm';
 import { MakeAvailableConfirm } from '../forms/MakeAvailableConfirm';
 import { RecordContaminationModal } from '../../contamination/components/RecordContaminationModal';
-import { Batch } from '../types';
+import { PartialRootingForm } from '../../rooting/forms/PartialRootingForm';
+import { FullRootingForm } from '../../rooting/forms/FullRootingForm';
+import { indoorApi } from '../../services/indoorApi';
+import { useLabContext } from '../../contexts/LabContext';
+import { useAuth } from '../../../auth/AuthContext';
+import { Batch } from '../../types';
+import { BatchTimelineModal } from '../components/BatchTimelineModal';
 
-type ModalType = 'CREATE' | 'SUBCULTURE' | 'INCUBATE' | 'SAMPLE' | 'REPORT' | 'EXPORT' | 'TIMELINE' | 'CONTAMINATION' | null;
+type ModalType = 'CREATE' | 'SUBCULTURE' | 'INCUBATE' | 'SAMPLE' | 'REPORT' | 'EXPORT' | 'TIMELINE' | 'CONTAMINATION' | 'PARTIAL_ROOTING' | 'FULL_ROOTING' | null;
 
 const IndoorBatchMaster: React.FC = () => {
   const {
@@ -61,13 +69,145 @@ const IndoorBatchMaster: React.FC = () => {
     getBatchTimeline
   } = useIndoorBatchMaster();
 
+  const { user } = useAuth();
+  const { labNumber } = useLabContext();
   const notify = useNotify();
+
+  // Helper to get lock reason for actions
+  const getActionLockReason = (action: string, batch: Batch): string | null => {
+    // Universal locks
+    if (isSoldOut(batch)) {
+      return 'Batch is sold out - no actions available';
+    }
+    if (batch.state !== 'ACTIVE' && action !== 'UNEXPORT') {
+      if (batch.state === 'OUTDOOR_READY') {
+        return 'Batch is marked for outdoor - unmark first to perform actions';
+      }
+      if (batch.state === 'AT_OUTDOOR') {
+        return 'Batch is currently at outdoor module';
+      }
+      return 'Batch is not active - action locked';
+    }
+
+    const stageNum = parseInt(batch.stage?.split('-')[1] || '0');
+    const isTerminalBatch = isTerminal(batch);
+
+    switch (action) {
+      case 'SUBCULTURE':
+        if (isTerminalBatch) {
+          return 'Terminal incubation batches cannot be subcultured';
+        }
+        if (batch.stage === 'Stage-9' && batch.phase === 'incubation') {
+          return 'Cannot subculture from Stage-9 incubation - this is the final stage';
+        }
+        if (batch.phase !== 'batch_created' && batch.phase !== 'subculturing' && batch.phase !== 'incubation') {
+          return 'Subculture only available in batch_created, subculturing or incubation phase';
+        }
+        if (stageNum === 0 && batch.phase !== 'batch_created' && batch.phase !== 'subculturing') {
+          return 'Stage-0 can only subculture when in batch_created or subculturing phase';
+        }
+        if (stageNum >= 1 && stageNum <= 9 && batch.phase !== 'incubation') {
+          return 'Stage 1-9 can only subculture when in incubation phase';
+        }
+        return null;
+      
+      case 'INCUBATE':
+        if (isTerminalBatch) {
+          return 'Terminal incubation batches cannot be incubated again';
+        }
+        if (stageNum < 1 || stageNum > 9) {
+          return 'Incubation only available for Stage 1-9';
+        }
+        if (batch.phase !== 'subculturing') {
+          return 'Can only incubate when in subculturing phase';
+        }
+        return null;
+      
+      case 'SAMPLE':
+        if (batch.is_sampled !== 'n') {
+          return 'Sample already submitted';
+        }
+        return null;
+
+      case 'REPORT':
+        if (batch.is_sampled !== 's') {
+          return 'Sample not yet submitted';
+        }
+        return null;
+      
+      case 'PARTIAL_ROOTING':
+        if (batch.phase !== 'subculturing') {
+          return 'Partial rooting only available from subculturing phase';
+        }
+        return null;
+      
+      case 'FULL_ROOTING':
+        if (batch.phase !== 'subculturing') {
+          return 'Full rooting only available from subculturing phase';
+        }
+        return null;
+      
+      case 'CONTAMINATION':
+        if (batch.phase !== 'incubation' && batch.phase !== 'rooting') {
+          return 'Contamination can only be recorded in incubation or rooting phase';
+        }
+        return null;
+      
+      case 'EXPORT':
+        if (batch.state === 'OUTDOOR_READY' || batch.state === 'AT_OUTDOOR') {
+          return 'Batch already exported to outdoor';
+        }
+        // Rooting batches can be exported
+        if (batch.phase === 'rooting' || batch.stage === 'Rooting') {
+          return null;
+        }
+        if (stageNum < 1) {
+          return 'Batch must be at least Stage-1 to export';
+        }
+        if (batch.event_count < 1) {
+          return 'Batch must have at least one event before export';
+        }
+        return null;
+      
+      case 'UNEXPORT':
+        if (batch.state !== 'OUTDOOR_READY') {
+          return 'Batch is not marked for outdoor';
+        }
+        return null;
+      
+      default:
+        return null;
+    }
+  };
+
+  const formatPhaseDisplay = (phase: string): string => {
+    switch (phase) {
+      case 'batch_created': return 'Batch Created';
+      case 'subculturing': return 'Subculturing';
+      case 'incubation': return 'Incubation';
+      case 'rooting': return 'Rooting';
+      case 'partial_rooting': return 'Partial Rooting';
+      default: return phase;
+    }
+  };
+
+  const formatStateDisplay = (state: string): string => {
+    switch (state) {
+      case 'ACTIVE': return 'Active';
+      case 'OUTDOOR_READY': return 'Outdoor Ready';
+      case 'AT_OUTDOOR': return 'At Outdoor';
+      case 'SOLD_OUT': return 'Sold Out';
+      case 'COMPLETED': return 'Completed';
+      default: return state;
+    }
+  };
 
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [timelineData, setTimelineData] = useState<any[]>([]);
   const [mediaCodes, setMediaCodes] = useState<string[]>([]);
   const [undoLockReasons, setUndoLockReasons] = useState<Record<string, string[]>>({});
+  const [batchPermissions, setBatchPermissions] = useState<Record<string, any>>({});
 
   const handlePageChange = (page: number) => {
     fetchBatches(page);
@@ -75,6 +215,17 @@ const IndoorBatchMaster: React.FC = () => {
 
   const handleDropdownOpen = async (open: boolean, batch: Batch) => {
     if (!open) return;
+    
+    // Fetch permissions for this batch
+    try {
+      const response = await indoorApi.batchActions.getPermissions(batch.batch_code);
+      const permissions = response.permissions || response.data?.permissions;
+      setBatchPermissions(prev => ({ ...prev, [batch.batch_code]: permissions }));
+    } catch (error) {
+      console.error('Failed to fetch permissions:', error);
+    }
+    
+    // Fetch undo preview
     const preview = await previewUndo(batch.batch_code);
     if (preview.success) {
       const reasons: string[] = preview.data.lockReasons ?? (
@@ -84,14 +235,14 @@ const IndoorBatchMaster: React.FC = () => {
     }
   };
 
-  // Fetch data when component mounts
+  // Fetch data when component mounts or lab changes
   React.useEffect(() => {
-    fetchBatches();
+    fetchBatches(1);
     fetchOperators();
     
     const fetchMediaCodes = async () => {
       try {
-        const codes = await apiClient.get('/indoor/form-data/media-codes');
+        const codes = await apiClient.get('/indoor/form-data/media-codes', { params: { lab_number: labNumber } });
         setMediaCodes(codes);
       } catch (error) {
         console.error('Failed to fetch media codes:', error);
@@ -100,7 +251,7 @@ const IndoorBatchMaster: React.FC = () => {
     };
     
     fetchMediaCodes();
-  }, [fetchBatches, fetchOperators]);
+  }, [labNumber, fetchBatches, fetchOperators]);
 
   const openModal = (type: ModalType, batch?: Batch) => {
     if (batch) setSelectedBatch(batch);
@@ -232,6 +383,42 @@ const IndoorBatchMaster: React.FC = () => {
     }
   };
 
+  const handlePartialRooting = async (data: any) => {
+    try {
+      await indoorApi.rooting.makePartialRooting({
+        ...data,
+        created_by: 'system'
+      });
+      notify.success('Partial rooting completed successfully');
+      closeModal();
+      fetchBatches();
+    } catch (error: any) {
+      notify.error(error.response?.data?.message || error.message || 'Failed to create partial rooting');
+    }
+  };
+
+  const handleFullRooting = async (data: any) => {
+    try {
+      await indoorApi.rooting.moveFullBatchToRooting({
+        ...data,
+        created_by: 'system'
+      });
+      notify.success(`Full batch moved to rooting: ${data.batchCode}`);
+      closeModal();
+      fetchBatches();
+    } catch (error: any) {
+      notify.error(error.response?.data?.message || error.message || 'Failed to move batch to rooting');
+    }
+  };
+
+  const handleMakeRooting = async (batch: Batch) => {
+    // REMOVED - Partial rooting is now single-step
+  };
+
+  const handleMoveToTerminalIncubation = async (data: any) => {
+    // REMOVED - No terminal incubation anymore
+  };
+
   const handleTimeline = async (batch: Batch) => {
     const result = await getBatchTimeline(batch.batch_code);
     if (result.success) {
@@ -245,43 +432,50 @@ const IndoorBatchMaster: React.FC = () => {
 
   // Stage-0 batches have 0 bottles by design — they are NOT sold out
   const isSoldOut = (batch: Batch) =>
-    batch.state === 'SOLD_OUT' || ((batch.available_bottles ?? 0) <= 0 && batch.stage !== 'Stage-0');
+    batch.state === 'SOLD_OUT' || ((batch.qty_available ?? 0) <= 0 && batch.stage !== 'Stage-0');
 
-  // Visibility: phase/stage based (same logic as before, no sold-out check)
+  // === VISIBILITY: phase/stage based ===
+
+  const isTerminal = (batch: Batch) => batch.stage === 'Rooting';
+
   const showSubculture = (batch: Batch) => {
+    if (batch.stage === 'Rooting') return false;
     const n = parseInt(batch.stage?.split('-')[1] || '0');
-    return (n === 0 && batch.phase === 'subculturing') ||
-           (n >= 1 && n <= 8 && batch.phase === 'incubation');
+    return (n === 0 && (batch.phase === 'batch_created' || batch.phase === 'subculturing')) ||
+           (n >= 1 && n <= 9 && batch.phase === 'incubation');
   };
+
   const showIncubate = (batch: Batch) => {
+    if (batch.stage === 'Rooting') return false;
     const n = parseInt(batch.stage?.split('-')[1] || '0');
-    return n >= 1 && n <= 8 && batch.phase === 'subculturing';
+    return n >= 1 && n <= 9 && batch.phase === 'subculturing';
   };
+
   const showExport = (batch: Batch) => {
+    if (batch.state === 'OUTDOOR_READY' || batch.state === 'AT_OUTDOOR') return false;
+    
+    // Rooting batches can be exported
+    if (batch.phase === 'rooting' || batch.stage === 'Rooting') return true;
+    
+    // Stage-1 and above can be exported
     const n = parseInt(batch.stage?.split('-')[1] || '0');
-    return batch.state !== 'OUTDOOR_READY' && batch.state !== 'AT_OUTDOOR' && n >= 1 && batch.event_count >= 1;
+    return n >= 1 && batch.event_count >= 1;
   };
 
-  // Lock vs active: sold-out + state check (only evaluated when item is already visible)
-  const canSubculture   = (batch: Batch) => !isSoldOut(batch) && batch.state === 'ACTIVE' && !(batch.stage === 'Stage-8' && batch.phase === 'incubation');
-  const canIncubate     = (batch: Batch) => !isSoldOut(batch) && batch.state === 'ACTIVE';
-  const canSample       = (batch: Batch) => !isSoldOut(batch) && batch.state === 'ACTIVE' && batch.is_sampled === 'n';
-  const canReportSample = (batch: Batch) => !isSoldOut(batch) && batch.state === 'ACTIVE' && batch.is_sampled === 's';
-  const canExport       = (batch: Batch) => !isSoldOut(batch) && batch.state === 'ACTIVE';
-  const canUnexport     = (batch: Batch) => batch.state === 'OUTDOOR_READY';
+  const showPartialRooting = (batch: Batch) => batch.phase === 'subculturing';
+  const showFullRooting = (batch: Batch) => batch.phase === 'subculturing';
 
-  const canRecordContamination = (batch: Batch) =>
-    !isSoldOut(batch) && batch.state === 'ACTIVE' && batch.phase === 'incubation';
+  const showContamination = (batch: Batch) => batch.phase === 'incubation' || batch.phase === 'rooting';
 
   const handleExportData = () => {
     const exportData = batches.map(batch => ({
       'Batch Code': batch.batch_code,
       'Plant Name': batch.plant_name,
       'Current Age (Days)': batch.current_age,
-      'Phase': batch.phase_display,
+      'Phase': formatPhaseDisplay(batch.phase),
       'Stage': batch.stage,
-      'Current Bottles': batch.current_bottles_count,
-      'Contamination': batch.contamination_count,
+      'Current Bottles': batch.qty_in,
+      'Contamination': batch.qty_contaminated,
       'Events': batch.event_count
     }));
     notify.error('Export functionality would download Excel file here');
@@ -289,40 +483,28 @@ const IndoorBatchMaster: React.FC = () => {
 
   if (loading) return <div className="p-4">Loading...</div>;
 
-  const columns = [
-    { key: 'batch_code', label: 'Batch Code', render: (v: string) => <span className="font-medium text-gray-900 text-base">{v}</span> },
-    { key: 'created_date', label: 'Created Date', render: (v: string) => <span className="text-base">{v ? new Date(v).toLocaleDateString() : '-'}</span> },
-    { key: 'plant_name', label: 'Plant Name' },
-    { key: 'current_age', label: 'Current Age', render: (v: number) => <span className="px-2 py-1 rounded border text-base bg-green-50 text-green-700 border-green-200">{v} days</span> },
-    { key: 'phase_display', label: 'Phase', render: (v: string) => <span className="px-2 py-1 rounded border text-base bg-blue-50 text-blue-700 border-blue-200">{v}</span> },
-    { key: 'stage', label: 'Stage', render: (v: string, record: any) => <span className="text-base">{v ? v.replace('Stage-', '') : '-'}</span> },
-    { key: 'current_bottles_count', label: 'Current Bottles', render: (v: number) => <span className="text-base">{v?.toLocaleString() ?? '-'}</span> },
-    { key: 'current_contamination', label: 'Current Contamination', render: (v: number) => <span className="text-red-600 text-base">{(v || 0).toLocaleString()}</span> },
-    { key: 'current_stage_sold', label: 'Current Stage Sold', render: (v: number) => <span className="text-base">{(v || 0).toLocaleString()}</span> },
-    { key: 'available_bottles', label: 'Available Bottles', render: (v: number) => <span className="text-green-700 text-base">{(v ?? 0).toLocaleString()}</span> },
-    { key: 'total_sold_bottles', label: 'Total Bottles Sold', render: (v: number) => <span className="text-base">{(v || 0).toLocaleString()}</span> },
-    { key: 'contamination_count', label: 'Total Contamination', render: (v: number) => <span className="text-red-600 text-base">{v.toLocaleString()}</span> },
-    { key: 'event_count', label: 'Events', render: (v: number) => <span className="text-base">{v}</span> },
-    { key: 'is_sampled', label: 'Sampling', render: (v: string) => (
-      <span className={`px-2 py-1 rounded border text-base ${
-        v === 'c' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-        v === 's' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-        'bg-slate-50 text-slate-400 border-slate-200'
-      }`}>
-        {v === 'c' ? 'Result Reported' : v === 's' ? 'Sample Sent' : 'Not Sampled'}
-      </span>
-    )},
-    { key: 'state', label: 'State', render: (v: string) => (
-      <span className={`px-2 py-1 rounded border text-base ${
-        v === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-200' :
-        v === 'OUTDOOR_READY' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-        v === 'SOLD_OUT' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-        v === 'AT_OUTDOOR' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-        'bg-gray-50 text-gray-700 border-gray-200'
-      }`}>
-        {v}
-      </span>
-    )},
+const columns = [
+    { key: 'batch_code',             label: 'Batch Code',            render: (v: string) => v },
+    { key: 'created_date',           label: 'Created Date',          render: (v: string) => v ? new Date(v).toLocaleDateString() : '-' },
+    { key: 'plant_name',             label: 'Plant Name' },
+    { key: 'lab_number',             label: 'Lab',                   render: (v: number) => v ? `Lab ${v}` : '-' },
+    { key: 'current_age',            label: 'Current Age',           render: (v: number) => `${v} days` },
+    { key: 'phase',                  label: 'Phase',                 render: (v: string) => formatPhaseDisplay(v) },
+    { key: 'stage',                  label: 'Stage',                 render: (v: string) => v ? v.replace('Stage-', '') : '-' },
+    { key: 'qty_in',                 label: 'Current Bottles',       render: (v: number) => v?.toLocaleString() ?? '-' },
+    { key: 'qty_contaminated',       label: 'Current Contamination' },
+    { key: 'qty_p_rooted',           label: 'Current Partial Rooting', render: (v: number) => (v || 0).toLocaleString() },
+    { key: 'qty_sold',               label: 'Current Stage Sold',    render: (v: number) => (v || 0).toLocaleString() },
+    { key: 'qty_available',          label: 'Available Bottles' },
+    { key: 'is_sampled',             label: 'Sampling',              render: (v: string) => v === 'c' ? 'Result Reported' : v === 's' ? 'Sample Sent' : 'Not Sampled' },
+    { key: 'state',                  label: 'State' },
+    { key: 'total_qty_sold',         label: 'Total Bottles Sold',    render: (v: number) => (v || 0).toLocaleString() },
+    { key: 'total_qty_contaminated', label: 'Total Contamination' },
+    { key: 'total_qty_p_rooted',     label: 'Total Partial Rooting', render: (v: number) => (v || 0).toLocaleString() },
+    { key: 'event_count',            label: 'Events',                render: (v: number) => v },
+    { key: 'is_partial_rooting',     label: 'Partial Rooting',       render: (v: boolean) => v ? 'Yes' : '' },
+    { key: 'source_batch_code',      label: 'Source Batch',          render: (v: string) => v || '' },
+    { key: 'source_batch_stage',     label: 'Source Stage',          render: (v: string, record: any) => (v && record.source_batch_code) ? v : '' },
     {
       key: '_actions',
       label: 'Actions',
@@ -336,92 +518,252 @@ const IndoorBatchMaster: React.FC = () => {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Actions for {batch.batch_code}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {showSubculture(batch) && (
-              canSubculture(batch) ? (
-                <DropdownMenuItem onClick={() => openModal('SUBCULTURE', batch)}>
-                  <FlaskConical className="mr-2 h-4 w-4 text-green-600" />
-                  <span>{batch.stage === 'Stage-0' ? 'Subculture' : 'Continue Subculture'}</span>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="mr-2 h-4 w-4" />
-                  <span>{batch.stage === 'Stage-0' ? 'Subculture' : 'Continue Subculture'}</span>
-                </DropdownMenuItem>
-              )
-            )}
-            {showIncubate(batch) && (
-              canIncubate(batch) ? (
-                <DropdownMenuItem onClick={() => openModal('INCUBATE', batch)}>
-                  <Microscope className="mr-2 h-4 w-4 text-blue-600" />
-                  <span>Incubate</span>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="mr-2 h-4 w-4" />
-                  <span>Incubate</span>
-                </DropdownMenuItem>
-              )
-            )}
-            {batch.is_sampled !== 's' && (
-              canSample(batch) ? (
-                <DropdownMenuItem onClick={() => openModal('SAMPLE', batch)}>
-                  <TestTube className="mr-2 h-4 w-4 text-cyan-600" />
-                  <span>Submit Sample</span>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="mr-2 h-4 w-4" />
-                  <span>Submit Sample</span>
-                </DropdownMenuItem>
-              )
-            )}
-            {batch.is_sampled === 's' && (
-              canReportSample(batch) ? (
-                <DropdownMenuItem onClick={() => openModal('REPORT', batch)}>
-                  <TestTube className="mr-2 h-4 w-4 text-purple-600" />
-                  <span>Report Sample Result</span>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="mr-2 h-4 w-4" />
-                  <span>Report Sample Result</span>
-                </DropdownMenuItem>
-              )
-            )}
-            {showExport(batch) && (
-              canExport(batch) ? (
-                <DropdownMenuItem onClick={() => openModal('EXPORT', batch)}>
-                  <ArrowUpRight className="mr-2 h-4 w-4 text-orange-600" />
-                  <span>Make Available for Outdoor</span>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="mr-2 h-4 w-4" />
-                  <span>Make Available for Outdoor</span>
-                </DropdownMenuItem>
-              )
-            )}
-            {canUnexport(batch) && (
-              <DropdownMenuItem onClick={() => handleUnexportBatch(batch)}>
-                <ArrowDownLeft className="mr-2 h-4 w-4 text-amber-600" />
-                <span>Unmark from Outdoor</span>
-              </DropdownMenuItem>
-            )}
-            {canRecordContamination(batch) ? (
-              <DropdownMenuItem onClick={() => openModal('CONTAMINATION', batch)} className="text-red-600">
-                <Skull className="mr-2 h-4 w-4" />
-                <span>Record Contamination</span>
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                <Lock className="mr-2 h-4 w-4" />
-                <span>Record Contamination</span>
-              </DropdownMenuItem>
-            )}
+            
+            {/* Timeline - Always visible */}
             <DropdownMenuItem onClick={() => handleTimeline(batch)}>
               <Clock className="mr-2 h-4 w-4 text-gray-600" />
               <span>View Timeline</span>
             </DropdownMenuItem>
+            
+            <DropdownMenuSeparator />
+            
+            {/* Subculture — Stage-0 batch_created/subculturing OR Stage 1-9 incubation (alternates with Incubate) */}
+            {batch.phase !== 'partial_rooting' && ((batch.stage === 'Stage-0' && (batch.phase === 'batch_created' || batch.phase === 'subculturing')) || (parseInt(batch.stage?.split('-')[1] || '0') >= 1 && batch.phase === 'incubation')) && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canSubculture;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>{batch.stage === 'Stage-0' ? 'Subculture' : 'Continue Subculture'}</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('SUBCULTURE', batch)}>
+                  <FlaskConical className="mr-2 h-4 w-4 text-green-600" />
+                  <span>{batch.stage === 'Stage-0' ? 'Subculture' : 'Continue Subculture'}</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Incubate — alternates with Subculture */}
+            {batch.phase === 'subculturing' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canIncubate;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Incubate</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('INCUBATE', batch)}>
+                  <Microscope className="mr-2 h-4 w-4 text-blue-600" />
+                  <span>Incubate</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Submit Sample — alternates with Report */}
+            {batch.is_sampled === 'n' && batch.phase !== 'partial_rooting' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canSubmitSample;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Submit Sample</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('SAMPLE', batch)}>
+                  <TestTube className="mr-2 h-4 w-4 text-cyan-600" />
+                  <span>Submit Sample</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Report Sample Result — alternates with Submit Sample */}
+            {batch.is_sampled === 's' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canReportSampleResult;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Report Sample Result</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('REPORT', batch)}>
+                  <TestTube className="mr-2 h-4 w-4 text-purple-600" />
+                  <span>Report Sample Result</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Partial Rooting */}
+            {batch.phase !== 'partial_rooting' && batch.phase !== 'rooting' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canPartialRooting;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Make Partial Rooting</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('PARTIAL_ROOTING', batch)}>
+                  <GitBranch className="mr-2 h-4 w-4 text-orange-600" />
+                  <span>Make Partial Rooting</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Full Rooting */}
+            {batch.phase === 'subculturing' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canFullRooting;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Move Full Batch to Rooting</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('FULL_ROOTING', batch)}>
+                  <GitMerge className="mr-2 h-4 w-4 text-orange-600" />
+                  <span>Move Full Batch to Rooting</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Contamination */}
+            {batch.phase !== 'partial_rooting' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canRecordContamination;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Record Contamination</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('CONTAMINATION', batch)} className="text-red-600">
+                  <Skull className="mr-2 h-4 w-4" />
+                  <span>Record Contamination</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            <DropdownMenuSeparator />
+            
+            {/* Export to Outdoor — alternates with Unmark */}
+            {batch.state !== 'OUTDOOR_READY' && batch.state !== 'AT_OUTDOOR' && batch.phase !== 'partial_rooting' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canExportToOutdoor;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Make Available for Outdoor</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('EXPORT', batch)}>
+                  <ArrowUpRight className="mr-2 h-4 w-4 text-orange-600" />
+                  <span>Make Available for Outdoor</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            {/* Unmark from Outdoor — alternates with Export */}
+            {batch.state === 'OUTDOOR_READY' && (() => {
+              const isLoadingPermissions = !batchPermissions[batch.batch_code];
+              const permission = batchPermissions[batch.batch_code]?.canUnexportFromOutdoor;
+              const isLocked = isLoadingPermissions || (permission && !permission.allowed);
+              const lockReason = isLoadingPermissions ? 'Loading permissions...' : permission?.reason;
+              
+              return isLocked ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="mr-2 h-4 w-4" />
+                        <span>Unmark from Outdoor</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => handleUnexportBatch(batch)}>
+                  <ArrowDownLeft className="mr-2 h-4 w-4 text-amber-600" />
+                  <span>Unmark from Outdoor</span>
+                </DropdownMenuItem>
+              );
+            })()}
+            
+            <DropdownMenuSeparator />
             {(undoLockReasons[batch.batch_code]?.length ?? 0) > 0 ? (
               <TooltipProvider>
                 <Tooltip side="left" content={
@@ -462,15 +804,9 @@ const IndoorBatchMaster: React.FC = () => {
         
         <TabsContent value="master">
           <DataTable
-        title=""
+        title="Indoor Batch Master"
         columns={columns}
-        records={batches.map(batch => ({
-          ...batch,
-          className: cn(
-            batch.state === 'SOLD_OUT' && "bg-rose-50/30 opacity-80",
-            batch.state === 'AT_OUTDOOR' && "bg-purple-50/30"
-          )
-        }))}
+        records={batches.map(batch => ({ ...batch }))}
         filterConfig={{
           filter1Key: 'plant_name',
           filter1Label: 'Plant Name',
@@ -528,6 +864,31 @@ const IndoorBatchMaster: React.FC = () => {
         </ModalLayout>
       )}
 
+      {activeModal === 'PARTIAL_ROOTING' && selectedBatch && (
+        <PartialRootingForm
+          record={{
+            ...selectedBatch,
+            id: selectedBatch.current_source_id,
+            remaining_bottles: selectedBatch.qty_in,
+            to_stage: selectedBatch.stage,
+            next_stage: selectedBatch.stage
+          }}
+          onSubmit={handlePartialRooting}
+          onCancel={closeModal}
+        />
+      )}
+
+      {activeModal === 'FULL_ROOTING' && selectedBatch && (
+        <FullRootingForm
+          record={{
+            ...selectedBatch,
+            id: selectedBatch.current_source_id
+          }}
+          onSubmit={handleFullRooting}
+          onCancel={closeModal}
+        />
+      )}
+
       {activeModal === 'CONTAMINATION' && selectedBatch && (
         <RecordContaminationModal
           batch={selectedBatch}
@@ -537,124 +898,11 @@ const IndoorBatchMaster: React.FC = () => {
       )}
 
       {activeModal === 'TIMELINE' && selectedBatch && (
-        <ModalLayout title={`Indoor Batch Timeline — ${selectedBatch.batch_code}`} width="850px">
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-3 text-base">
-              <div><span className="text-gray-600">Plant: </span><span className="font-semibold">{selectedBatch.plant_name}</span></div>
-              <div><span className="text-gray-600">Stage: </span><span className="font-semibold">{selectedBatch.stage}</span></div>
-              <div><span className="text-gray-600">Phase: </span><span className="font-semibold">{selectedBatch.phase_display}</span></div>
-              <div><span className="text-gray-600">Age: </span><span className="font-semibold text-green-600">{selectedBatch.current_age} days</span></div>
-              <div><span className="text-gray-600">Bottles: </span><span className="font-semibold text-blue-600">{selectedBatch.current_bottles_count}</span></div>
-              <div><span className="text-gray-600">Contamination: </span><span className="font-semibold text-red-600">{selectedBatch.contamination_count}</span></div>
-            </div>
-
-            {timelineData.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">No events found for this batch</div>
-            ) : (
-              <div className="relative">
-                <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
-                <div className="space-y-4">
-                  {timelineData.filter(event => event.event_type !== 'CREATE').map((event, idx) => {
-                    const eventData = event.event_data || {};
-                    const getIcon = () => {
-                      switch (event.event_type) {
-                        case 'CREATE': return Plus;
-                        case 'SUBCULTURE': return FlaskConical;
-                        case 'INCUBATE': return Microscope;
-                        case 'EXPORT': return ArrowUpRight;
-                        default: return Clock;
-                      }
-                    };
-                    const getColor = () => {
-                      switch (event.event_type) {
-                        case 'CREATE': return 'bg-green-100 text-green-600';
-                        case 'SUBCULTURE': return 'bg-blue-100 text-blue-600';
-                        case 'INCUBATE': return 'bg-purple-100 text-purple-600';
-                        case 'EXPORT': return 'bg-orange-100 text-orange-600';
-                        default: return 'bg-gray-100 text-gray-600';
-                      }
-                    };
-                    const Icon = getIcon();
-                    const colorClass = getColor();
-                    return (
-                      <div key={idx} className="relative flex gap-3">
-                        <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${colorClass}`}>
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1 pb-2">
-                          <div className="bg-white border rounded-lg p-3 shadow-sm">
-                            <div className="flex items-start justify-between mb-2">
-                              <h3 className="font-medium">
-                                {event.event_type === 'CREATE' && 'Batch Created'}
-                                {event.event_type === 'SUBCULTURE' && `Subculture to ${eventData.next_stage || eventData.nextStage || 'Next Stage'}`}
-                                {event.event_type === 'INCUBATE' && `Incubation at ${eventData.stage || eventData.current_stage || 'Current Stage'}`}
-                                {event.event_type === 'EXPORT' && 'Exported to Outdoor'}
-                              </h3>
-                              <div className="text-base text-gray-500">{new Date(event.created_at).toLocaleDateString()}</div>
-                            </div>
-                            <div className="bg-gray-50 rounded p-2 space-y-1.5 text-base text-gray-600">
-                              {event.age_at_arrival !== null && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[120px]">Arrival Age</span>
-                                  <span className="font-semibold text-green-600">{event.age_at_arrival} days</span>
-                                </div>
-                              )}
-                              {event.age_at_departure !== null && event.event_state === 'completed' && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[120px]">Departure Age</span>
-                                  <span className="font-semibold text-green-600">{event.age_at_departure} days</span>
-                                </div>
-                              )}
-                              {eventData.media_code && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[120px]">Media Code</span>
-                                  <span className="font-semibold text-gray-800">{eventData.media_code}</span>
-                                </div>
-                              )}
-                              {eventData.current_bottles_count !== null && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[120px]">Bottles (Before)</span>
-                                  <span className="font-semibold text-gray-800">{eventData.current_bottles_count}</span>
-                                </div>
-                              )}
-                              {eventData.new_bottles_count !== null && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[120px]">Bottles (After)</span>
-                                  <span className="font-semibold text-blue-600">{eventData.new_bottles_count}</span>
-                                </div>
-                              )}
-                              {event.contamination_count > 0 && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[120px]">Contamination</span>
-                                  <span className="font-semibold text-red-600">{event.contamination_count}</span>
-                                </div>
-                              )}
-                              {eventData.notes && (
-                                <div className="flex items-start gap-2 pt-1 border-t border-gray-200">
-                                  <span className="text-gray-400 min-w-[120px]">Notes</span>
-                                  <span className="text-gray-700">{eventData.notes}</span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="mt-2 text-right">
-                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${event.event_state === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                                {event.event_state}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-end pt-2">
-              <Button variant="outline" onClick={closeModal}>Close</Button>
-            </div>
-          </div>
-        </ModalLayout>
+        <BatchTimelineModal
+          batch={selectedBatch}
+          timelineData={timelineData}
+          onClose={closeModal}
+        />
       )}
     </div>
   );

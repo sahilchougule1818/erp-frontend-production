@@ -17,7 +17,6 @@ import {
   Bug,
   Droplets,
   Package,
-  Clock,
   LayoutDashboard,
   Building,
   Users,
@@ -26,7 +25,9 @@ import {
   LayoutList,
   Banknote,
   PackagePlus,
-  RotateCcw
+  RotateCcw,
+  GitBranch,
+  Settings
 } from 'lucide-react';
 import { User } from '../auth/AuthContext';
 
@@ -99,9 +100,11 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
         { id: 'indoor-batch-master', label: 'Batch Master', icon: Command, page: 'indoor-batch-master', breadcrumbs: ['Indoor', 'Batch Master'] },
         { id: 'subculturing', label: 'Subculturing', icon: Microscope, page: 'subculturing', breadcrumbs: ['Indoor', 'Subculturing'] },
         { id: 'incubation', label: 'Incubation', icon: Thermometer, page: 'incubation', breadcrumbs: ['Indoor', 'Incubation'] },
+        { id: 'rooting', label: 'Rooting', icon: GitBranch, page: 'rooting', breadcrumbs: ['Indoor', 'Rooting'] },
         { id: 'indoor-contamination', label: 'Indoor Contamination', icon: Bug, page: 'indoor-contamination', breadcrumbs: ['Indoor', 'Indoor Contamination'] },
         { id: 'cleaning-record', label: 'Cleaning Record', icon: ShieldCheck, page: 'cleaning-record', breadcrumbs: ['Indoor', 'Cleaning Record'] },
-        { id: 'sampling', label: 'Sampling', icon: TestTube, page: 'sampling', breadcrumbs: ['Indoor', 'Sampling'] }
+        { id: 'sampling', label: 'Sampling', icon: TestTube, page: 'sampling', breadcrumbs: ['Indoor', 'Sampling'] },
+        { id: 'indoor-settings', label: 'Indoor Settings', icon: Settings, page: 'indoor-settings', breadcrumbs: ['Indoor', 'Indoor Settings'] }
       ]
     },
     {
@@ -118,7 +121,8 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
         { id: 'holding-area', label: 'Holding Area', icon: Package, page: 'holding-area', breadcrumbs: ['Outdoor', 'Holding Area'] },
         { id: 'outdoor-mortality', label: 'Outdoor Mortality', icon: Bug, page: 'outdoor-mortality', breadcrumbs: ['Outdoor', 'Outdoor Mortality'] },
         { id: 'fertilization', label: 'Fertilization', icon: Droplets, page: 'fertilization', breadcrumbs: ['Outdoor', 'Fertilization'] },
-        { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] }
+        { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] },
+        { id: 'outdoor-settings', label: 'Outdoor Settings', icon: Settings, page: 'outdoor-settings', breadcrumbs: ['Outdoor', 'Outdoor Settings'] }
       ]
     },
     {
@@ -129,11 +133,12 @@ export function Sidebar({ currentPage, onNavigate, user, isCollapsed, onToggle }
         { id: 'sales-dashboard', label: 'Sales Dashboard', icon: LayoutDashboard, page: 'sales-dashboard', breadcrumbs: ['Sales', 'Sales Dashboard'] },
         { id: 'sales-bank', label: 'Bank Account Master', icon: Building, page: 'sales-bank', breadcrumbs: ['Sales', 'Bank Account Master'] },
         { id: 'sales-customers', label: 'Customers', icon: Users, page: 'sales-customers', breadcrumbs: ['Sales', 'Customers'] },
-        { id: 'sales-buyer', label: 'Bookings', icon: ShoppingCart, page: 'sales-buyer', breadcrumbs: ['Sales', 'Bookings'] },
+        { id: 'instant-sales', label: 'Instant Sales', icon: ShoppingCart, page: 'instant-sales', breadcrumbs: ['Sales', 'Instant Sales'] },
+        { id: 'pre-bookings', label: 'Pre-Bookings', icon: ShoppingBag, page: 'pre-bookings', breadcrumbs: ['Sales', 'Pre-Bookings'] },
         { id: 'sales-refunds', label: 'Refund Disbursements', icon: RotateCcw, page: 'sales-refunds', breadcrumbs: ['Sales', 'Refund Disbursements'] },
         { id: 'sales-inventory-purchases', label: 'Inventory Purchases', icon: PackagePlus, page: 'sales-inventory-purchases', breadcrumbs: ['Sales', 'Inventory Purchases'] },
         { id: 'sales-ledger', label: 'Financial Ledger', icon: FileText, page: 'sales-ledger', breadcrumbs: ['Sales', 'Financial Ledger'] },
-        { id: 'booking-lifecycle', label: 'Booking Lifecycle', icon: Clock, page: 'booking-lifecycle', breadcrumbs: ['Sales', 'Booking Lifecycle'] }
+        { id: 'sales-settings', label: 'Settings', icon: Settings, page: 'sales-settings', breadcrumbs: ['Sales', 'Settings'] }
       ]
     },
     {

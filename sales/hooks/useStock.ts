@@ -1,21 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { stockApi } from '../services/salesApi';
 
-export const useIndoorStock = () => {
+export const useIndoorStock = (phase?: string) => {
   const [stock, setStock] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStock = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await stockApi.getIndoorStock();
+      const res = await stockApi.getIndoorStock(phase ? { phase } : undefined);
       setStock(res);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [phase]);
 
   useEffect(() => { fetchStock(); }, [fetchStock]);
 
@@ -41,46 +41,4 @@ export const useOutdoorStock = () => {
   useEffect(() => { fetchStock(); }, [fetchStock]);
 
   return { stock, loading, refetch: fetchStock };
-};
-
-export const useAvailableIndoorBatches = () => {
-  const [batches, setBatches] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchBatches = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await stockApi.getAvailableIndoorStock();
-      setBatches(res);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { fetchBatches(); }, [fetchBatches]);
-
-  return { batches, loading, refetch: fetchBatches };
-};
-
-export const useAvailableOutdoorBatches = () => {
-  const [batches, setBatches] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchBatches = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await stockApi.getAvailableOutdoorStock();
-      setBatches(res);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { fetchBatches(); }, [fetchBatches]);
-
-  return { batches, loading, refetch: fetchBatches };
 };

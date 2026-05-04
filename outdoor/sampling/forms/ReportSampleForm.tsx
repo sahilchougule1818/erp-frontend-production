@@ -1,29 +1,23 @@
 import React, { useState } from 'react';
-import { useNotify } from '../shared/hooks/useNotify';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import { Label } from '../../../shared/ui/label';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Input } from '../../../shared/ui/input';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Textarea } from '../../../shared/ui/textarea';
-import { useNotify } from '../shared/hooks/useNotify';
 import { Button } from '../../../shared/ui/button';
-import { useNotify } from '../shared/hooks/useNotify';
 import { ModalLayout } from '../../../shared/components/ModalLayout';
-import { useNotify } from '../shared/hooks/useNotify';
 
 interface ReportSampleFormProps {
   batch: { batch_code: string };
   onClose: () => void;
-  onSubmit: (data: { resultDate: string; status: string; certificateNumber: string; govtCode: string; notes: string }) => void;
+  onSubmit: (data: { resultDate: string; status: string; seedCertificateNumber: string; notes: string }) => void;
 }
 
 export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClose, onSubmit }) => {
+  const notify = useNotify();
   const [resultDate, setResultDate] = useState(new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState('');
-  const [certificateNumber, setCertificateNumber] = useState('');
-  const [govtCode, setGovtCode] = useState('');
+  const [seedCertificateNumber, setSeedCertificateNumber] = useState('');
   const [notes, setNotes] = useState('');
 
   const handleSubmit = () => {
@@ -31,11 +25,11 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
       notify.error('Please select a status');
       return;
     }
-    if (status === 'Yes' && !certificateNumber) {
-      notify.error('Certificate number is required when status is Yes');
+    if (status === 'Yes' && !seedCertificateNumber) {
+      notify.error('Seed Certificate Number is required when status is Yes');
       return;
     }
-    onSubmit({ resultDate, status, certificateNumber, govtCode, notes });
+    onSubmit({ resultDate, status, seedCertificateNumber, notes });
   };
 
   return (
@@ -79,25 +73,14 @@ export const ReportSampleForm: React.FC<ReportSampleFormProps> = ({ batch, onClo
 
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Certificate Information</p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-base">Certificate No {status === 'Yes' && '*'}</Label>
-                <Input 
-                  value={certificateNumber} 
-                  onChange={(e) => setCertificateNumber(e.target.value)}
-                  disabled={status !== 'Yes'}
-                  placeholder="Enter certificate number"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-base">Govt Code</Label>
-                <Input 
-                  value={govtCode} 
-                  onChange={(e) => setGovtCode(e.target.value)}
-                  disabled={status !== 'Yes'}
-                  placeholder="Enter government code"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label className="text-base">Seed Certificate Number {status === 'Yes' && '*'}</Label>
+              <Input 
+                value={seedCertificateNumber} 
+                onChange={(e) => setSeedCertificateNumber(e.target.value)}
+                disabled={status !== 'Yes'}
+                placeholder="Enter seed certificate number"
+              />
             </div>
           </div>
 

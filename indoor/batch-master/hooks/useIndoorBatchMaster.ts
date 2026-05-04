@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { indoorApi } from '../../services/indoorApi';
+import { useLabContext } from '../../contexts/LabContext';
 import { Batch, Operator, UndoPreview } from '../types';
 
 export const useIndoorBatchMaster = () => {
@@ -7,6 +8,7 @@ export const useIndoorBatchMaster = () => {
   const [operators, setOperators] = useState<Operator[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { labNumber } = useLabContext(); // Use global lab context
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
@@ -19,7 +21,11 @@ export const useIndoorBatchMaster = () => {
   const fetchBatches = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const res = await (indoorApi.batchOperations.getAllBatches({ page }) as any);
+      const params: any = { page };
+      if (labNumber !== 0) {
+        params.lab_number = labNumber;
+      }
+      const res = await (indoorApi.batchOperations.getAllBatches(params) as any);
       if (res.data && res.pagination) {
         setBatches(res.data || []);
         const backendPage = res.pagination.currentPage || res.pagination.page || page;
@@ -46,7 +52,7 @@ export const useIndoorBatchMaster = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [labNumber]);
 
   const fetchOperators = useCallback(async () => {
     try {
@@ -155,11 +161,10 @@ export const useIndoorBatchMaster = () => {
   const reportSampleResult = async (batchCode: string, data: any) => {
     try {
       await (indoorApi.sampling.reportResult(batchCode, {
-        received_date: data.resultDate,
+        received_date: data.received_date,
         status: data.status,
-        certificate_number: data.certificateNo,
-        government_digital_code: data.govtCode,
-        reason: data.notes
+        government_digital_code: data.government_digital_code,
+        reason: data.reason
       }) as any);
       await fetchBatches();
       return { success: true };

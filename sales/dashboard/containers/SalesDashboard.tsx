@@ -56,15 +56,17 @@ export function SalesDashboard() {
     { key: 'batch_code', label: 'Batch Code' },
     { key: 'plant_name', label: 'Plant Name' },
     { key: 'stage', label: 'Stage' },
-    { key: 'bookable_bottles', label: 'Bookable Bottles', render: (val: number) => Number(val).toLocaleString() },
-    { key: 'age_days', label: 'Age (days)', render: (val: any) => val || 0 }
+    { key: 'phase', label: 'Phase' },
+    { key: 'lab_number', label: 'Lab' },
+    { key: 'available_bottles', label: 'Available Plants', render: (val: number) => Number(val).toLocaleString() }
   ];
 
   const outdoorColumns = [
     { key: 'batch_code', label: 'Batch Code' },
-    { key: 'plant_name', label: 'Plant Name' },
-    { key: 'bookable_plants', label: 'Bookable Plants', render: (val: number) => Number(val).toLocaleString() },
-    { key: 'age_days', label: 'Age (days)', render: (val: any) => val || 0 }
+    { key: 'plant_name', label: 'Plant' },
+    { key: 'phase', label: 'Phase' },
+    { key: 'location', label: 'Location' },
+    { key: 'available_plants', label: 'Available Plants', render: (val: number) => Number(val).toLocaleString() }
   ];
 
   return (

@@ -39,7 +39,6 @@ const LedgerSection: React.FC = () => {
 
   const netInflow  = Number(stats?.net_inflow)  || 0;
   const netOutflow = Number(stats?.net_outflow) || 0;
-  const netPending = Number(stats?.net_pending) || 0;
 
   const fmt = (n: number) =>
     n >= 1_00_000 ? `₹${(n / 1_00_000).toFixed(1)}L`
@@ -66,7 +65,7 @@ const LedgerSection: React.FC = () => {
       render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
     {
-      key: 'booking_id',
+      key: 'order_id',
       label: 'Booking ID',
       render: (val: string) => <span className="text-base">{val || '—'}</span>
     },
@@ -116,7 +115,7 @@ const LedgerSection: React.FC = () => {
     <div className="p-6 space-y-5">
 
       {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
         <div style={{ padding: '20px', backgroundColor: '#EAF3DE', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#3B6D11', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Funds Inflow</span>
@@ -124,7 +123,7 @@ const LedgerSection: React.FC = () => {
           </div>
           <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#27500A', marginTop: '8px' }}>{fmt(netInflow)}</div>
           <div style={{ fontSize: '0.7rem', color: '#3B6D11', fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>
-            {filters.bank_account_id !== 'all' || filters.from_date || filters.to_date ? 'Filtered view' : 'All time'}
+            All time
           </div>
         </div>
 
@@ -135,18 +134,7 @@ const LedgerSection: React.FC = () => {
           </div>
           <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#791F1F', marginTop: '8px' }}>{fmt(netOutflow)}</div>
           <div style={{ fontSize: '0.7rem', color: '#A32D2D', fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>
-            {filters.bank_account_id !== 'all' || filters.from_date || filters.to_date ? 'Filtered view' : 'All time'}
-          </div>
-        </div>
-
-        <div style={{ padding: '20px', backgroundColor: '#FAEEDA', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#854F0B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Pending</span>
-            <Clock style={{ color: '#854F0B', width: '20px', height: '20px' }} />
-          </div>
-          <div style={{ fontSize: '1.875rem', fontWeight: '700', color: '#633806', marginTop: '8px' }}>{fmt(netPending)}</div>
-          <div style={{ fontSize: '0.7rem', color: '#854F0B', fontWeight: '600', textTransform: 'uppercase', marginTop: '4px' }}>
-            Outstanding from customers
+            All time
           </div>
         </div>
       </div>

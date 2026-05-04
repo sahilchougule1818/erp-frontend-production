@@ -23,9 +23,8 @@ export interface Batch {
   current_age: number;
   phase_display: string;
   current_action?: string;
-  last_event_type?: string;
+  event_type?: string;
   created_at: string;
-  updated_at: string;
 }
 
 // ─── Phase tables — immutable snapshots, no state/departed_at ─────────────────
@@ -45,7 +44,6 @@ export interface PhaseRecord {
   current_age: number | null;
   workers: WorkerSnapshot[];
   created_at: string;
-  updated_at: string;
 }
 
 export interface PrimaryHardeningRecord extends PhaseRecord {
@@ -89,6 +87,7 @@ export interface Tunnel {
   current_occupancy: number;
   available_space: number;          // generated
   is_active: boolean;
+  batches?: any[];                  // from getTunnelOccupancy aggregation
 }
 
 // ─── Workers ──────────────────────────────────────────────────────────────
@@ -156,9 +155,9 @@ export interface MortalityHistoryRecord {
   batch_code: string;
   plant_name: string;
   phase_table: string;
-  tunnel: string | null;
+  to_location: string | null;
   mortality_count: number;
-  reason: string | null;
+  mortality_reason: string | null;
   recorded_at: string;
   event_code: string;
 }

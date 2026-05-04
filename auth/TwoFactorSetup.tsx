@@ -4,8 +4,7 @@ import { Button } from '../shared/ui/button';
 import { Input } from '../shared/ui/input';
 import { Label } from '../shared/ui/label';
 import { Shield, AlertCircle, CheckCircle } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+import apiClient from '../shared/services/apiClient';
 
 export function TwoFactorSetup({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<'enable' | 'verify'>('enable');
@@ -17,24 +16,12 @@ export function TwoFactorSetup({ onClose }: { onClose: () => void }) {
 
   const handleEnable = async () => {
     try {
-      const res = await fetch(`${API_URL}/auth/2fa/enable`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setQrCode(data.qrCode);
-        setSecret(data.secret);
-        setStep('verify');
-        setError('');
-      } else {
-        setError('Failed to enable 2FA');
-      }
-    } catch (err) {
+      const data = await apiClient.post<{ qrCode: string; secret: string }>('/auth/2fa/enable', {});
+      setQrCode(data.qrCode);
+      setSecret(data.secret);
+      setStep('verify');
+      setError('');
+    } catch {
       setError('Failed to enable 2FA');
     }
   };
@@ -42,23 +29,11 @@ export function TwoFactorSetup({ onClose }: { onClose: () => void }) {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/auth/2fa/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ token })
-      });
-
-      if (res.ok) {
-        setSuccess(true);
-        setTimeout(() => onClose(), 2000);
-      } else {
-        setError('Invalid token. Please try again.');
-      }
-    } catch (err) {
-      setError('Verification failed');
+      await apiClient.post('/auth/2fa/verify', { token });
+      setSuccess(true);
+      setTimeout(() => onClose(), 2000);
+    } catch {
+      setError('Invalid token. Please try again.');
     }
   };
 

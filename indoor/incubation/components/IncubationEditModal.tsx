@@ -44,8 +44,7 @@ export function IncubationEditModal({ record, onClose, onSuccess }: IncubationEd
   });
 
   const getOperatorDisplayName = (op: any) => {
-    const full = `${op.first_name || ''} ${op.last_name || ''}`.trim();
-    return full || op.short_name;
+    return op.short_name;
   };
 
   useEffect(() => {

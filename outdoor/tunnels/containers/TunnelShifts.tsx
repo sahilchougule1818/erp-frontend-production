@@ -49,39 +49,27 @@ export function TunnelShifts() {
     {
       key: 'to_location',
       label: 'To',
-      render: (val: string | null, row: any) => (
-        <span className="flex items-center gap-1">
-          <span>{val ?? '—'}</span>
-          {row.is_overcrowded && (
-            <span className="px-1.5 py-0.5 rounded text-base font-semibold bg-orange-100 text-orange-700 border border-orange-200"
-                  title="Tunnel is currently over capacity">
-              Over Capacity
-            </span>
-          )}
-        </span>
-      ),
+      render: (val: string | null) => val ?? '—',
     },
     {
       key: 'plants_at_entry',
       label: 'Plants',
-      render: (val: number) => <span>{Number(val || 0).toLocaleString()}</span>,
+      render: (val: number) => Number(val || 0).toLocaleString(),
     },
     {
       key: 'mortality_count',
       label: 'Mortality',
-      render: (val: number) => (
-        <span className={Number(val) > 0 ? 'font-semibold text-red-600' : 'text-slate-400'}>
-          {Number(val ?? 0).toLocaleString()}
-        </span>
-      ),
+      render: (val: number) => {
+        const n = Number(val ?? 0);
+        return n > 0
+          ? <span className="text-red-600 font-semibold">{n.toLocaleString()}</span>
+          : <span>{n.toLocaleString()}</span>;
+      },
     },
     {
       key: 'sold_count',
       label: 'Sold',
-      render: (val: number) =>
-        Number(val) > 0
-          ? <span className="font-semibold text-rose-600">{Number(val).toLocaleString()}</span>
-          : <span className="text-slate-400">—</span>,
+      render: (val: number) => Number(val ?? 0).toLocaleString(),
     },
   ];
 

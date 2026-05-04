@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../../../shared/ui/button';
 import { UserPlus, Trash2, Edit2, Plus } from 'lucide-react';
 import { ModalLayout } from '../../../shared/components/ModalLayout';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../../shared/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/ui/tabs';
-import { Badge } from '../../../shared/ui/badge';
-
 import { useOperatorMaster } from '../hooks/useOperatorMaster';
 import { OperatorForm } from '../forms/OperatorForm';
 import { DataTable } from '../../../shared/components/DataTable';
+import { useLabContext } from '../../contexts/LabContext';
 
 export function OperatorMaster() {
+  const { selectedLab } = useLabContext();
   const {
     operators,
     activityLogs,
@@ -18,7 +18,8 @@ export function OperatorMaster() {
     updateOperator,
     deleteOperator,
     operatorPagination,
-    activityLogsPagination
+    activityLogsPagination,
+    setCurrentLabFilter
   } = useOperatorMaster();
 
   const [modals, setModals] = useState({
@@ -27,6 +28,11 @@ export function OperatorMaster() {
   });
   const [selectedOperator, setSelectedOperator] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  // Update lab filter when global lab changes
+  useEffect(() => {
+    setCurrentLabFilter(selectedLab || undefined);
+  }, [selectedLab, setCurrentLabFilter]);
 
   const toggleModal = (type: keyof typeof modals, open?: boolean) => {
     setModals(prev => ({ ...prev, [type]: open ?? !prev[type] }));
@@ -80,30 +86,10 @@ export function OperatorMaster() {
             title=""
             records={operators}
             columns={[
-              {
-                key: 'id',
-                label: 'ID',
-                render: (val) => <span className="text-base text-slate-500 font-mono">{val}</span>
-              },
-              {
-                key: 'short_name',
-                label: 'Short Name',
-                render: (val) => <span className="text-base">{val}</span>
-              },
-              {
-                key: 'full_name',
-                label: 'Full Name',
-                render: (_: any, op: any) => <span className="text-base">{op.first_name} {op.last_name}</span>
-              },
-              {
-                key: 'is_active',
-                label: 'Status',
-                render: (val) => (
-                  <span className={val ? "text-emerald-700 text-base" : "text-slate-500 text-base"}>
-                    {val ? 'Active' : 'Inactive'}
-                  </span>
-                )
-              }
+              { key: 'id', label: 'ID' },
+              { key: 'short_name', label: 'Short Name' },
+              { key: 'full_name', label: 'Full Name', render: (_: any, op: any) => [op.first_name, op.middle_name, op.last_name].filter(Boolean).join(' ') },
+              { key: 'is_active', label: 'State', render: (val: boolean) => val ? 'Active' : 'Inactive' }
             ]}
             onEdit={handleEdit}
             onDelete={(op: any) => { setDeleteId(op.id); toggleModal('delete', true); }}
@@ -123,47 +109,15 @@ export function OperatorMaster() {
             title=""
             records={activityLogs}
             columns={[
-              { 
-                key: 'activity_date', 
-                label: 'Date', 
-                render: (val) => <span className="text-base">{new Date(val).toLocaleDateString()}</span>
-              },
-              { 
-                key: 'category', 
-                label: 'Category',
-                render: (val) => (
-                  <Badge variant="outline" className={`px-2 py-0.5 text-sm uppercase tracking-wider ${
-                    val === 'Production' 
-                      ? "bg-purple-50 text-purple-700 border-purple-100" 
-                      : val === 'Cleaning'
-                        ? "bg-green-50 text-green-700 border-green-100"
-                        : "bg-blue-50 text-blue-700 border-blue-100"
-                  }`}>
-                    {val}
-                  </Badge>
-                )
-              },
+              { key: 'activity_date', label: 'Date', render: (val: string) => new Date(val).toLocaleDateString() },
+              { key: 'category', label: 'Category' },
               { key: 'reference_code', label: 'Reference' },
-              { 
-                key: 'phase', 
-                label: 'Activity/Phase',
-                render: (val) => <span className="text-base">{val}</span>
-              },
-              { 
-                key: 'stage', 
-                label: 'Stage',
-                render: (val) => <span className="text-base">{val || '-'}</span>
-              },
-              { 
-                key: 'operator', 
-                label: 'Worker',
-                render: (val, log) => <span className="text-base">{log.full_name}</span>
-              },
-              { 
-                key: 'notes', 
-                label: 'Notes',
-                render: (val) => <span className="text-base text-slate-500 line-clamp-1 max-w-[150px] italic">{val || '-'}</span>
-              }
+              { key: 'phase', label: 'Activity/Phase' },
+              { key: 'stage', label: 'Stage', render: (val: string) => val || '-' },
+              { key: 'lab_number', label: 'Lab', render: (val: number) => val ? `Lab ${val}` : '-' },
+              { key: 'operator_id', label: 'Operator ID' },
+              { key: 'short_name', label: 'Operator Short Name' },
+              { key: 'notes', label: 'Notes', render: (val: string) => val || '-' }
             ]}
             filterConfig={{
               filter1Key: 'category',

@@ -11,15 +11,11 @@ export const useMediaCodes = () => {
 
   const loadMediaCodes = async () => {
     try {
-      const res = await (indoorApi.mediaPreparation.getAll() as any);
-      const uniqueCodes: any[] = Array.from(new Set((res || []).map((m: any) => m.media_code).filter(Boolean)));
-      const options = uniqueCodes.map((code: any) => ({
-        value: code,
-        label: code
-      }));
-      setMediaCodes(options);
-    } catch (error) {
-      console.error('Error loading media codes:', error);
+      const res = await indoorApi.autoclave.getAll();
+      const rows: any[] = (res as any)?.data || (Array.isArray(res) ? res : []);
+      const unique = Array.from(new Set(rows.map((m: any) => m.media_code).filter(Boolean)));
+      setMediaCodes(unique.map(code => ({ value: code, label: code })));
+    } catch {
       setMediaCodes([]);
     } finally {
       setLoading(false);

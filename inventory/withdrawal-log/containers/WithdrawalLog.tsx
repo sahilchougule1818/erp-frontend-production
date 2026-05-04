@@ -7,13 +7,14 @@ import { inventoryApi } from '../../services/inventoryApi';
 import { format } from 'date-fns';
 
 type Transaction = {
-  transaction_id: string;
+  purchase_id: string;
   item_id: number;
   item_name: string;
   unit: string;
   type: 'purchase' | 'withdrawal' | 'usage';
   quantity: number;
-  date: string;
+  purchase_date?: string;
+  usage_date?: string;
   current_stock: number;
   notes?: string;
 };
@@ -53,7 +54,7 @@ export function WithdrawalLog() {
 
   const columns = [
     {
-      key: 'date',
+      key: 'usage_date',
       label: 'Date',
       render: (val: string) => format(new Date(val), 'dd MMM yyyy')
     },

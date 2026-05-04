@@ -21,7 +21,7 @@ export const customersApi = {
 export const bankAccountsApi = {
   getAll: (params?: { all?: boolean }) => apiClient.get<BankAccount[]>('/sales/bank-accounts', { params }),
   getById: (id: number) => apiClient.get<BankAccount>(`/sales/bank-accounts/${id}`),
-  create: (data: Omit<BankAccount, 'id' | 'created_at' | 'updated_at' | 'current_balance' | 'total_credits' | 'total_debits'>) =>
+  create: (data: Omit<BankAccount, 'id' | 'created_at' | 'current_balance' | 'total_credits' | 'total_debits'>) =>
     apiClient.post<BankAccount>('/sales/bank-accounts', data),
   update: (id: number, data: Partial<BankAccount>) => apiClient.put<BankAccount>(`/sales/bank-accounts/${id}`, data),
   delete: (id: number) => apiClient.delete(`/sales/bank-accounts/${id}`),
@@ -51,10 +51,10 @@ export const customerBookingsApi = {
       }
     };
   },
-  getById: (bookingId: string) => {
+  getById: (orderId: string) => {
     // Try instant-sales first, fallback to pre-bookings
-    return apiClient.get<Booking>(`/sales/instant-sales/${bookingId}`)
-      .catch(() => apiClient.get<Booking>(`/sales/pre-bookings/${bookingId}`));
+    return apiClient.get<Booking>(`/sales/instant-sales/${orderId}`)
+      .catch(() => apiClient.get<Booking>(`/sales/pre-bookings/${orderId}`));
   },
   create: (data: any) => {
     const isInstantSell = Boolean(data.is_instant_sell);
@@ -62,32 +62,34 @@ export const customerBookingsApi = {
       ? apiClient.post<Booking>('/sales/instant-sales', data)
       : apiClient.post<Booking>('/sales/pre-bookings', data);
   },
-  update: (bookingId: string, data: any) => 
-    apiClient.put<Booking>(`/sales/pre-bookings/${bookingId}`, data),
-  updateStatus: (bookingId: string, data: { delivery_status?: string }) =>
-    apiClient.put<Booking>(`/sales/pre-bookings/${bookingId}/status`, data),
-  cancel: (bookingId: string, data: { cancellation_reason?: string }, isInstantSale: boolean) => {
+  update: (orderId: string, data: any) => 
+    apiClient.put<Booking>(`/sales/pre-bookings/${orderId}`, data),
+  updateInstantSale: (orderId: string, data: any) =>
+    apiClient.put<Booking>(`/sales/instant-sales/${orderId}`, data),
+  updateStatus: (orderId: string, data: { delivery_status?: string }) =>
+    apiClient.put<Booking>(`/sales/pre-bookings/${orderId}/status`, data),
+  cancel: (orderId: string, data: { cancellation_reason?: string }, isInstantSale: boolean) => {
     return isInstantSale
-      ? apiClient.put<Booking>(`/sales/instant-sales/${bookingId}/cancel`, data)
-      : apiClient.put<Booking>(`/sales/pre-bookings/${bookingId}/cancel`, data);
+      ? apiClient.post<Booking>(`/sales/instant-sales/${orderId}/cancel`, data)
+      : apiClient.put<Booking>(`/sales/pre-bookings/${orderId}/cancel`, data);
   },
-  delete: (bookingId: string, isInstantSale: boolean) => {
+  delete: (orderId: string, isInstantSale: boolean) => {
     return isInstantSale
-      ? apiClient.delete(`/sales/instant-sales/${bookingId}`)
-      : apiClient.delete(`/sales/pre-bookings/${bookingId}`);
+      ? apiClient.delete(`/sales/instant-sales/${orderId}`)
+      : apiClient.delete(`/sales/pre-bookings/${orderId}`);
   },
 };
 
 // Payments — scoped per booking, identified by transaction_number
 export const bookingPaymentsApi = {
-  getByBooking: (bookingId: string) => {
-    // Try instant-sales first, fallback to pre-bookings
-    return apiClient.get<BookingPayment[]>(`/sales/instant-sales/${bookingId}/payments`)
-      .catch(() => apiClient.get<BookingPayment[]>(`/sales/pre-bookings/${bookingId}/payments`));
+  getByBooking: (orderId: string) => {
+    return apiClient.get<BookingPayment[]>(`/sales/customer-payments/order/${orderId}`);
   },
-  create: (data: { booking_id: string; amount: number; payment_type?: string; payment_method: string; bank_account_id?: number | null; payment_reference?: string; notes?: string; payment_date?: string }) =>
+  create: (data: { order_id: string; amount: number; payment_type?: string; payment_method: string; bank_account_id?: number | null; payment_reference?: string; notes?: string; payment_date?: string }) =>
     apiClient.post<BookingPayment>('/sales/customer-payments', data),
-  delete: (transactionNumber: string) => apiClient.delete(`/sales/customer-payments/${transactionNumber}`),
+  delete: (transactionNumber: string) => apiClient.delete(`/sales/customer-payments/${transactionNumber}`, {
+    data: { deleted_by: 'system', reason: 'Payment undone' }
+  }),
 };
 
 export const inventoryPurchasesApi = {
@@ -106,10 +108,8 @@ export const inventoryPaymentsApi = {
 };
 
 export const stockApi = {
-  getIndoorStock: () => apiClient.get<any[]>('/sales/stock/indoor'),
-  getOutdoorStock: () => apiClient.get<any[]>('/sales/stock/outdoor'),
-  getAvailableIndoorStock: () => apiClient.get<any[]>('/sales/stock/indoor'),
-  getAvailableOutdoorStock: () => apiClient.get<any[]>('/sales/stock/outdoor'),
+  getIndoorStock: (params?: { phase?: string }) => apiClient.get<any[]>('/sales/dashboard/indoor-stock', { params }),
+  getOutdoorStock: () => apiClient.get<any[]>('/sales/dashboard/outdoor-stock'),
 };
 
 export const ledgerApi = {
@@ -137,8 +137,40 @@ export const refundDisbursementsApi = {
 
 export const dashboardApi = {
   getStats: () => apiClient.get<DashboardStats>('/sales/dashboard/stats'),
+  getPreBookingStats: () => apiClient.get<{ pending_deliveries: number; outstanding_amount: number }>('/sales/dashboard/prebooking-stats'),
+  getInstantSaleStats: () => apiClient.get<{ total_sales: number; outstanding_amount: number }>('/sales/dashboard/instantsale-stats'),
 };
 
 export const notificationsApi = {
   getUpcomingDeliveries: () => apiClient.get<UpcomingDelivery[]>('/sales/notifications/upcoming-deliveries'),
+};
+
+export const salesApi = {
+  dashboard: dashboardApi,
+};
+
+export const billingApi = {
+  downloadBill: async (orderId: string) => {
+    try {
+      const blob = await apiClient.get(`/sales/billing/orders/${orderId}/bill`, {
+        responseType: 'blob'
+      }) as unknown as Blob;
+      
+      if (!(blob instanceof Blob)) {
+        throw new Error('Invalid response format');
+      }
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Invoice-${orderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error: any) {
+      console.error('Download bill error:', error);
+      throw new Error(error?.message || 'Failed to download invoice');
+    }
+  },
 };

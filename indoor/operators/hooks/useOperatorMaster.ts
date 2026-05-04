@@ -14,6 +14,7 @@ export const useOperatorMaster = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activityLogsPage, setActivityLogsPage] = useState(1);
+  const [currentLabFilter, setCurrentLabFilter] = useState<number | undefined>(undefined);
   const [operatorPagination, setOperatorPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -79,12 +80,17 @@ export const useOperatorMaster = () => {
     }
   }, []);
 
-  const loadActivityLogs = useCallback(async (params: { operatorId?: number, referenceCode?: string, category?: string, page?: number } = {}) => {
+  const loadActivityLogs = useCallback(async (params: { operatorId?: number, referenceCode?: string, category?: string, page?: number, lab_number?: number } = {}) => {
     setLoading(true);
     try {
-      const data = await apiClient.get('/indoor/operator-log/activity-logs', { 
-        params: { ...params, page: params.page || activityLogsPage, limit: 10 } 
-      });
+      const requestParams = { 
+        ...params, 
+        page: params.page || activityLogsPage, 
+        limit: 10,
+        lab_number: params.lab_number !== undefined ? params.lab_number : currentLabFilter
+      };
+      
+      const data = await apiClient.get('/indoor/operator-log/activity-logs', { params: requestParams });
       const logs = (data as any)?.data || (Array.isArray(data) ? data : []);
       setActivityLogs(logs);
       const pagination = (data as any)?.pagination;
@@ -101,7 +107,7 @@ export const useOperatorMaster = () => {
     } finally {
       setLoading(false);
     }
-  }, [activityLogsPage]);
+  }, [activityLogsPage, currentLabFilter]);
 
   const handleBatchChange = (value: string) => {
     setSelectedBatch(value);
@@ -144,11 +150,17 @@ export const useOperatorMaster = () => {
 
   useEffect(() => {
     fetchOperators(currentPage);
+  }, [currentPage, fetchOperators]);
+
+  useEffect(() => {
     loadBatches();
     loadMediaBatchList();
     loadCleaningTaskList();
-    loadActivityLogs({ page: activityLogsPage }); 
-  }, [currentPage, activityLogsPage, fetchOperators, loadBatches, loadMediaBatchList, loadCleaningTaskList, loadActivityLogs]);
+  }, [loadBatches, loadMediaBatchList, loadCleaningTaskList]);
+
+  useEffect(() => {
+    loadActivityLogs({ page: activityLogsPage });
+  }, [activityLogsPage, currentLabFilter]);
 
   return {
     operators,
@@ -172,6 +184,7 @@ export const useOperatorMaster = () => {
     handleMediaBatchChange,
     handleCleaningTaskChange,
     loadActivityLogs,
+    setCurrentLabFilter,
     createOperator,
     updateOperator,
     deleteOperator,

@@ -10,7 +10,7 @@ import { useWorkerMaster } from '../hooks/useWorkerMaster';
 import { WorkerForm } from '../forms/WorkerForm';
 import { DataTable } from '../../../shared/components/DataTable';
 import { useNotify } from '../../../shared/hooks/useNotify';
-import { Tunnels } from '../../tunnels/containers/Tunnels';
+import { Units } from '../../units/containers/Units';
 
 export function OutdoorWorkerMaster() {
   const {
@@ -36,7 +36,7 @@ export function OutdoorWorkerMaster() {
   const columns = [
     { key: 'id', label: 'ID', render: (val: number) => <span className="text-base text-slate-500 font-mono">{val}</span> },
     { key: 'short_name', label: 'Short Name', render: (val: string) => <span className="font-bold text-base">{val}</span> },
-    { key: 'full_name', label: 'Full Name', render: (_: any, record: any) => <span className="text-base">{`${record.first_name} ${record.last_name}`}</span> },
+    { key: 'full_name', label: 'Full Name', render: (_: any, record: any) => <span className="text-base">{[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(' ')}</span> },
     { key: 'is_active', label: 'Status', render: (val: boolean) => (
       <Badge className={val ? 'bg-green-100 text-green-700 text-base' : 'bg-gray-100 text-gray-700 text-base'}>
         {val ? 'Active' : 'Inactive'}
@@ -68,7 +68,8 @@ export function OutdoorWorkerMaster() {
     }},
     { key: 'phase', label: 'Phase', render: (val: string) => <span className="capitalize text-base">{val?.replace(/_/g, ' ')}</span> },
     { key: 'tunnel', label: 'Tunnel', render: (val: string) => <span className="text-base">{val || '-'}</span> },
-    { key: 'worker_name', label: 'Worker', render: (_: any, record: any) => <span className="text-base">{record.worker_name || record.worker_shortname}</span> },
+    { key: 'worker_id', label: 'Worker ID', render: (val: number) => <span className="text-base">{val}</span> },
+    { key: 'worker_shortname', label: 'Worker Short Name', render: (val: string) => <span className="text-base">{val}</span> },
     { key: 'date', label: 'Date', render: (val: string) => <span className="text-base">{val ? new Date(val).toLocaleDateString() : ''}</span> }
   ];
 
@@ -117,7 +118,8 @@ export function OutdoorWorkerMaster() {
         <TabsList className="w-full max-w-md">
           <TabsTrigger value="operators">Worker Master</TabsTrigger>
           <TabsTrigger value="operator-log">Worker Log Register</TabsTrigger>
-          <TabsTrigger value="tunnel-master">Tunnel Master</TabsTrigger>
+          <TabsTrigger value="tunnel-master">PH Tunnels</TabsTrigger>
+          <TabsTrigger value="units-master">SH Units</TabsTrigger>
         </TabsList>
 
         <TabsContent value="operators">
@@ -153,7 +155,7 @@ export function OutdoorWorkerMaster() {
                     <SelectItem value="all">All Workers</SelectItem>
                     {workers.map((op: any) => (
                       <SelectItem key={op.id} value={op.id.toString()}>
-                        {op.first_name} {op.last_name} ({op.short_name})
+                      {[op.first_name, op.middle_name, op.last_name].filter(Boolean).join(' ')} ({op.short_name})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -164,7 +166,11 @@ export function OutdoorWorkerMaster() {
         </TabsContent>
 
         <TabsContent value="tunnel-master">
-          <Tunnels />
+          <Units type="ph" />
+        </TabsContent>
+
+        <TabsContent value="units-master">
+          <Units type="sh" />
         </TabsContent>
       </Tabs>
 

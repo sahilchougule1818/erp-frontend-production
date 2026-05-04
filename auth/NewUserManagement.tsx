@@ -11,16 +11,19 @@ import { Badge } from '../shared/ui/badge';
 import { UserPlus, Trash2, AlertCircle, Mail, Shield, Settings } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useNotify } from '../shared/hooks/useNotify';
-import { fetchWithCsrf, fetchCsrfToken } from '../shared/helpers/csrf';
+import { fetchCsrfToken } from '../shared/helpers/csrf';
+import apiClient from '../shared/services/apiClient';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 interface Manager {
   user_id: number;
+  username: string;
   email: string;
   first_name: string;
   last_name: string;
   role_name: string;
+  lab_number: number | null;
   is_active: boolean;
   created_at: string;
 }
@@ -39,7 +42,10 @@ export function UserManagement() {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
+  const [labNumber, setLabNumber] = useState('');
+  const [labs, setLabs] = useState<{ lab_number: number; lab_name: string }[]>([]);
   const [emailOTP, setEmailOTP] = useState('');
   const [showEmailOTP, setShowEmailOTP] = useState(false);
   
@@ -63,22 +69,21 @@ export function UserManagement() {
       fetchCsrfToken();
       fetchManagers();
       fetchMasterEmail();
+      fetchLabs();
     }
   }, [hasRole]);
 
+  const fetchLabs = async () => {
+    try {
+      const data = await apiClient.get<{ lab_number: number; lab_name: string; is_active: boolean }[]>('/indoor/labs');
+      setLabs(data.filter(l => l.is_active));
+    } catch {}
+  };
+
   const fetchManagers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/auth/managers`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setManagers(data);
-      }
+      const data = await apiClient.get<Manager[]>('/auth/managers');
+      setManagers(data);
     } catch (error) {
       console.error('Error fetching managers:', error);
     }
@@ -86,20 +91,8 @@ export function UserManagement() {
 
   const fetchMasterEmail = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/auth/master-email`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentMasterEmail(data.masterEmail);
-      } else {
-        console.error('Failed to fetch master email:', response.status);
-      }
+      const data = await apiClient.get<{ masterEmail: string }>('/auth/master-email');
+      setCurrentMasterEmail(data.masterEmail);
     } catch (error) {
       console.error('Error fetching master email:', error);
     }
@@ -110,7 +103,9 @@ export function UserManagement() {
     setPassword('');
     setFirstName('');
     setLastName('');
+    setUsername('');
     setRole('');
+    setLabNumber('');
     setEmailOTP('');
     setShowEmailOTP(false);
     setError('');
@@ -131,11 +126,36 @@ export function UserManagement() {
     setMasterEmailError('');
   };
 
+  const validatePassword = (pwd: string): string | null => {
+    if (pwd.length < 8) return 'Password must be at least 8 characters long';
+    if (pwd.length > 128) return 'Password must not exceed 128 characters';
+    if (!/[A-Z]/.test(pwd)) return 'Password must contain at least one uppercase letter';
+    if (!/[a-z]/.test(pwd)) return 'Password must contain at least one lowercase letter';
+    if (!/[0-9]/.test(pwd)) return 'Password must contain at least one number';
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd)) return 'Password must contain at least one special character';
+    return null;
+  };
+
   const handleSendEmailOTP = async () => {
     setError('');
+
+    const pwdError = validatePassword(password);
+    if (pwdError) {
+      setError(pwdError);
+      return;
+    }
+
     setLoading(true);
     
     try {
+      // Check username availability first
+      const checkRes = await apiClient.post<{ available: boolean }>('/auth/check-username', { username });
+      if (!checkRes.available) {
+        setError('Username already taken');
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch(`${API_URL}/auth/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,13 +166,11 @@ export function UserManagement() {
       
       if (response.ok) {
         setShowEmailOTP(true);
-        if (data.otp) {
-        }
       } else {
         setError(data.message || 'Failed to send verification OTP');
       }
-    } catch (error) {
-      setError('Failed to send verification OTP');
+    } catch (error: any) {
+      setError(error.message || 'Failed to send verification OTP');
     } finally {
       setLoading(false);
     }
@@ -162,37 +180,14 @@ export function UserManagement() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/auth/create-manager`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          firstName,
-          lastName,
-          role,
-          emailOTP
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        resetCreateForm();
-        setShowCreateModal(false);
-        fetchManagers();
-        notify.success('Manager account created successfully!');
-      } else {
-        setError(data.message || 'Failed to create manager');
-      }
-    } catch (error) {
-      setError('Failed to create manager');
+      await apiClient.post('/auth/create-manager', { email, password, firstName, lastName, username, role, labNumber: labNumber ? parseInt(labNumber) : undefined, emailOTP });
+      resetCreateForm();
+      setShowCreateModal(false);
+      fetchManagers();
+      notify.success('Manager account created successfully!');
+    } catch (error: any) {
+      setError(error.message || 'Failed to create manager');
     } finally {
       setLoading(false);
     }
@@ -201,28 +196,11 @@ export function UserManagement() {
   const handleSendDeleteOTP = async () => {
     setError('');
     setLoading(true);
-    
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/auth/send-manager-delete-otp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setShowMasterOTP(true);
-        if (data.otp) {
-        }
-      } else {
-        setError(data.message || 'Failed to send master OTP');
-      }
-    } catch (error) {
-      setError('Failed to send master OTP');
+      await apiClient.post('/auth/send-manager-delete-otp', {});
+      setShowMasterOTP(true);
+    } catch (error: any) {
+      setError(error.message || 'Failed to send master OTP');
     } finally {
       setLoading(false);
     }
@@ -231,33 +209,14 @@ export function UserManagement() {
   const handleDeleteManager = async () => {
     setError('');
     setLoading(true);
-    
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/auth/delete-manager`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          userId: selectedManager?.user_id,
-          masterOTP
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        resetDeleteForm();
-        setShowDeleteDialog(false);
-        fetchManagers();
-        notify.success('Manager account deleted successfully!');
-      } else {
-        setError(data.message || 'Failed to delete manager');
-      }
-    } catch (error) {
-      setError('Failed to delete manager');
+      await apiClient.delete('/auth/delete-manager', { data: { userId: selectedManager?.user_id, masterOTP } });
+      resetDeleteForm();
+      setShowDeleteDialog(false);
+      fetchManagers();
+      notify.success('Manager account deleted successfully!');
+    } catch (error: any) {
+      setError(error.message || 'Failed to delete manager');
     } finally {
       setLoading(false);
     }
@@ -266,31 +225,10 @@ export function UserManagement() {
   const handleSendMasterEmailOTPs = async () => {
     setMasterEmailError('');
     setLoading(true);
-    
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetchWithCsrf(`${API_URL}/auth/send-master-email-change-otps`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ newEmail: newMasterEmail })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setShowMasterEmailOTPs(true);
-        if (data.oldOTP && data.newOTP) {
-          console.log('Old OTP:', data.oldOTP, 'New OTP:', data.newOTP);
-        }
-      } else {
-        console.error('Failed to send OTPs:', data);
-        setMasterEmailError(data.message || data.error || 'Failed to send OTPs');
-      }
+      await apiClient.post('/auth/send-master-email-change-otps', { newEmail: newMasterEmail });
+      setShowMasterEmailOTPs(true);
     } catch (error: any) {
-      console.error('Error sending OTPs:', error);
       setMasterEmailError(error.message || 'Failed to send OTPs');
     } finally {
       setLoading(false);
@@ -301,34 +239,14 @@ export function UserManagement() {
     e.preventDefault();
     setMasterEmailError('');
     setLoading(true);
-    
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetchWithCsrf(`${API_URL}/auth/update-master-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          newEmail: newMasterEmail,
-          oldOTP: oldEmailOTP,
-          newOTP: newEmailOTP
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        resetMasterEmailForm();
-        setShowMasterEmailDialog(false);
-        fetchMasterEmail();
-        notify.success('Master email updated successfully!');
-      } else {
-        setMasterEmailError(data.message || 'Failed to update master email');
-      }
-    } catch (error) {
-      setMasterEmailError('Failed to update master email');
+      await apiClient.post('/auth/update-master-email', { newEmail: newMasterEmail, oldOTP: oldEmailOTP, newOTP: newEmailOTP });
+      resetMasterEmailForm();
+      setShowMasterEmailDialog(false);
+      fetchMasterEmail();
+      notify.success('Master email updated successfully!');
+    } catch (error: any) {
+      setMasterEmailError(error.message || 'Failed to update master email');
     } finally {
       setLoading(false);
     }
@@ -374,8 +292,10 @@ export function UserManagement() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Username</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Lab</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -387,11 +307,15 @@ export function UserManagement() {
                   <TableCell className="font-medium">
                     {manager.first_name} {manager.last_name}
                   </TableCell>
+                  <TableCell className="font-mono text-sm">{manager.username}</TableCell>
                   <TableCell>{manager.email}</TableCell>
                   <TableCell>
                     <Badge className={getRoleBadgeColor(manager.role_name)}>
                       {manager.role_name}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {manager.lab_number ? `Lab ${manager.lab_number}` : '—'}
                   </TableCell>
                   <TableCell>
                     <Badge className={manager.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
@@ -418,7 +342,7 @@ export function UserManagement() {
               ))}
               {managers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                     No managers found
                   </TableCell>
                 </TableRow>
@@ -491,6 +415,17 @@ export function UserManagement() {
             </div>
             
             <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Choose a username"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -514,7 +449,7 @@ export function UserManagement() {
             
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select value={role} onValueChange={setRole} required>
+              <Select value={role} onValueChange={(v) => { setRole(v); setLabNumber(''); }} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
@@ -525,12 +460,30 @@ export function UserManagement() {
                 </SelectContent>
               </Select>
             </div>
+
+            {role === 'IndoorManager' && (
+              <div className="space-y-2">
+                <Label htmlFor="labNumber">Assigned Lab *</Label>
+                <Select value={labNumber} onValueChange={setLabNumber} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select lab" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {labs.map(lab => (
+                      <SelectItem key={lab.lab_number} value={lab.lab_number.toString()}>
+                        Lab {lab.lab_number} — {lab.lab_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             
             {!showEmailOTP ? (
               <Button 
                 type="button"
                 onClick={handleSendEmailOTP}
-                disabled={loading || !email || !password || !firstName || !lastName || !role}
+                disabled={loading || !username || !email || !password || !firstName || !lastName || !role || (role === 'IndoorManager' && !labNumber)}
                 className="w-full"
               >
                 <Mail className="w-4 h-4 mr-2" />

@@ -13,25 +13,31 @@ const UNITS = [
 
 const COLORS_HEX = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
+type ViewMode = 'primary' | 'secondary' | 'holding';
+
 export const OutdoorDashboard = memo(() => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<any>(null);
   const [occupancy, setOccupancy] = useState<any[]>([]);
+  const [shOccupancy, setSHOccupancy] = useState<any[]>([]);
   const [holdingBatches, setHoldingBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTunnel, setExpandedTunnel] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('primary');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [statsData, occupancyData, holdingData] = await Promise.all([
+        const [statsData, occupancyData, shOccupancyData, holdingData] = await Promise.all([
           outdoorApi.dashboard.getDashboardStats(),
           outdoorApi.dashboard.getTunnelOccupancy(),
+          outdoorApi.dashboard.getSHOccupancy(),
           outdoorApi.dashboard.getHoldingArea()
         ]);
         setStats(statsData);
         setOccupancy(occupancyData);
+        setSHOccupancy(shOccupancyData);
         setHoldingBatches(holdingData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -43,13 +49,15 @@ export const OutdoorDashboard = memo(() => {
   }, []);
 
   const getTunnelData = useCallback((tunnelName: string) => {
-    return occupancy.find(o => o.tunnel === tunnelName);
-  }, [occupancy]);
+    return viewMode === 'secondary' 
+      ? shOccupancy.find(o => o.name === tunnelName)
+      : occupancy.find(o => o.name === tunnelName);
+  }, [occupancy, shOccupancy, viewMode]);
 
   const renderOccupancyBar = (tunnelName: string) => {
     const data = getTunnelData(tunnelName);
     const batches = data?.batches || [];
-    const totalPlants = batches.reduce((sum: number, b: any) => sum + (b.plants || 0), 0);
+    const totalPlants = batches.reduce((sum: number, b: any) => sum + (b.available_plants || 0), 0);
     const capacity = data?.capacity || 0;
     const isOverCapacity = capacity > 0 && totalPlants > capacity;
     const isExpanded = expandedTunnel === tunnelName;
@@ -91,13 +99,13 @@ export const OutdoorDashboard = memo(() => {
               {batches.length > 0 ? (
                 batches.map((batch: any, idx: number) => {
                   const base = capacity > 0 ? capacity : totalPlants;
-                  const pct = base > 0 ? Math.min((batch.plants / base) * 100, 100) : 0;
+                  const pct = base > 0 ? Math.min((batch.available_plants / base) * 100, 100) : 0;
                   const color = COLORS_HEX[idx % COLORS_HEX.length];
                   return (
                     <div
                       key={idx}
                       style={{ width: `${pct}%`, height: '100%', backgroundColor: color, transition: 'width 0.3s ease' }}
-                      title={`${batch.batch_code}: ${batch.plants} plants`}
+                      title={`${batch.batch_code}: ${batch.available_plants} plants`}
                     />
                   );
                 })
@@ -148,11 +156,11 @@ export const OutdoorDashboard = memo(() => {
                     </div>
                     <div style={{ textAlign: 'right', fontSize: '0.8rem' }}>
                       <div style={{ fontWeight: 'bold', color: '#0f172a' }}>
-                        {batch.plants}
+                        {batch.available_plants}
                       </div>
-                      {batch.mortality > 0 && (
+                      {batch.total_mortality > 0 && (
                         <div style={{ color: '#ef4444', fontWeight: '600', fontSize: '0.7rem' }}>
-                          ⚠ {batch.mortality}
+                          ⚠ {batch.total_mortality}
                         </div>
                       )}
                     </div>
@@ -186,9 +194,9 @@ export const OutdoorDashboard = memo(() => {
       <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #fed7aa', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '16px', borderBottom: '1px solid #ffedd5', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ width: '6px', height: '20px', backgroundColor: '#ea580c', borderRadius: '4px' }} />
-          <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 'bold' }}>Holding Area</h3>
+          <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 'bold' }}>Holding Area Stock</h3>
         </div>
-        <div style={{ padding: '16px', overflowY: 'auto', maxHeight: '280px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ padding: '16px', overflowY: 'auto', maxHeight: '600px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
           {holdingBatches.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px dashed #e2e8f0' }}>
               <Warehouse style={{ width: '32px', height: '32px', margin: '0 auto 8px', opacity: 0.5 }} />
@@ -208,7 +216,7 @@ export const OutdoorDashboard = memo(() => {
                       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{batch.plant_name}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#ea580c' }}>{batch.plants}</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#ea580c' }}>{batch.available_plants}</div>
                       <div style={{ fontSize: '10px', color: '#fb923c', fontWeight: 'bold', textTransform: 'uppercase' }}>Plants</div>
                     </div>
                   </div>
@@ -220,6 +228,18 @@ export const OutdoorDashboard = memo(() => {
       </div>
     );
   };
+
+  const renderSHUnitCard = (unit: any) => (
+    <div key={unit.name} style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #bfdbfe', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '16px', borderBottom: '1px solid #dbeafe', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ width: '6px', height: '20px', backgroundColor: '#3b82f6', borderRadius: '4px' }} />
+        <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 'bold' }}>{unit.name}</h3>
+      </div>
+      <div style={{ padding: '16px' }}>
+        {renderOccupancyBar(unit.name)}
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ padding: '24px', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -272,11 +292,85 @@ export const OutdoorDashboard = memo(() => {
         </div>
       )}
 
-      {/* Grid Schematic Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '32px', marginBottom: '40px' }}>
-        {UNITS.map((unit) => renderUnitCard(unit))}
-        {renderHoldingArea()}
+      {/* Toggle Buttons */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '24px' }}>
+        <button
+          onClick={() => setViewMode('primary')}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: viewMode === 'primary' ? '2px solid #10b981' : '1px solid #e2e8f0',
+            backgroundColor: viewMode === 'primary' ? '#d1fae5' : 'white',
+            color: viewMode === 'primary' ? '#065f46' : '#64748b',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <Leaf style={{ width: '18px', height: '18px' }} />
+          Primary Hardening
+        </button>
+        <button
+          onClick={() => setViewMode('secondary')}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: viewMode === 'secondary' ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+            backgroundColor: viewMode === 'secondary' ? '#dbeafe' : 'white',
+            color: viewMode === 'secondary' ? '#1e40af' : '#64748b',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <TreePine style={{ width: '18px', height: '18px' }} />
+          Secondary Hardening
+        </button>
+        <button
+          onClick={() => setViewMode('holding')}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: viewMode === 'holding' ? '2px solid #f59e0b' : '1px solid #e2e8f0',
+            backgroundColor: viewMode === 'holding' ? '#fef3c7' : 'white',
+            color: viewMode === 'holding' ? '#92400e' : '#64748b',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <Warehouse style={{ width: '18px', height: '18px' }} />
+          Holding Area
+        </button>
       </div>
+
+      {/* Grid Schematic Layout */}
+      {viewMode === 'primary' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '32px', marginBottom: '40px' }}>
+          {UNITS.map((unit) => renderUnitCard(unit))}
+        </div>
+      )}
+
+      {viewMode === 'secondary' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '32px', marginBottom: '40px' }}>
+          {shOccupancy.map((unit) => renderSHUnitCard(unit))}
+        </div>
+      )}
+
+      {viewMode === 'holding' && (
+        <div style={{ marginBottom: '40px' }}>
+          {renderHoldingArea()}
+        </div>
+      )}
     </div>
   );
 });

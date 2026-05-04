@@ -53,8 +53,7 @@ export const MakeAvailableConfirm: React.FC<MakeAvailableConfirmProps> = ({
         <Button 
           onClick={handleConfirm} 
           disabled={loading}
-          style={{ backgroundColor: '#ea580c', color: 'white' }}
-          className="hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-orange-600 hover:bg-orange-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Processing...' : 'Confirm'}
         </Button>

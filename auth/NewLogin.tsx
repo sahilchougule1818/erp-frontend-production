@@ -12,6 +12,7 @@ type Step = 'LOGIN' | 'ADMIN_REGISTER' | 'MASTER_OTP' | 'EMAIL_OTP' | 'FORGOT_PA
 
 export function Login() {
   const [step, setStep] = useState<Step>('LOGIN');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -27,6 +28,7 @@ export function Login() {
   const { login } = useAuth();
 
   const resetForm = () => {
+    setUsername('');
     setEmail('');
     setPassword('');
     setFirstName('');
@@ -49,8 +51,9 @@ export function Login() {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
-          email,
+          username,
           password,
           twoFactorToken: step === 'TWO_FACTOR' ? twoFactorToken : undefined,
           ipAddress: '0.0.0.0',
@@ -63,13 +66,12 @@ export function Login() {
       if (response.ok) {
         if (data.requires2FA) {
           setStep('TWO_FACTOR');
-        } else if (data.token && data.user) {
+        } else if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
-          localStorage.setItem('token', data.token);
           window.location.reload();
         }
       } else {
-        setError(data.message || 'Invalid email or password');
+        setError(data.message || 'Invalid username or password');
       }
     } catch (err: any) {
       setError(err.message || 'Login failed. Please try again.');
@@ -144,6 +146,7 @@ export function Login() {
         body: JSON.stringify({
           email,
           password,
+          username,
           firstName,
           lastName,
           masterOTP,
@@ -240,13 +243,13 @@ export function Login() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-base font-medium">Email</Label>
+              <Label htmlFor="username" className="text-base font-medium">Username</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@seemabiotech.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 className="h-11 text-base"
               />
@@ -325,6 +328,18 @@ export function Login() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="reg-username" className="text-base font-medium">Username</Label>
+              <Input
+                id="reg-username"
+                placeholder="Choose a username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="h-10 text-base"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="email" className="text-base font-medium">Email</Label>
               <Input
                 id="email"
@@ -352,7 +367,7 @@ export function Login() {
 
             <Button
               onClick={handleSendMasterOTP}
-              disabled={loading || !email || !password || !firstName || !lastName}
+              disabled={loading || !username || !email || !password || !firstName || !lastName}
               className="w-full bg-green-600 hover:bg-green-700 h-10 text-base font-medium mt-4"
             >
               <Shield className="w-4 h-4 mr-2" />

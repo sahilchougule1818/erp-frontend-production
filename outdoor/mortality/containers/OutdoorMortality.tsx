@@ -24,14 +24,13 @@ export function OutdoorMortality() {
     },
     { key: 'batch_code',  label: 'Batch Code' },
     { key: 'phase_name',  label: 'Phase' },
-    { key: 'tunnel',      label: 'Tunnel',
+    { key: 'to_location',      label: 'Tunnel',
       render: (val: string | null) => val ?? '—' },
     {
       key: 'mortality_count',
       label: 'Mortality Count',
-      render: (val: number) => <span className="font-semibold text-red-600">{val ?? 0}</span>,
     },
-    { key: 'reason',      label: 'Reason',
+    { key: 'mortality_reason',      label: 'Reason',
       render: (val: string | null) => val ?? '—' },
   ];
 
@@ -61,7 +60,7 @@ export function OutdoorMortality() {
             records={log}
             filterConfig={{
               filter1Key: 'batch_code', filter1Label: 'Batch Code',
-              filter2Key: 'tunnel', filter2Label: 'Tunnel',
+              filter2Key: 'to_location', filter2Label: 'Tunnel',
             }}
             exportFileName="mortality-records"
             readOnly

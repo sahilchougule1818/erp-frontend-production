@@ -41,7 +41,7 @@ const emptyForm = {
   notes: ''
 };
 
-const stageOptions = Array.from({ length: 8 }, (_, i) => ({ 
+const stageOptions = Array.from({ length: 9 }, (_, i) => ({ 
   value: `Stage-${i + 1}`, 
   label: `Stage-${i + 1}` 
 }));
@@ -66,7 +66,7 @@ export function SubcultureForm({ initialData, selectedBatch, operators, records,
       ...emptyForm,
       batchCode: selectedBatch?.batch_code || '',
       plantName: selectedBatch?.plant_name || '',
-      currentQuantity: selectedBatch?.available_bottles ?? selectedBatch?.current_bottles_count ?? '',
+      currentQuantity: selectedBatch?.qty_available ?? selectedBatch?.current_qty_in ?? '',
       ...initialData
     });
     if (initialData?.id) fetchOperatorIds(initialData.id);
@@ -114,7 +114,7 @@ const fetchOperatorIds = async (recordId: number) => {
       batchName: selectedBatch?.batch_code,
       mediaCode: form.mediaCode,
       plantName: selectedBatch?.plant_name,
-      currentBottles: selectedBatch?.available_bottles ?? selectedBatch?.current_bottles_count,
+      currentBottles: selectedBatch?.qty_available ?? selectedBatch?.current_qty_in,
       noOfBottles: form.noOfBottles,
       contaminationCount: form.contamination,
       operatorIds: form.operatorIds,
@@ -164,7 +164,7 @@ const fetchOperatorIds = async (recordId: number) => {
             {selectedBatch?.stage !== 'Stage-0' && (
               <div className="space-y-2">
                 <Label>Current Quantity (Available)</Label>
-                <Input type="number" value={selectedBatch?.available_bottles ?? selectedBatch?.current_bottles_count ?? ''} readOnly className="bg-gray-100" />
+                <Input type="number" value={selectedBatch?.qty_available ?? selectedBatch?.current_qty_in ?? ''} readOnly className="bg-gray-100" />
               </div>
             )}
             <div className="space-y-2">

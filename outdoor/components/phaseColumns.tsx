@@ -1,10 +1,9 @@
-import React from 'react';
-
 // ─── Column config interface ──────────────────────────────────────────────────
 
 interface PhaseColumnConfig {
   includeSourcePhase?:   boolean;   // holding_area: show which phase it came from
   includeStockColumns?:  boolean;   // primary/secondary: show sold, available, total_mortality
+  tunnelLabel?:          string;    // override column header (e.g. 'SH Unit' for secondary hardening)
 }
 
 // ─── Shared column factory ────────────────────────────────────────────────────
@@ -13,6 +12,7 @@ export const createPhaseColumns = (config: PhaseColumnConfig = {}) => {
   const {
     includeSourcePhase   = false,
     includeStockColumns  = false,
+    tunnelLabel          = 'Tunnel',
   } = config;
 
   const columns: any[] = [
@@ -35,7 +35,7 @@ export const createPhaseColumns = (config: PhaseColumnConfig = {}) => {
 
   columns.push({
     key: 'current_tunnel',
-    label: 'Tunnel',
+    label: tunnelLabel,
   });
 
   columns.push(
@@ -67,28 +67,14 @@ export const createPhaseColumns = (config: PhaseColumnConfig = {}) => {
 
   if (includeStockColumns) {
     columns.push(
-      { key: 'sold_count',       label: 'Sold', render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-rose-600' : 'text-slate-400'}>{Number(v ?? 0).toLocaleString()}</span> },
-      { key: 'available_plants', label: 'Available',  render: (v: number) => <span className="text-green-700">{Number(v ?? 0).toLocaleString()}</span> },
+      { key: 'sold_count',       label: 'Sold',      render: (v: number) => Number(v ?? 0).toLocaleString() },
+      { key: 'available_plants', label: 'Available' },
     );
   }
 
   columns.push({
     key: 'state',
-    label: 'Status',
-    render: (val: string) => {
-      const stateColors: Record<string, string> = {
-        'ACTIVE':     'bg-green-100 text-green-700',
-        'COMPLETED':  'bg-slate-100 text-slate-500',
-        'SOLD_OUT':   'bg-rose-100 text-rose-700',
-        'HOLDING':    'bg-blue-100 text-blue-700',
-      };
-      const colorClass = stateColors[val] ?? 'bg-slate-100 text-slate-500';
-      return (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-base font-medium ${colorClass}`}>
-          {val}
-        </span>
-      );
-    },
+    label: 'State',
   });
 
   return columns;
@@ -98,7 +84,7 @@ export const createPhaseColumns = (config: PhaseColumnConfig = {}) => {
 
 export const phaseColumnConfigs = {
   primaryHardening:   { includeStockColumns: true },
-  secondaryHardening: { includeStockColumns: true },
+  secondaryHardening: { includeStockColumns: true, tunnelLabel: 'SH Unit' },
   holdingArea:        { includeSourcePhase: true, includeStockColumns: true },
 } satisfies Record<string, PhaseColumnConfig>;
 

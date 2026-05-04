@@ -13,6 +13,7 @@ interface Batch {
   available_plants: number;
   total_plants: number;
   current_tunnel?: string;
+  current_phase?: string;
 }
 
 interface Tunnel {
@@ -24,22 +25,30 @@ interface Tunnel {
 interface ShiftFormProps {
   batch: Batch;
   tunnels: Tunnel[];
+  shUnits: any[];
   workers: any[];
   onSubmit: (data: any) => void;
   onClose: () => void;
 }
 
-export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftFormProps) {
+export function ShiftForm({ batch, tunnels, shUnits, workers, onSubmit, onClose }: ShiftFormProps) {
   const notify = useNotify();
   const [newTunnel, setNewTunnel] = useState('');
+  const [newUnit, setNewUnit] = useState('');
   const [plants, setPlants] = useState(batch.available_plants ?? batch.total_plants);
   const [mortalityCount, setMortalityCount] = useState(0);
   const [reason, setReason] = useState('');
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
   const [trays, setTrays] = useState<{ cavityCount: number; count: number }[]>([]);
 
+  const isSecondaryHardening = batch.current_phase === 'secondary_hardening';
+
   const handleSubmit = () => {
-    if (!newTunnel) {
+    if (isSecondaryHardening && !newUnit) {
+      notify.error('Please select a unit');
+      return;
+    }
+    if (!isSecondaryHardening && !newTunnel) {
       notify.error('Please select a tunnel');
       return;
     }
@@ -47,18 +56,18 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
       notify.error('Please select at least one worker');
       return;
     }
-    onSubmit({ newTunnel, plants, mortalityCount, reason, selectedWorkers, trays });
+    onSubmit({ newTunnel, newUnit, plants, mortalityCount, reason, selectedWorkers, trays });
   };
 
   return (
-    <ModalLayout title="Make Shift (Tunnel Move)">
+    <ModalLayout title={isSecondaryHardening ? "Make Shift (Unit Move)" : "Make Shift (Tunnel Move)"}>
       <div className="px-6 py-4 space-y-4" style={{ flex: 1, overflowY: 'auto' }}>
         <div className="bg-gray-50 p-4 rounded-lg space-y-2">
           <p className="text-base text-gray-600">
             Batch Code: <span className="font-semibold text-gray-900">{batch.batch_code}</span>
           </p>
           <p className="text-base text-gray-600">
-            Current Tunnel: <span className="font-semibold text-gray-900">{batch.current_tunnel || '—'}</span>
+            Current {isSecondaryHardening ? 'Unit' : 'Tunnel'}: <span className="font-semibold text-gray-900">{batch.current_tunnel || '—'}</span>
           </p>
         </div>
 
@@ -66,20 +75,31 @@ export function ShiftForm({ batch, tunnels, workers, onSubmit, onClose }: ShiftF
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 mt-5">Shift Details</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>New Tunnel *</Label>
-              <Select value={newTunnel} onValueChange={setNewTunnel}>
-                <SelectTrigger><SelectValue placeholder="Select tunnel" /></SelectTrigger>
-                <SelectContent>
-                  {tunnels.map(t => {
-                    const safeName = t.name || t.tunnel || t.tunnel_name;
-                    const displayName = (t as any).display_name || safeName;
-                    return (
-                    <SelectItem key={safeName} value={safeName as string}>
-                      {displayName}
-                    </SelectItem>
-                  )})}
-                </SelectContent>
-              </Select>
+              <Label>{isSecondaryHardening ? 'New Unit *' : 'New Tunnel *'}</Label>
+              {isSecondaryHardening ? (
+                <Select value={newUnit} onValueChange={setNewUnit}>
+                  <SelectTrigger><SelectValue placeholder="Select unit" /></SelectTrigger>
+                  <SelectContent>
+                    {shUnits.map(u => (
+                      <SelectItem key={u.id} value={u.name}>{u.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Select value={newTunnel} onValueChange={setNewTunnel}>
+                  <SelectTrigger><SelectValue placeholder="Select tunnel" /></SelectTrigger>
+                  <SelectContent>
+                    {tunnels.map(t => {
+                      const safeName = t.name || t.tunnel || t.tunnel_name;
+                      const displayName = (t as any).display_name || safeName;
+                      return (
+                      <SelectItem key={safeName} value={safeName as string}>
+                        {displayName}
+                      </SelectItem>
+                    )})}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Plants *</Label>

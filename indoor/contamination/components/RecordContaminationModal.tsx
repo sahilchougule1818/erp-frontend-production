@@ -10,13 +10,16 @@ import { Batch } from '../types';
 import { ModalLayout } from '../../../shared/components/ModalLayout';
 
 interface PreloadedRecord {
-  incubation_record_id: number;
+  id?: number;
+  incubation_record_id?: number;
+  rooted_batch_id?: number;
   batch_code: string;
   plant_name: string;
   stage: string;
-  contamination_count: number;
+  qty_contaminated: number;
   notes: string | null;
-  current_bottles_count: number;
+  qty_in: number;
+  source_table?: string;
 }
 
 interface RecordContaminationModalProps {
@@ -28,7 +31,7 @@ interface RecordContaminationModalProps {
 
 export function RecordContaminationModal({ batch, preloaded, onClose, onSuccess }: RecordContaminationModalProps) {
   const [record, setRecord] = useState<PreloadedRecord | null>(preloaded ?? null);
-  const [contaminationCount, setContaminationCount] = useState(preloaded?.contamination_count ?? 0);
+  const [contaminationCount, setContaminationCount] = useState(preloaded?.qty_contaminated ?? 0);
   const [notes, setNotes] = useState(preloaded?.notes ?? '');
   const [loading, setLoading] = useState(!preloaded);
   const [saving, setSaving] = useState(false);
@@ -44,7 +47,7 @@ export function RecordContaminationModal({ batch, preloaded, onClose, onSuccess 
         const data = await (indoorApi.contamination.getActiveRecord(batch!.batch_code) as any);
         if (!active) return;
         setRecord(data);
-        setContaminationCount(data.contamination_count ?? 0);
+        setContaminationCount(data.qty_contaminated ?? 0);
         setNotes(data.notes ?? '');
       } catch {
         if (!active) return;
@@ -64,16 +67,25 @@ export function RecordContaminationModal({ batch, preloaded, onClose, onSuccess 
       notify.error('Contamination cannot be negative');
       return;
     }
-    if (contaminationCount > record.current_bottles_count) {
-      notify.error(`Contamination (${contaminationCount}) cannot exceed bottles entered (${record.current_bottles_count})`);
+    if (contaminationCount > record.qty_in) {
+      notify.error(`Contamination (${contaminationCount}) cannot exceed bottles entered (${record.qty_in})`);
       return;
     }
+    
+    const recordId = record.id || record.incubation_record_id || record.rooted_batch_id;
+    if (!recordId) {
+      notify.error('Invalid record ID');
+      return;
+    }
+    
     setSaving(true);
     try {
-      await indoorApi.contamination.update(record.incubation_record_id, {
+      await indoorApi.contamination.update(recordId, {
+        qty_contaminated: contaminationCount,
         contamination_count: contaminationCount,
         notes: notes || null,
-        expected_contamination: record.contamination_count
+        expected_contamination: record.qty_contaminated,
+        source_table: record.source_table
       });
       notify.success('Contamination updated successfully');
       onSuccess();
@@ -116,28 +128,28 @@ export function RecordContaminationModal({ batch, preloaded, onClose, onSuccess 
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Bottles Entered</span>
-                <span className="font-semibold">{record.current_bottles_count}</span>
+                <span className="font-semibold">{record.qty_in}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <Label>
                 Contamination Count
-                <span className="text-gray-400 font-normal ml-1">(max {record.current_bottles_count})</span>
+                <span className="text-gray-400 font-normal ml-1">(max {record.qty_in})</span>
               </Label>
               <Input
                 type="number"
                 min={0}
-                max={record.current_bottles_count}
+                max={record.qty_in}
                 value={contaminationCount}
-                onChange={(e) => setContaminationCount(Number(e.target.value))}
+                onChange={(e) => setContaminationCount(parseInt(e.target.value) || 0)}
                 className="text-red-800 font-bold border-red-200 focus:border-red-400"
                 disabled={saving}
               />
               <div className="flex justify-between text-base px-1">
                 <span className="text-gray-500">Remaining after contamination</span>
                 <span className="font-bold text-green-700">
-                  {Math.max(0, record.current_bottles_count - contaminationCount)}
+                  {Math.max(0, record.qty_in - contaminationCount)}
                 </span>
               </div>
             </div>

@@ -73,6 +73,7 @@ export const useFertilizationData = () => {
     loading, 
     saveRecord, 
     deleteRecord, 
+    loadData: fetchData,
     refetch: fetchData,
     pagination: {
       currentPage,

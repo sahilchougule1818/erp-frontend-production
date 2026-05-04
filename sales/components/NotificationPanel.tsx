@@ -24,13 +24,13 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
     }
   };
 
-  const handleDismiss = (bookingId: string) => {
+  const handleDismiss = (orderId: string) => {
     const newDismissed = new Set(dismissedIds);
-    newDismissed.add(bookingId);
+    newDismissed.add(orderId);
     setDismissedIds(newDismissed);
   };
 
-  const visibleDeliveries = deliveries.filter(d => !dismissedIds.has(d.booking_id));
+  const visibleDeliveries = deliveries.filter(d => !dismissedIds.has(d.order_id));
 
   return (
     <div className="absolute top-12 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden z-50" style={{ right: '1rem', maxHeight: '500px' }}>
@@ -54,7 +54,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
               
               return (
                 <div
-                  key={delivery.booking_id}
+                  key={delivery.order_id}
                   className={`relative rounded-lg border-2 p-4 transition-all hover:shadow-md ${
                     isUrgent 
                       ? 'bg-red-50 border-red-300 hover:border-red-400' 
@@ -62,7 +62,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
                   }`}
                 >
                   <button
-                    onClick={() => handleDismiss(delivery.booking_id)}
+                    onClick={() => handleDismiss(delivery.order_id)}
                     className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 transition-colors"
                   >
                     <X className="h-4 w-4" />
@@ -89,7 +89,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
                       <div className="flex items-center gap-2">
                         <Package className="h-4 w-4 text-gray-500 flex-shrink-0" />
                         <span className="text-gray-700">
-                          <span className="font-semibold">{delivery.quantity}</span> {delivery.fulfillment_type === 'STOCK_FROM_INDOOR' ? 'bottles' : 'plants'} - {delivery.plant_name}
+                          <span className="font-semibold">{delivery.quantity}</span> units - {delivery.plant_name}
                         </span>
                       </div>
 
@@ -101,7 +101,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
                       </div>
 
                       <div className="text-base text-gray-600 mt-2 pt-2 border-t border-gray-300 font-mono">
-                        {delivery.booking_id}
+                        {delivery.order_id}
                       </div>
                     </div>
                   </div>

@@ -98,7 +98,7 @@ const RefundDisbursementSection: React.FC = () => {
 
   const columns = [
     { key: 'refund_id', label: 'Refund ID' },
-    { key: 'booking_id', label: 'Booking ID' },
+    { key: 'order_id', label: 'Booking ID' },
     { key: 'customer_name', label: 'Customer' },
     {
       key: 'phone_number',
@@ -106,29 +106,19 @@ const RefundDisbursementSection: React.FC = () => {
       render: (val: string) => val || '—'
     },
     {
-      key: 'plant_name',
-      label: 'Product',
-      render: (val: string) => val || '—'
-    },
-    {
-      key: 'quantity',
-      label: 'Qty',
-      render: (val: number) => val || '—'
-    },
-    {
       key: 'refund_amount',
       label: 'Refund Amount',
       render: (val: number) => `₹${Number(val).toLocaleString()}`
     },
     {
-      key: 'paid_amount',
+      key: 'amount_paid',
       label: 'Disbursed',
       render: (val: number) => `₹${Number(val).toLocaleString()}`
     },
     {
-      key: 'remaining_amount',
+      key: 'amount_remaining',
       label: 'Remaining',
-      render: (val: number) => `₹${Number(val).toLocaleString()}`
+      render: (val: number) => `₹${Number(val || 0).toLocaleString()}`
     },
     {
       key: 'status',
@@ -200,8 +190,8 @@ const RefundDisbursementSection: React.FC = () => {
               {refund && (
                 <div className="text-right">
                   <p className="text-base text-gray-500">Remaining</p>
-                  <p className={`text-xl font-bold ${Number(refund.remaining_amount) > 0 ? 'text-amber-600' : 'text-green-600'}`}>
-                    ₹{Number(refund.remaining_amount).toLocaleString()}
+                  <p className={`text-xl font-bold ${Number(refund.amount_remaining || 0) > 0 ? 'text-amber-600' : 'text-green-600'}`}>
+                    ₹{Number(refund.amount_remaining || 0).toLocaleString()}
                   </p>
                 </div>
               )}
@@ -212,7 +202,7 @@ const RefundDisbursementSection: React.FC = () => {
                   {refund.refund_id}
                 </span>
                 <span className="text-base bg-red-50 text-red-600 px-2 py-0.5 rounded font-medium">
-                  Booking {refund.booking_id}
+                  Booking {refund.order_id}
                 </span>
                 <span className="text-base text-gray-500">{refund.customer_name}</span>
               </div>
@@ -230,15 +220,15 @@ const RefundDisbursementSection: React.FC = () => {
               <div className="bg-red-50 border border-red-100 rounded-lg p-3 grid grid-cols-3 gap-3 text-center">
                 <div>
                   <p className="text-[10px] text-red-400 uppercase font-bold">Total Refund</p>
-                  <p className="text-base font-bold text-red-700">₹{Number(refund.refund_amount).toLocaleString()}</p>
+                  <p className="text-base font-bold text-red-700">₹{Number(refund.refund_amount || 0).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-green-400 uppercase font-bold">Disbursed</p>
-                  <p className="text-base font-bold text-green-700">₹{Number(refund.paid_amount).toLocaleString()}</p>
+                  <p className="text-base font-bold text-green-700">₹{Number(refund.amount_paid || 0).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-amber-400 uppercase font-bold">Remaining</p>
-                  <p className="text-base font-bold text-amber-700">₹{Number(refund.remaining_amount).toLocaleString()}</p>
+                  <p className="text-base font-bold text-amber-700">₹{Number(refund.amount_remaining || 0).toLocaleString()}</p>
                 </div>
               </div>
 
@@ -256,7 +246,7 @@ const RefundDisbursementSection: React.FC = () => {
                   </h3>
                   {refund.payments.length > 0 && (
                     <span className="text-base text-gray-400">
-                      {refund.payments.length} term{refund.payments.length > 1 ? 's' : ''} · ₹{Number(refund.paid_amount).toLocaleString()} disbursed
+                      {refund.payments.length} term{refund.payments.length > 1 ? 's' : ''} · ₹{Number(refund.amount_paid || 0).toLocaleString()} disbursed
                     </span>
                   )}
                 </div>
@@ -271,18 +261,18 @@ const RefundDisbursementSection: React.FC = () => {
                       <div key={payment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
                         <div className="flex items-center gap-3">
                           <div className="h-8 w-8 flex items-center justify-center bg-white rounded-md border border-gray-200 text-gray-500 shrink-0 text-base font-bold">
-                            #{payment.term_number}
+                            #{payment.refund_term_no}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-base text-gray-800">₹{Number(payment.amount).toLocaleString()}</span>
+                              <span className="font-semibold text-base text-gray-800">₹{Number(payment.debit_amount).toLocaleString()}</span>
                               <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4 font-medium">{payment.payment_method}</Badge>
                               {idx === 0 && (
                                 <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">Latest</span>
                               )}
                             </div>
                             <p className="text-base text-gray-400 mt-0.5">
-                              {format(new Date(payment.payment_date), 'do MMM yyyy')}
+                              {format(new Date(payment.entry_date), 'do MMM yyyy')}
                               {payment.transaction_number && <span className="ml-2">TXN: {payment.transaction_number}</span>}
                             </p>
                           </div>
@@ -292,7 +282,7 @@ const RefundDisbursementSection: React.FC = () => {
                             variant="outline"
                             size="sm"
                             className="h-7 px-2.5 text-red-600 border-red-200 hover:bg-red-50 text-base font-medium"
-                            onClick={() => handleDeleteTerm(payment.term_number)}
+                            onClick={() => handleDeleteTerm(payment.refund_term_no)}
                           >
                             <Trash2 className="h-3 w-3 mr-1" /> Undo
                           </Button>
@@ -304,7 +294,7 @@ const RefundDisbursementSection: React.FC = () => {
               </div>
 
               {/* Record New Disbursement or Completed Banner */}
-              {Number(refund.remaining_amount) <= 0 ? (
+              {Number(refund.amount_remaining || 0) <= 0 ? (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-5 text-center space-y-2">
                   <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto" />
                   <p className="font-semibold text-base text-green-800">Refund Complete</p>

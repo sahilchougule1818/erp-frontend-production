@@ -52,22 +52,22 @@ export const useBookings = () => {
 
 export const useCustomerBookings = useBookings;
 
-export const useBookingPayments = (bookingId: string | null | undefined) => {
+export const useBookingPayments = (orderId: string | null | undefined) => {
   const [payments, setPayments] = useState<BookingPayment[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchPayments = useCallback(async () => {
-    if (!bookingId) { setPayments([]); return; }
+    if (!orderId) { setPayments([]); return; }
     try {
       setLoading(true);
-      const data = await bookingPaymentsApi.getByBooking(bookingId);
+      const data = await bookingPaymentsApi.getByBooking(orderId);
       setPayments(data);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [bookingId]);
+  }, [orderId]);
 
   useEffect(() => { fetchPayments(); }, [fetchPayments]);
 

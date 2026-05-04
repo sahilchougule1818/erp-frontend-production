@@ -25,16 +25,18 @@ interface Tunnel {
 interface TransitionFormProps {
   batch: Batch;
   tunnels: Tunnel[];
+  shUnits: any[];
   workers: any[];
   onSubmit: (data: any) => void;
   onClose: () => void;
 }
 
-export function TransitionForm({ batch, tunnels, workers, onSubmit, onClose }: TransitionFormProps) {
+export function TransitionForm({ batch, tunnels, shUnits, workers, onSubmit, onClose }: TransitionFormProps) {
   const [targetPhase, setTargetPhase] = useState(
-    batch.current_phase === 'primary_hardening' ? 'secondary_hardening' : 'holding_area'
+    batch.current_phase === 'primary_hardening' ? 'holding_area' : 'secondary_hardening'
   );
   const [newTunnel, setNewTunnel] = useState('');
+  const [unit, setUnit] = useState('');
   const [plants, setPlants] = useState(batch.available_plants ?? batch.total_plants);
   const [mortalityCount, setMortalityCount] = useState(0);
   const [reason, setReason] = useState('');
@@ -43,15 +45,19 @@ export function TransitionForm({ batch, tunnels, workers, onSubmit, onClose }: T
   const notify = useNotify();
 
   const handleSubmit = () => {
-    if (targetPhase !== 'holding_area' && (!newTunnel || !plants)) {
-      notify.error('Please select tunnel and enter plant count');
+    if (targetPhase === 'secondary_hardening' && !unit) {
+      notify.error('Please select a unit for secondary hardening');
+      return;
+    }
+    if (!plants) {
+      notify.error('Please enter plant count');
       return;
     }
     if (selectedWorkers.length === 0) {
       notify.error('Please select at least one worker');
       return;
     }
-    onSubmit({ targetPhase, newTunnel, plants, mortalityCount, reason, selectedWorkers, trays });
+    onSubmit({ targetPhase, newTunnel, unit, plants, mortalityCount, reason, selectedWorkers, trays });
   };
 
   return (
@@ -82,31 +88,26 @@ export function TransitionForm({ batch, tunnels, workers, onSubmit, onClose }: T
                 <SelectContent>
                   {batch.current_phase === 'primary_hardening' && (
                     <>
-                      <SelectItem value="secondary_hardening">Secondary Hardening</SelectItem>
                       <SelectItem value="holding_area">Holding Area</SelectItem>
+                      <SelectItem value="secondary_hardening">Secondary Hardening</SelectItem>
                     </>
                   )}
-                  {batch.current_phase === 'secondary_hardening' && (
-                    <SelectItem value="holding_area">Holding Area</SelectItem>
+                  {batch.current_phase === 'holding_area' && (
+                    <SelectItem value="secondary_hardening">Secondary Hardening</SelectItem>
                   )}
                 </SelectContent>
               </Select>
             </div>
             
-            {targetPhase !== 'holding_area' && (
+            {targetPhase === 'secondary_hardening' && (
               <div className="space-y-2">
-                <Label>New Tunnel *</Label>
-                <Select value={newTunnel} onValueChange={setNewTunnel}>
-                  <SelectTrigger><SelectValue placeholder="Select tunnel" /></SelectTrigger>
+                <Label>Unit *</Label>
+                <Select value={unit} onValueChange={setUnit}>
+                  <SelectTrigger><SelectValue placeholder="Select unit" /></SelectTrigger>
                   <SelectContent>
-                    {tunnels.map(t => {
-                      const safeName = t.name || t.tunnel || t.tunnel_name;
-                      const displayName = (t as any).display_name || safeName;
-                      return (
-                      <SelectItem key={safeName} value={safeName as string}>
-                        {displayName}
-                      </SelectItem>
-                    )})}
+                    {shUnits.map(u => (
+                      <SelectItem key={u.id} value={u.name}>{u.name}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

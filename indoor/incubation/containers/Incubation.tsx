@@ -13,40 +13,18 @@ export function Incubation() {
     { key: 'incubation_date', label: 'Incubation Date', render: (val: string) => val?.split('T')[0] },
     { key: 'stage', label: 'Stage' },
     { key: 'batch_code', label: 'Batch Code' },
-    { key: 'media_code', label: 'Media Code', render: (val: string) => <span className="text-base">{val || '-'}</span> },
+    { key: 'lab_number', label: 'Lab', render: (v: number) => v ? `Lab ${v}` : '-' },
+    { key: 'media_code', label: 'Media Code' },
     { key: 'plant_name', label: 'Plant Name' },
-    { key: 'current_bottles_count', label: 'Bottles Entered' },
-    { 
-      key: 'contamination_count', 
-      label: 'Contamination', 
-      render: (val: number) => <span className="text-red-600 text-base">{val || 0}</span> 
-    },
-    {
-      key: 'current_sold',
-      label: 'Current Sold',
-      render: (val: number) => <span className="text-base">{val || 0}</span>
-    },
-    { key: 'available_bottles', label: 'Remaining', render: (val: number) => <span className="text-green-600 text-base">{val || 0}</span> },
+    { key: 'qty_in', label: 'Bottles Entered' },
+    { key: 'qty_contaminated', label: 'Contamination' },
+    { key: 'qty_sold', label: 'Sold' },
+    { key: 'qty_available', label: 'Available' },
     { key: 'incubation_period', label: 'Period (Days)' },
     { key: 'temperature', label: 'Temp' },
     { key: 'humidity', label: 'Humidity' },
     { key: 'light_intensity', label: 'Light Intensity' },
-    {
-      key: 'state',
-      label: 'Status',
-      render: (val: string) => (
-        <span className={`px-2 py-1 rounded border text-base ${
-          val === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-200' :
-          val === 'OUTDOOR_READY' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-          val === 'SOLD_OUT' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-          val === 'AT_OUTDOOR' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-          val === 'COMPLETED' ? 'bg-gray-50 text-gray-700 border-gray-200' :
-          'bg-gray-50 text-gray-700 border-gray-200'
-        }`}>
-          {val}
-        </span>
-      )
-    }
+    { key: 'state', label: 'State' }
   ];
 
   return (

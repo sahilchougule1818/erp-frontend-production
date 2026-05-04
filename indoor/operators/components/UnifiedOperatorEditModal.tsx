@@ -72,7 +72,7 @@ export function UnifiedOperatorEditModal({
             cleaning_type,
             activity_type: activityType 
           }),
-          indoorApi.operators.getAll({ page: 1, limit: 1000 })
+          indoorApi.operators.getAll({ page: 1, limit: 500 })
         ]);
         if (!active) return;
         

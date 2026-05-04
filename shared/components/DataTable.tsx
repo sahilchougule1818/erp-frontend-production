@@ -4,7 +4,43 @@ import { Button } from '../ui/button';
 import { PenSquare, Download, Users, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { TableFilter } from './TableFilter';
 import { EditSearchButton } from './EditSearchButton';
+import { LabSelector } from './LabSelector';
 import * as XLSX from 'xlsx';
+
+const STATUS_BADGE: Record<string, string> = {
+  // batch state — always uppercase from DB
+  ACTIVE:        'bg-green-50 text-green-700 border-green-200',
+  COMPLETED:     'bg-gray-50 text-gray-700 border-gray-200',
+  OUTDOOR_READY: 'bg-orange-50 text-orange-700 border-orange-200',
+  AT_OUTDOOR:    'bg-purple-50 text-purple-700 border-purple-200',
+  SOLD_OUT:      'bg-rose-50 text-rose-700 border-rose-200',
+  SOLD:          'bg-rose-50 text-rose-700 border-rose-200',
+  // sampling result
+  Yes:           'bg-green-50 text-green-700 border-green-200',
+  No:            'bg-red-50 text-red-700 border-red-200',
+  // media prep — lowercase from DB
+  pending:           'bg-yellow-50 text-yellow-700 border-yellow-200',
+  completed:         'bg-green-50 text-green-700 border-green-200',
+  stock_unavailable: 'bg-red-50 text-red-700 border-red-200',
+};
+
+const PHASE_BADGE: Record<string, string> = {
+  primary_hardening:   'bg-green-50 text-green-700 border-green-200',
+  secondary_hardening: 'bg-blue-50 text-blue-700 border-blue-200',
+  holding_area:        'bg-orange-50 text-orange-700 border-orange-200',
+};
+
+const PHASE_LABEL: Record<string, string> = {
+  primary_hardening:   'Primary Hardening',
+  secondary_hardening: 'Secondary Hardening',
+  holding_area:        'Holding Area',
+};
+
+function renderStatusBadge(value: any) {
+  const label = value ?? '-';
+  const cls = STATUS_BADGE[label] ?? 'bg-gray-50 text-gray-700 border-gray-200';
+  return <span className={`px-2 py-1 rounded border text-base ${cls}`}>{label}</span>;
+}
 
 interface Column {
   key: string;
@@ -36,6 +72,12 @@ interface DataTableProps {
     limit: number;
     onPageChange: (page: number) => void;
   };
+  labFilter?: {
+    enabled: boolean;
+    value: number;
+    onChange: (lab: number) => void;
+  };
+  hideBorder?: boolean;
 }
 
 export const DataTable = memo(function DataTable({
@@ -49,7 +91,9 @@ export const DataTable = memo(function DataTable({
   addButton,
   filterConfig,
   exportFileName = 'data',
-  pagination
+  pagination,
+  labFilter,
+  hideBorder = false
 }: DataTableProps) {
   const [selectedFilter1, setSelectedFilter1] = useState('');
   const [selectedFilter2, setSelectedFilter2] = useState('');
@@ -92,13 +136,16 @@ export const DataTable = memo(function DataTable({
   }, []);
 
   return (
-    <Card>
+    <Card className={hideBorder ? 'border-0 shadow-none' : ''}>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>{title}</CardTitle>
           {description && <p className="text-base text-gray-500 mt-1">{description}</p>}
         </div>
         <div className="flex gap-2">
+          {labFilter?.enabled && (
+            <LabSelector value={labFilter.value} onChange={labFilter.onChange} />
+          )}
           {addButton}
           <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />Export
@@ -134,15 +181,15 @@ export const DataTable = memo(function DataTable({
         )}
         <div className="border rounded-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
+            <thead className="bg-gray-100 border-b border-gray-200">
+              <tr className="divide-x divide-gray-100">
                 {columns.map(col => (
-                  <th key={col.key} className={`px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap ${col.key === '_actions' ? 'sticky right-0 bg-gray-50 z-10 w-24' : ''}`}>
+                  <th key={col.key} className={`px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap ${col.key === '_actions' ? 'sticky right-0 bg-green-50 z-10 w-24 [box-shadow:-1px_0_0_0_#e2e8f0]' : col.label?.startsWith('Total') ? 'bg-blue-100' : ''}`}>
                     {col.label}
                   </th>
                 ))}
                 {(onEdit || onEditWorkers || onDelete) && (
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap sticky right-0 bg-gray-50 z-10 w-24">
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap sticky right-0 bg-green-50 z-10 w-24 [box-shadow:-1px_0_0_0_#e2e8f0]">
                     Actions
                   </th>
                 )}
@@ -159,14 +206,24 @@ export const DataTable = memo(function DataTable({
                 displayRecords.map((record: any, index: number) => {
                   const isHistorical = record.is_active === false;
                   return (
-                    <tr key={record.id || record.booking_id || record.batch_id || record.batch_code || index} className="border-b hover:bg-gray-50">
+                    <tr key={record.id || record.order_id || record.batch_id || record.batch_code || index} className="border-b hover:bg-gray-50 divide-x divide-gray-100">
                       {columns.map(col => (
-                        <td key={col.key} className={`px-4 py-4 text-base font-normal whitespace-nowrap align-middle text-center ${col.key === '_actions' ? 'sticky right-0 bg-white z-10' : ''}`}>
-                          {col.render ? col.render(record[col.key], record) : record[col.key]}
+                        <td key={col.key} className={`px-4 py-4 text-base font-normal whitespace-nowrap align-middle text-center ${col.key === '_actions' ? 'sticky right-0 bg-green-50 z-10 [box-shadow:-1px_0_0_0_#e2e8f0]' : col.label?.startsWith('Total') ? 'bg-blue-50' : ''}`}>
+                          {col.render
+                            ? col.render(record[col.key], record)
+                            : (col.key === 'qty_available' || col.key === 'available_plants')
+                              ? <span className="text-green-600">{record[col.key] != null ? Number(record[col.key]).toLocaleString() : '—'}</span>
+                              : (col.key === 'mortality_count' || col.key === 'total_mortality' || col.key === 'qty_contaminated' || col.key === 'total_qty_contaminated')
+                              ? <span className={Number(record[col.key]) > 0 ? 'text-red-600' : ''}>{Number(record[col.key] ?? 0).toLocaleString()}</span>
+                              : (col.key === 'current_phase')
+                              ? (() => { const cls = PHASE_BADGE[record[col.key]] ?? 'bg-gray-50 text-gray-700 border-gray-200'; return <span className={`px-2 py-1 rounded border text-base ${cls}`}>{PHASE_LABEL[record[col.key]] ?? record[col.key]}</span>; })()
+                              : (col.key === 'state' || col.key === 'result' || col.key === 'status')
+                              ? renderStatusBadge(record[col.key])
+                              : record[col.key]}
                         </td>
                       ))}
                       {(onEdit || onEditWorkers || onDelete) && (
-                        <td className="px-4 py-3 text-base font-normal sticky right-0 bg-white z-10">
+                        <td className="px-4 py-3 text-base font-normal sticky right-0 bg-green-50 z-10 [box-shadow:-1px_0_0_0_#e2e8f0]">
                           <div className="flex gap-1">
                             {onEdit && (
                               <Button

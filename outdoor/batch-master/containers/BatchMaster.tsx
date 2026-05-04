@@ -47,30 +47,9 @@ const phaseLabel = (phase: string) => {
   return map[phase] ?? phase;
 };
 
-const phaseBadge = (batch: Batch) => {
-  const color = batch.is_in_holding_area
-    ? 'bg-orange-50 text-orange-700 border-orange-200'
-    : batch.current_phase === 'primary_hardening'
-    ? 'bg-green-50 text-green-700 border-green-200'
-    : 'bg-blue-50 text-blue-700 border-blue-200';
-  return (
-    <Badge className={cn(color, "border shadow-none text-base")}>
-      {phaseLabel(batch.current_phase)}
-    </Badge>
-  );
-};
-
-const sampledBadge = (val: string) => {
-  const cfg =
-    val === 'c' ? { label: 'Result Reported',  cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' } :
-    val === 's' ? { label: 'Sample Sent',  cls: 'bg-amber-50 text-amber-700 border-amber-200' } :
-                  { label: 'Not Sampled',    cls: 'bg-slate-50 text-slate-400 border-slate-200'   };
-  return <Badge className={cn(cfg.cls, "border shadow-none text-base")}>{cfg.label}</Badge>;
-};
-
 const BatchMaster: React.FC = () => {
   const {
-    batches, tunnels, workers, indoorBatches, loading,
+    batches, tunnels, shUnits, workers, indoorBatches, loading,
     loadData, loadIndoorBatches, makeShift, phaseTransition,
     undoLastAction, recordFertilization,
     submitSample, reportSampleResult, importFromIndoor,
@@ -86,6 +65,42 @@ const BatchMaster: React.FC = () => {
   const [timelineStats, setTimelineStats]             = useState<any>(null);
 
   const notify = useNotify();
+
+  // Helper to get lock reason for actions
+  const getActionLockReason = (action: string, batch: Batch): string | null => {
+    if (batch.state === 'SOLD') {
+      return 'Batch is completely sold out - no actions available';
+    }
+
+    switch (action) {
+      case 'SHIFT':
+        if (batch.state === 'HOLDING') {
+          return 'Cannot shift while batch is in holding state';
+        }
+        return null;
+      
+      case 'TRANSITION':
+        if (batch.current_phase === 'secondary_hardening') {
+          return 'Secondary hardening is the final phase - no further transitions allowed';
+        }
+        return null;
+      
+      case 'FERTILIZE':
+        return null; // Always allowed
+      
+      case 'MORTALITY':
+        return null; // Always allowed
+      
+      case 'SAMPLE':
+        return null; // Always allowed
+      
+      case 'REPORT':
+        return null; // Always allowed
+      
+      default:
+        return null;
+    }
+  };
 
   const openModal = (type: ModalType, batch: Batch) => { setSelected(batch); setModal(type); };
   const closeModal = () => { setModal(null); setSelected(null); setSelectedIndoorBatch(null); setUndoPreview(null); setTimelineData([]); setTimelineStats(null); };
@@ -147,27 +162,20 @@ const BatchMaster: React.FC = () => {
   };
 
   const columns = [
-    { key: 'batch_code',             label: 'Batch Code',    render: (v: string) => <span className="font-medium text-gray-900 text-base">{v}</span> },
-    { key: 'created_at',             label: 'Created Date',  render: (v: string) => <span className="text-base">{v ? new Date(v).toLocaleDateString() : '—'}</span> },
+    { key: 'batch_code',             label: 'Batch Code' },
+    { key: 'created_at',             label: 'Created Date',  render: (v: string) => v ? new Date(v).toLocaleDateString() : '—' },
     { key: 'plant_name',             label: 'Plant Name' },
-    { key: 'current_phase',          label: 'Current Phase', render: (_: any, r: Batch) => phaseBadge(r) },
-    { key: 'current_tunnel',            label: 'Tunnel',         render: (v: string) => <span className="text-slate-600 text-base">{v || '—'}</span> },
-    { key: 'initial_plants',            label: 'Initial Plants', render: (v: number) => <span className="text-slate-600 text-base">{Number(v || 0).toLocaleString()}</span> },
-    { key: 'total_mortality',           label: 'Mortality',      render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-red-600 text-base' : 'text-slate-400 text-base'}>{Number(v || 0).toLocaleString()}</span> },
-    { key: 'total_plants',              label: 'Alive Count',    render: (v: number) => <span className="text-slate-900 text-base">{Number(v || 0).toLocaleString()}</span> },
-    { key: 'sold_plants',               label: 'Total Sold',     render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-red-600 text-base' : 'text-slate-400 text-base'}>{Number(v || 0).toLocaleString()}</span> },
-    { key: 'available_plants',          label: 'Available',      render: (v: number) => <span className="text-green-700 text-base">{v != null ? Number(v).toLocaleString() : '—'}</span> },
-    { key: 'current_phase_sold',        label: 'Phase Sold',     render: (v: number) => <span className={Number(v) > 0 ? 'font-semibold text-rose-600 text-base' : 'text-slate-400 text-base'}>{Number(v || 0).toLocaleString()}</span> },
-    { key: 'current_age',            label: 'Age (Days)',     render: (v: number) => <Badge variant="outline" className="text-slate-600 text-base bg-slate-50 border-slate-200">{v ?? 0} days</Badge> },
-    { key: 'is_sampled',             label: 'Sampling',       render: (v: string) => sampledBadge(v) },
-    { key: 'state',                  label: 'State',         render: (v: string) => {
-      const config = {
-        'SOLD': { label: 'Sold Out', cls: 'bg-rose-50 text-rose-700 border-rose-200' },
-        'HOLDING': { label: 'Holding', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-        'ACTIVE': { label: 'Active', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-      }[v] || { label: v, cls: 'bg-slate-50 text-slate-600 border-slate-200' };
-      return <Badge className={cn(config.cls, "border shadow-none text-sm uppercase tracking-tighter")}>{config.label}</Badge>;
-    }},
+    { key: 'current_age',            label: 'Age (Days)',     render: (v: number) => `${v ?? 0} days` },
+    { key: 'current_phase', label: 'Current Phase' },
+    { key: 'current_tunnel',         label: 'Tunnel' },
+    { key: 'initial_plants',         label: 'Initial Plants', render: (v: number) => Number(v || 0).toLocaleString() },
+    { key: 'total_mortality',        label: 'Mortality' },
+    { key: 'total_plants',           label: 'Alive Count',    render: (v: number) => Number(v || 0).toLocaleString() },
+    { key: 'current_phase_sold',     label: 'Phase Sold',     render: (v: number) => Number(v || 0).toLocaleString() },
+    { key: 'available_plants',       label: 'Available' },
+    { key: 'is_sampled',             label: 'Sampling',       render: (v: string) => v === 'c' ? 'Result Reported' : v === 's' ? 'Sample Sent' : 'Not Sampled' },
+    { key: 'state',                  label: 'State' },
+    { key: 'sold_plants',            label: 'Total Sold',     render: (v: number) => Number(v || 0).toLocaleString() },
     {
       key: '_actions',
       label: 'Actions',
@@ -186,69 +194,120 @@ const BatchMaster: React.FC = () => {
 
             <DropdownMenuSeparator />
             
-            {batch.state === 'ACTIVE' ? (
-              <DropdownMenuItem onClick={() => openModal('SHIFT', batch)}>
-                <ArrowRightLeft className="h-4 w-4 mr-2" /> Shift Tunnel
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                <Lock className="h-4 w-4 mr-2" /> Shift Tunnel
-              </DropdownMenuItem>
-            )}
+            {(() => {
+              const lockReason = getActionLockReason('SHIFT', batch);
+              return lockReason ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="h-4 w-4 mr-2" /> {batch.current_phase === 'secondary_hardening' ? 'Shift Unit' : 'Shift Tunnel'}
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('SHIFT', batch)}>
+                  <ArrowRightLeft className="h-4 w-4 mr-2" /> {batch.current_phase === 'secondary_hardening' ? 'Shift Unit' : 'Shift Tunnel'}
+                </DropdownMenuItem>
+              );
+            })()}
             
-            {batch.state === 'ACTIVE' ? (
-              <DropdownMenuItem onClick={() => openModal('TRANSITION', batch)}>
-                <ArrowUpRight className="h-4 w-4 mr-2" /> Phase Transition
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                <Lock className="h-4 w-4 mr-2" /> Phase Transition
-              </DropdownMenuItem>
-            )}
+            {(() => {
+              const lockReason = getActionLockReason('TRANSITION', batch);
+              return lockReason ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="h-4 w-4 mr-2" /> Phase Transition
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('TRANSITION', batch)}>
+                  <ArrowUpRight className="h-4 w-4 mr-2" /> Phase Transition
+                </DropdownMenuItem>
+              );
+            })()}
             
-            {batch.state !== 'SOLD' ? (
-              <DropdownMenuItem onClick={() => openModal('FERTILIZE', batch)}>
-                <Droplet className="h-4 w-4 mr-2" /> Fertilize
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                <Lock className="h-4 w-4 mr-2" /> Fertilize
-              </DropdownMenuItem>
-            )}
+            {(() => {
+              const lockReason = getActionLockReason('FERTILIZE', batch);
+              return lockReason ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="h-4 w-4 mr-2" /> Fertilize
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('FERTILIZE', batch)}>
+                  <Droplet className="h-4 w-4 mr-2" /> Fertilize
+                </DropdownMenuItem>
+              );
+            })()}
             
-            {batch.state !== 'SOLD' ? (
-              <DropdownMenuItem onClick={() => openModal('MORTALITY', batch)} className="text-red-600">
-                <Skull className="h-4 w-4 mr-2" /> Record Mortality
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                <Lock className="h-4 w-4 mr-2" /> Record Mortality
-              </DropdownMenuItem>
-            )}
+            {(() => {
+              const lockReason = getActionLockReason('MORTALITY', batch);
+              return lockReason ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="h-4 w-4 mr-2" /> Record Mortality
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <DropdownMenuItem onClick={() => openModal('MORTALITY', batch)} className="text-red-600">
+                  <Skull className="h-4 w-4 mr-2" /> Record Mortality
+                </DropdownMenuItem>
+              );
+            })()}
             
-            {batch.is_sampled === 'n' && (
-              batch.state === 'ACTIVE' ? (
+            {/* Alternating actions - only show one at a time */}
+            {batch.is_sampled === 'n' && (() => {
+              const lockReason = getActionLockReason('SAMPLE', batch);
+              return lockReason ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="h-4 w-4 mr-2" /> Submit Sample
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
                 <DropdownMenuItem onClick={() => openModal('SAMPLE', batch)}>
                   <TestTube className="h-4 w-4 mr-2" /> Submit Sample
                 </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="h-4 w-4 mr-2" /> Submit Sample
-                </DropdownMenuItem>
-              )
-            )}
+              );
+            })()}
             
-            {batch.is_sampled === 's' && (
-              batch.state === 'ACTIVE' ? (
+            {batch.is_sampled === 's' && (() => {
+              const lockReason = getActionLockReason('REPORT', batch);
+              return lockReason ? (
+                <TooltipProvider>
+                  <Tooltip side="left" content={lockReason}>
+                    <span className="block w-full">
+                      <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
+                        <Lock className="h-4 w-4 mr-2" /> Report Result
+                      </DropdownMenuItem>
+                    </span>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
                 <DropdownMenuItem onClick={() => openModal('REPORT', batch)}>
                   <Download className="h-4 w-4 mr-2" /> Report Result
                 </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem disabled className="text-slate-400 cursor-not-allowed pointer-events-none">
-                  <Lock className="h-4 w-4 mr-2" /> Report Result
-                </DropdownMenuItem>
-              )
-            )}
+              );
+            })()}
             
             <DropdownMenuSeparator />
             
@@ -325,6 +384,7 @@ const BatchMaster: React.FC = () => {
         <ShiftForm
           batch={selectedBatch}
           tunnels={tunnels}
+          shUnits={shUnits}
           workers={workers}
           onSubmit={(data) => makeShift(selectedBatch.batch_code, data).then(ok => ok && closeModal())}
           onClose={closeModal}
@@ -335,6 +395,7 @@ const BatchMaster: React.FC = () => {
         <TransitionForm
           batch={selectedBatch}
           tunnels={tunnels}
+          shUnits={shUnits}
           workers={workers}
           onSubmit={(data) =>
             phaseTransition(selectedBatch.batch_code, selectedBatch.current_tunnel ?? '', data)
@@ -473,7 +534,7 @@ const BatchMaster: React.FC = () => {
             tunnels={tunnels}
             workers={workers}
             onSubmit={(data) =>
-              importFromIndoor(selectedIndoorBatch.id, data).then(ok => ok && closeModal())
+              importFromIndoor(selectedIndoorBatch.id, data, selectedIndoorBatch.source_type).then(ok => ok && closeModal())
             }
             onClose={closeModal}
           />

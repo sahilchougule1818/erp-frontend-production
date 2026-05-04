@@ -2,47 +2,31 @@ import { useState, useEffect } from 'react';
 import { Card } from '../../../shared/ui/card';
 import { Button } from '../../../shared/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../shared/ui/select';
-import { FileText, Download, TreePine, Sprout, ArrowRightLeft, Droplet, Package, Box } from 'lucide-react';
-import { Badge } from '../../../shared/ui/badge';
+import { FileText, Download, TreePine, Sprout, ArrowRightLeft, Droplet, Box, ChevronDown, ChevronUp } from 'lucide-react';
 import apiClient from '../../../shared/services/apiClient';
 import { useSearchParams } from 'react-router-dom';
 
-const getPhaseIcon = (phase: string, eventType: string) => {
-  if (eventType === 'IMPORT') {
-    return Sprout; // Primary hardening icon for import
-  }
-  if (eventType === 'SHIFT') {
-    return ArrowRightLeft;
-  }
-  if (eventType === 'TRANSITION') {
-    const phaseStr = phase?.toLowerCase() || '';
-    if (phaseStr.includes('secondary') || phaseStr === 'secondary_hardening') {
-      return TreePine;
-    }
-    if (phaseStr.includes('holding') || phaseStr === 'holding_area') {
-      return Box;
-    }
-  }
-  return Package;
+const getPhaseIcon = (phase: string) => {
+  const phaseStr = phase?.toLowerCase() || '';
+  if (phaseStr === 'primary_hardening') return Sprout;
+  if (phaseStr === 'secondary_hardening') return TreePine;
+  if (phaseStr === 'holding_area') return Box;
+  return Sprout;
 };
 
-const getPhaseColor = (phase: string, eventType: string) => {
-  if (eventType === 'IMPORT') {
-    return 'bg-green-100 text-green-600'; // Primary hardening color
-  }
-  if (eventType === 'SHIFT') {
-    return 'bg-purple-100 text-purple-600';
-  }
-  if (eventType === 'TRANSITION') {
-    const phaseStr = phase?.toLowerCase() || '';
-    if (phaseStr.includes('holding') || phaseStr === 'holding_area') {
-      return 'bg-orange-100 text-orange-600';
-    }
-    if (phaseStr.includes('secondary') || phaseStr === 'secondary_hardening') {
-      return 'bg-blue-100 text-blue-600'; // Secondary hardening color
-    }
-  }
+const getPhaseColor = (phase: string) => {
+  const phaseStr = phase?.toLowerCase() || '';
+  if (phaseStr === 'primary_hardening') return 'bg-green-100 text-green-600';
+  if (phaseStr === 'secondary_hardening') return 'bg-blue-100 text-blue-600';
+  if (phaseStr === 'holding_area') return 'bg-orange-100 text-orange-600';
   return 'bg-gray-100 text-gray-600';
+};
+
+const formatPhaseName = (phase: string) => {
+  if (phase === 'primary_hardening') return 'Primary Hardening';
+  if (phase === 'secondary_hardening') return 'Secondary Hardening';
+  if (phase === 'holding_area') return 'Holding Area';
+  return phase;
 };
 
 export function BatchTimeline() {
@@ -50,17 +34,18 @@ export function BatchTimeline() {
   const batchFromUrl = searchParams.get('batch');
   
   const [selectedBatch, setSelectedBatch] = useState('');
-  const [batches, setBatches] = useState<string[]>([]);
+  const [batches, setBatches] = useState<any[]>([]);
   const [timeline, setTimeline] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchBatches();
   }, []);
 
   useEffect(() => {
-    if (batchFromUrl && batches.includes(batchFromUrl)) {
+    if (batchFromUrl && batches.some(b => b.batch_code === batchFromUrl)) {
       setSelectedBatch(batchFromUrl);
     }
   }, [batchFromUrl, batches]);
@@ -75,9 +60,8 @@ export function BatchTimeline() {
   const fetchBatches = async () => {
     try {
       const data = await apiClient.get('/outdoor/batch-timeline/batches');
-      const batchCodes = Array.isArray(data) ? data.map((b: any) => b.batch_code) : [];
-      setBatches(batchCodes);
-      if (batchCodes.length > 0) setSelectedBatch(batchCodes[0]);
+      setBatches(Array.isArray(data) ? data : []);
+      if (data.length > 0) setSelectedBatch(data[0].batch_code);
     } catch (error) {
       console.error('Error fetching batches:', error);
       setBatches([]);
@@ -89,6 +73,10 @@ export function BatchTimeline() {
     try {
       const data = await apiClient.get(`/outdoor/batch-timeline/${selectedBatch}`);
       setTimeline(Array.isArray(data) ? data : []);
+      // Auto-expand all events by default
+      if (Array.isArray(data)) {
+        setExpandedEvents(new Set(data.map(e => e.event_id)));
+      }
     } catch (error) {
       console.error('Error fetching timeline:', error);
       setTimeline([]);
@@ -99,9 +87,7 @@ export function BatchTimeline() {
 
   const fetchStats = async () => {
     try {
-      const data = await apiClient.get(
-        `/outdoor/batch-timeline/${selectedBatch}/stats`
-      );
+      const data = await apiClient.get(`/outdoor/batch-timeline/${selectedBatch}/stats`);
       setStats(data);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -109,8 +95,20 @@ export function BatchTimeline() {
     }
   };
 
+  const toggleEventExpansion = (eventId: string) => {
+    setExpandedEvents(prev => {
+      const next = new Set(prev);
+      if (next.has(eventId)) {
+        next.delete(eventId);
+      } else {
+        next.add(eventId);
+      }
+      return next;
+    });
+  };
+
   const handleExport = () => {
-    const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{color:#16a34a}.timeline{margin:20px 0}.event{margin:10px 0;padding:10px;border:1px solid #ddd;border-radius:5px}</style></head><body><h1>Batch Timeline - ${selectedBatch}</h1><div class="timeline">${timeline.map(event => `<div class="event"><h3>${event.event_type} - ${event.phase}</h3><p>Plants: ${event.plants || 'N/A'}, Tunnel: ${event.tunnel || 'N/A'}</p><small>${new Date(event.created_at).toLocaleString()}</small></div>`).join('')}</div></body></html>`;
+    const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{color:#16a34a}.timeline{margin:20px 0}.event{margin:10px 0;padding:10px;border:1px solid #ddd;border-radius:5px}</style></head><body><h1>Batch Timeline - ${selectedBatch}</h1><div class="timeline">${timeline.map(event => `<div class="event"><h3>${formatPhaseName(event.phase)}</h3><p>Plants: ${event.plants_entered?.toLocaleString() || 'N/A'}, Tunnel: ${event.tunnel || 'N/A'}</p><small>${new Date(event.created_at).toLocaleString()}</small></div>`).join('')}</div></body></html>`;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -132,8 +130,11 @@ export function BatchTimeline() {
                   <SelectValue placeholder="Select batch" />
                 </SelectTrigger>
                 <SelectContent>
-                  {batches.map(batch => (
-                    <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                  {batches.map(b => (
+                    <SelectItem key={b.batch_code} value={b.batch_code}>
+                      {b.batch_code} — {b.plant_name}
+                      {b.state !== 'ACTIVE' && <span className="text-xs text-gray-400 ml-1">({b.state})</span>}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -143,43 +144,38 @@ export function BatchTimeline() {
               <>
                 <div className="border-l border-gray-200 pl-4">
                   <div className="text-base text-gray-600 mb-1">Current Phase</div>
-                  <div className="text-lg font-semibold">
-                    {stats.current_phase
-                      ?.replace(/_/g, ' ')
-                      .replace(/\b\w/g, (c: string) => c.toUpperCase()) 
-                      || 'N/A'}
+                  <div className="text-base font-semibold text-gray-900">
+                    {formatPhaseName(stats.current_phase) || 'N/A'}
                   </div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
                   <div className="text-base text-gray-600 mb-1">Current Tunnel</div>
-                  <div className="text-lg font-semibold">{stats.current_tunnel || 'N/A'}</div>
+                  <div className="text-base font-semibold text-gray-900">{stats.current_tunnel || 'N/A'}</div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-base text-gray-600 mb-1">
-                    Current Age
-                  </div>
-                  <div className="text-lg font-semibold text-green-600">
+                  <div className="text-base text-gray-600 mb-1">Current Age</div>
+                  <div className="text-base font-semibold text-gray-900">
                     {stats.current_age ?? 0} days
                   </div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-base text-gray-600 mb-1">Total Plants</div>
-                  <div className="text-xl font-semibold">{stats.plants?.toLocaleString() || 0}</div>
+                  <div className="text-base text-gray-600 mb-1">Initial Plants</div>
+                  <div className="text-base font-semibold text-gray-900">{stats.plants?.toLocaleString() || 0}</div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
                   <div className="text-base text-gray-600 mb-1">Total Mortality</div>
-                  <div className="text-xl font-semibold text-red-600">
+                  <div className="text-base font-semibold text-gray-900">
                     {stats.total_mortality?.toLocaleString() || 0}
                   </div>
                 </div>
 
                 <div className="border-l border-gray-200 pl-4">
-                  <div className="text-base text-gray-600 mb-1">Net Plants</div>
-                  <div className="text-xl font-semibold text-green-600">{stats.total_plants?.toLocaleString() || 0}</div>
+                  <div className="text-base text-gray-600 mb-1">Net Alive</div>
+                  <div className="text-base font-semibold text-gray-900">{stats.total_plants?.toLocaleString() || 0}</div>
                 </div>
               </>
             )}
@@ -212,105 +208,157 @@ export function BatchTimeline() {
 
               <div className="space-y-6">
                 {timeline.map((event, idx) => {
-                  const Icon = getPhaseIcon(event.phase, event.event_type);
-                  const phaseColor = getPhaseColor(event.phase, event.event_type);
-                  const eventLabel =
-                    event.event_type === 'IMPORT'
-                      ? (idx === 0
-                          ? `Import to Primary Hardening`
-                          : `Import to ${event.phase}`)
-                    : event.event_type === 'SHIFT'
-                      ? `Shift within ${event.phase}`
-                    : event.event_type === 'TRANSITION'
-                      ? `Transition to ${event.phase}`
-                    : event.event_type;
+                  const Icon = getPhaseIcon(event.phase);
+                  const phaseColor = getPhaseColor(event.phase);
+                  const isExpanded = expandedEvents.has(event.event_id);
+                  const hasShifts = event.shifts && event.shifts.length > 0;
+                  const timeInPhase = event.age_at_arrival !== null && event.age_at_departure !== null
+                    ? event.age_at_departure - event.age_at_arrival
+                    : null;
+
                   return (
-                    <div key={idx} className="relative flex gap-4">
-                      <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center ${phaseColor}`}>
+                    <div key={event.event_id} className="relative flex gap-4">
+                      <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${phaseColor}`}>
                         <Icon className="w-5 h-5" />
                       </div>
 
                       <div className="flex-1 pb-6">
-                        <div className="bg-white border rounded-lg p-4
-                          shadow-sm hover:shadow-md transition-shadow">
-
-                          {/* Row 1: Title + Date */}
+                        <div className="bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                          {/* Header */}
                           <div className="flex items-start justify-between mb-3">
-                            <h3 className="font-medium">{eventLabel}</h3>
-                            <div className="text-base text-gray-500">
+                            <div>
+                              <h3 className="font-medium text-base">
+                                {event.event_type === 'IMPORT' && idx === 0
+                                  ? `Import to ${formatPhaseName(event.phase)}`
+                                  : `Transition to ${formatPhaseName(event.phase)}`}
+                              </h3>
+                              {event.tunnel && (
+                                <div className="text-sm text-gray-500 mt-1">Initial Tunnel: {event.tunnel}</div>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-500">
                               {new Date(event.created_at).toLocaleDateString()}
                             </div>
                           </div>
 
-                          {/* Row 2: Main details — left: tunnel/plants/activities, right: age metrics */}
-                          <div className="bg-gray-50 rounded-md p-3 flex gap-6 text-base text-gray-600 mb-3">
-
-                            {/* Left column — tunnel, plants, mortality, fertilization */}
-                            <div className="flex flex-col gap-2 flex-1">
-                              {event.tunnel && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[60px]">Tunnel</span>
-                                  <span className="font-semibold text-gray-800">{event.tunnel}</span>
-                                </div>
-                              )}
-                              {event.plants && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[60px]">Plants</span>
-                                  <span className="font-semibold text-gray-800">{event.plants}</span>
+                          {/* Main Stats */}
+                          <div className="bg-gray-50 rounded-md p-3 mb-3">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-base">
+                              <div>
+                                <span className="text-gray-500">Plants Entered:</span>
+                                <span className="font-semibold text-gray-900 ml-2">
+                                  {event.plants_entered?.toLocaleString() || 0}
+                                </span>
+                              </div>
+                              {event.plants_sold > 0 && (
+                                <div>
+                                  <span className="text-gray-500">Sold:</span>
+                                  <span className="font-semibold text-gray-900 ml-2">
+                                    {event.plants_sold.toLocaleString()}
+                                  </span>
                                 </div>
                               )}
                               {event.mortality_count > 0 && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 min-w-[60px]">Mortality</span>
-                                  <span className="font-semibold text-red-600">{event.mortality_count}</span>
+                                <div>
+                                  <span className="text-gray-500">Mortality:</span>
+                                  <span className="font-semibold text-gray-900 ml-2">
+                                    {event.mortality_count.toLocaleString()}
+                                  </span>
                                 </div>
                               )}
-                              {event.fertilizations && event.fertilizations.length > 0 && (
-                                <div className="mt-1 pt-2 border-t border-gray-200">
-                                  <div className="text-gray-400 text-base mb-1.5">Fertilization:</div>
-                                  {event.fertilizations.map((fert: any, fertIdx: number) => (
-                                    <div key={fertIdx} className="flex items-center gap-1.5 text-base mb-1">
-                                      <Droplet className="w-3 h-3 text-amber-600 flex-shrink-0" />
-                                      <span className="font-medium text-gray-800">{fert.fertilizer_name}</span>
-                                      <span className="text-gray-500">({fert.quantity})</span>
-                                      <span className="text-gray-400 text-base ml-auto">
-                                        {new Date(fert.created_at).toLocaleDateString()}
-                                      </span>
+                              {event.alive_plants != null && (
+                                <div>
+                                  <span className="text-gray-500">Alive:</span>
+                                  <span className="font-semibold text-gray-900 ml-2">
+                                    {event.alive_plants.toLocaleString()}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Age Metrics */}
+                          <div className="flex flex-wrap gap-3 mb-3">
+                            {event.age_at_arrival !== null && event.age_at_arrival !== undefined && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-base text-gray-500">Age at Arrival:</span>
+                                <span className="text-base font-semibold text-gray-900">
+                                  {event.age_at_arrival} days
+                                </span>
+                              </div>
+                            )}
+                            {event.age_at_departure !== null && event.age_at_departure !== undefined && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-base text-gray-500">Age at Departure:</span>
+                                <span className="text-base font-semibold text-gray-900">
+                                  {event.age_at_departure} days
+                                </span>
+                              </div>
+                            )}
+                            {timeInPhase !== null && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-base text-gray-500">Time in Phase:</span>
+                                <span className="text-base font-semibold text-gray-900">
+                                  {timeInPhase} days
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Tunnel Movements (Shifts) */}
+                          {hasShifts && (
+                            <div className="border-t border-gray-200 pt-3">
+                              <button
+                                onClick={() => toggleEventExpansion(event.event_id)}
+                                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 mb-2"
+                              >
+                                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                Tunnel Movements ({event.shifts.length})
+                              </button>
+
+                              {isExpanded && (
+                                <div className="space-y-2 mt-2">
+                                  {event.shifts.map((shift: any, sIdx: number) => (
+                                    <div key={sIdx} className="bg-gray-50 rounded-md p-3 border border-gray-200">
+                                      <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                          <ArrowRightLeft className="w-4 h-4 text-purple-500" />
+                                          <span className="font-medium text-gray-900">
+                                            {shift.from_location} → {shift.to_location}
+                                          </span>
+                                          <span className="text-base text-gray-500">
+                                            ({shift.plants?.toLocaleString()} plants)
+                                          </span>
+                                        </div>
+                                        <span className="text-sm text-gray-400">
+                                          {new Date(shift.moved_at).toLocaleDateString()}
+                                        </span>
+                                      </div>
+
+                                      {/* Fertilizations for this shift */}
+                                      {shift.fertilizations && shift.fertilizations.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-2 pl-6">
+                                          {shift.fertilizations.map((fert: any, fIdx: number) => (
+                                            <div
+                                              key={fIdx}
+                                              className="inline-flex items-center gap-1.5 px-2 py-1 bg-gray-100 border border-gray-300 rounded-full text-sm"
+                                            >
+                                              <Droplet className="w-3 h-3 text-gray-600" />
+                                              <span className="font-medium text-gray-900">{fert.fertilizer_name}</span>
+                                              <span className="text-gray-700">({fert.quantity})</span>
+                                              <span className="text-gray-600">
+                                                • {new Date(fert.application_date).toLocaleDateString()}
+                                              </span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
                                     </div>
                                   ))}
                                 </div>
                               )}
                             </div>
-
-                            {/* Right column — age metrics only */}
-                            <div className="flex flex-col gap-1.5 items-end min-w-[180px]">
-                              {event.age_at_arrival !== null && event.age_at_arrival !== undefined && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 text-base">Age at Arrival</span>
-                                  <span className="px-2 py-0.5 bg-green-50 border border-green-200 rounded-full text-base font-semibold text-green-700">
-                                    {event.age_at_arrival} days
-                                  </span>
-                                </div>
-                              )}
-                              {event.age_at_departure !== null && event.age_at_departure !== undefined && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 text-base">Age at Departure</span>
-                                  <span className="px-2 py-0.5 bg-orange-50 border border-orange-200 rounded-full text-base font-semibold text-orange-600">
-                                    {event.age_at_departure} days
-                                  </span>
-                                </div>
-                              )}
-                              {event.age_at_arrival !== null && event.age_at_departure !== null &&
-                               event.age_at_arrival !== undefined && event.age_at_departure !== undefined && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-gray-400 text-base">Time in Tunnel</span>
-                                  <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-base font-semibold text-blue-700">
-                                    {event.age_at_departure - event.age_at_arrival} days
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { indoorApi } from '../../services/indoorApi';
+import { useLabContext } from '../../contexts/LabContext';
 import { ContaminationRecord } from '../types';
 
 export const useIndoorContaminationData = () => {
@@ -8,6 +9,7 @@ export const useIndoorContaminationData = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const { labNumber } = useLabContext();
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -20,7 +22,7 @@ export const useIndoorContaminationData = () => {
       setIsLoading(true);
       const res = batchCode 
         ? await indoorApi.contamination.getByBatch(batchCode)
-        : await indoorApi.contamination.getAll({ page: page || currentPage });
+        : await indoorApi.contamination.getAll({ page: page || currentPage, lab_number: labNumber });
       const data = (res as any)?.data || (Array.isArray(res) ? res : []);
       setRecords(data);
       const paginationData = (res as any)?.pagination;
@@ -35,26 +37,26 @@ export const useIndoorContaminationData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage]);
+  }, [currentPage, labNumber]);
 
   const fetchSummary = useCallback(async () => {
     try {
-      const res = await indoorApi.contamination.getSummary();
+      const res = await indoorApi.contamination.getSummary(labNumber);
       setSummary(res as any);
     } catch (err: any) {
       console.error(err);
     }
-  }, []);
+  }, [labNumber]);
 
   const updateContamination = async (id: number | string, count: number) => {
-    await indoorApi.contamination.update(id, { contamination_count: count });
+    await indoorApi.contamination.update(id, { qty_contaminated: count, contamination_count: count });
     await fetchRecords();
     if (fetchSummary) await fetchSummary();
   };
 
   useEffect(() => {
     fetchRecords(undefined, currentPage);
-  }, [currentPage]);
+  }, [currentPage, labNumber]);
 
   return {
     records,

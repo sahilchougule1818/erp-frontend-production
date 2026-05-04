@@ -28,21 +28,21 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-xl border shadow-lg flex flex-col" style={{ width: '850px', maxHeight: '90vh' }}>
-        <div className="px-6 pt-6 pb-4 border-b flex-shrink-0">
+        <div className="px-6 pt-6 pb-4 border-b border-gray-300 flex-shrink-0">
           <div className="flex justify-between items-start mb-3">
             <h4 className="text-lg font-semibold">Outdoor Batch Timeline — {batch.batch_code}</h4>
             <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
           </div>
           {timelineStats && (
             <div className="grid grid-cols-4 gap-3 text-base">
-              <div><span className="text-gray-600">Plant: </span><span className="font-semibold">{batch.plant_name}</span></div>
-              <div><span className="text-gray-600">Phase: </span><span className="font-semibold">{phaseLabel(timelineStats.current_phase || batch.current_phase)}</span></div>
-              <div><span className="text-gray-600">Tunnel: </span><span className="font-semibold">{timelineStats.current_tunnel || batch.current_tunnel || 'N/A'}</span></div>
-              <div><span className="text-gray-600">Age: </span><span className="font-semibold text-green-600">{timelineStats.current_age ?? batch.current_age ?? 0} days</span></div>
-              <div><span className="text-gray-600">Initial Plants: </span><span className="font-semibold text-blue-600">{timelineStats.plants ?? batch.initial_plants ?? 0}</span></div>
-              <div><span className="text-gray-600">Current Alive: </span><span className="font-semibold text-green-600">{timelineStats.available_plants ?? batch.available_plants ?? 0}</span></div>
-              <div><span className="text-gray-600">Sold: </span><span className="font-semibold text-purple-600">{timelineStats.sold_plants ?? batch.sold_plants ?? 0}</span></div>
-              <div><span className="text-gray-600">Mortality: </span><span className="font-semibold text-red-600">{timelineStats.total_mortality ?? batch.total_mortality ?? 0}</span></div>
+              <div><span className="text-gray-600">Plant: </span><span className="font-semibold text-gray-900">{batch.plant_name}</span></div>
+              <div><span className="text-gray-600">Phase: </span><span className="font-semibold text-gray-900">{phaseLabel(timelineStats.current_phase || batch.current_phase)}</span></div>
+              <div><span className="text-gray-600">Tunnel: </span><span className="font-semibold text-gray-900">{timelineStats.current_tunnel || batch.current_tunnel || 'N/A'}</span></div>
+              <div><span className="text-gray-600">Age: </span><span className="font-semibold text-gray-900">{timelineStats.current_age ?? batch.current_age ?? 0} days</span></div>
+              <div><span className="text-gray-600">Initial Plants: </span><span className="font-semibold text-gray-900">{timelineStats.plants ?? batch.initial_plants ?? 0}</span></div>
+              <div><span className="text-gray-600">Current Alive: </span><span className="font-semibold text-gray-900">{timelineStats.available_plants ?? batch.available_plants ?? 0}</span></div>
+              <div><span className="text-gray-600">Sold: </span><span className="font-semibold text-gray-900">{timelineStats.sold_plants ?? batch.sold_plants ?? 0}</span></div>
+              <div><span className="text-gray-600">Mortality: </span><span className="font-semibold text-gray-900">{timelineStats.total_mortality ?? batch.total_mortality ?? 0}</span></div>
             </div>
           )}
         </div>
@@ -78,13 +78,13 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                         <div className="bg-white border rounded-lg p-3 shadow-sm">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-3">
-                              <h3 className="font-medium">
+                              <h3 className="font-medium text-base">
                                 {event.event_type === 'IMPORT' && `Import to ${phaseLabel(event.event_data?.phase || event.phase)}`}
                                 {event.event_type === 'TRANSITION' && `Transition to ${phaseLabel(event.event_data?.to_phase || event.phase)}`}
                               </h3>
                               {event.age_at_arrival !== null && event.age_at_arrival !== undefined && (
                                 <span className="text-base text-gray-500">
-                                  Age at Arrival: <span className="font-semibold text-green-600">{event.age_at_arrival} days</span>
+                                  Age at Arrival: <span className="font-semibold text-gray-900">{event.age_at_arrival} days</span>
                                 </span>
                               )}
                             </div>
@@ -102,25 +102,25 @@ export const TimelineModal: React.FC<TimelineModalProps> = ({
                               {event.plants_entered && (
                                 <div className="text-center">
                                   <div className="text-base text-gray-400 mb-1">Plants Entered</div>
-                                  <div className="font-semibold text-blue-600 text-base">{event.plants_entered}</div>
+                                  <div className="font-semibold text-gray-900 text-base">{event.plants_entered}</div>
                                 </div>
                               )}
                               {event.mortality_count !== null && event.mortality_count !== undefined && (
                                 <div className="text-center">
                                   <div className="text-base text-gray-400 mb-1">Mortality</div>
-                                  <div className="font-semibold text-red-600 text-base">{event.mortality_count}</div>
+                                  <div className="font-semibold text-gray-900 text-base">{event.mortality_count}</div>
                                 </div>
                               )}
                               {event.plants_sold !== null && event.plants_sold !== undefined && (
                                 <div className="text-center">
                                   <div className="text-base text-gray-400 mb-1">Plants Sold</div>
-                                  <div className="font-semibold text-purple-600 text-base">{event.plants_sold}</div>
+                                  <div className="font-semibold text-gray-900 text-base">{event.plants_sold}</div>
                                 </div>
                               )}
                               {event.alive_plants !== null && event.alive_plants !== undefined && (
                                 <div className="text-center">
                                   <div className="text-base text-gray-400 mb-1">Available Plants</div>
-                                  <div className="font-semibold text-green-600 text-base">{event.alive_plants}</div>
+                                  <div className="font-semibold text-gray-900 text-base">{event.alive_plants}</div>
                                 </div>
                               )}
                             </div>

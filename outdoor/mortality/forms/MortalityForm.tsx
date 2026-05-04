@@ -33,7 +33,7 @@ export function MortalityForm({ batch, onClose, onSuccess }: MortalityFormProps)
         const fetched = Number(data.mortality_count ?? 0);
         setCurrentMortality(fetched);
         setCount(fetched);
-        setReason(data.reason ?? '');
+        setReason(data.mortality_reason ?? '');
       })
       .catch(() => { /* no stay or error — defaults stay at 0 */ })
       .finally(() => setLoading(false));

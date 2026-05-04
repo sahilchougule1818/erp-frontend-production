@@ -43,8 +43,8 @@ export function IncubationForm({ initialData, selectedBatch, operators, onSubmit
       ...emptyForm,
       batchCode: selectedBatch?.batch_code || '',
       plantName: selectedBatch?.plant_name || '',
-      noOfBottles: selectedBatch?.current_bottles_count || '',
-      mediaCode: selectedBatch?.media_code || '',
+      noOfBottles: selectedBatch?.qty_available || selectedBatch?.current_qty_in || '',
+      mediaCode: selectedBatch?.latest_media_code || selectedBatch?.media_code || '',
       ...initialData
     });
     if (initialData?.id) fetchOperatorIds(initialData.id);
@@ -77,7 +77,7 @@ const fetchOperatorIds = async (recordId: number) => {
     id: form.id,
     batchName: selectedBatch?.batch_code,
     plantName: selectedBatch?.plant_name,
-    noOfBottles: selectedBatch?.current_bottles_count || form.noOfBottles,
+    noOfBottles: selectedBatch?.qty_available || selectedBatch?.current_qty_in || form.noOfBottles,
     mediaCode: form.mediaCode,
     contaminationCount: form.contamination,
     incubationPeriod: form.incubationPeriod,
@@ -120,7 +120,7 @@ const fetchOperatorIds = async (recordId: number) => {
             </div>
             <div className="space-y-2">
               <Label>Current Bottles</Label>
-              <Input type="number" value={selectedBatch?.current_bottles_count || ''} readOnly className="bg-gray-100" />
+              <Input type="number" value={selectedBatch?.qty_available || selectedBatch?.current_qty_in || ''} readOnly className="bg-gray-100" />
             </div>
             <div className="col-span-2 space-y-2">
               <Label>Media Code</Label>
