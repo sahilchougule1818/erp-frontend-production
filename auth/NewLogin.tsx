@@ -66,8 +66,9 @@ export function Login() {
       if (response.ok) {
         if (data.requires2FA) {
           setStep('TWO_FACTOR');
-        } else if (data.user) {
+        } else if (data.user && data.token) {
           localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('auth-token', data.token);
           window.location.reload();
         }
       } else {
